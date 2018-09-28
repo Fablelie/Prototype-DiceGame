@@ -166,7 +166,7 @@ public class DokaponGameMode : GameMode {
 
 	public void ParseMovableNode(int max=0, int step=0, Node node=null, Node pNode=null) {
 		if (max == 0) max = stepWalking;
-		if (node == null) node = currentPoring.node;
+		if (node == null) node = currentPoring.Node;
 		if (pNode == null) pNode = node;
 
 		foreach(Neighbor neighbor in node.NeighborList) {
@@ -236,15 +236,16 @@ public class DokaponGameMode : GameMode {
 		return result;
 	}
 
-	void RouteToNode(Node target, Node node=null, Node pNode=null, int step=0, List<Node> result=null) {
+	void RouteToNode(Node target, Node node = null, Node pNode = null, int step = 0, List<Node> result = null) {
 		if (step > stepWalking) return;
 
 		if (result == null) result = new List<Node>();
-		if (pNode == null) pNode = currentPoring.node;
+		if (pNode == null) pNode = currentPoring.Node;
 		if (node == null) node = pNode;
 
 		result.Add(node);
-		if (node.nid == target.nid) {
+		if (node.nid == target.nid) 
+		{
 			if (step == stepWalking) Route.Add(result);
 		}
 		
@@ -282,7 +283,7 @@ public class DokaponGameMode : GameMode {
 		
 		// Init for first loop.
 		if (result == null) result = new List<Node>();
-		if (pNode == null) pNode = currentPoring.node;
+		if (pNode == null) pNode = currentPoring.Node;
 		if (node == null) node = pNode;
 			
 		Debug.Log(String.Format(GetIndent(step)+"[START {1}] {0}/{2} ", step, node.nid, stepWalking));

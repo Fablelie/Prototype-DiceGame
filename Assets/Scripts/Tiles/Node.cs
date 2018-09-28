@@ -88,8 +88,13 @@ public class Node : MonoBehaviour {
 
 	public void AddPoring(Poring poring) {
 		poring.transform.position = transform.position;
-		poring.node = this;
+		poring.Node = this;
 		porings.Add(poring);
+	}
+
+	public void RemovePoring(Poring poring)
+	{
+		porings.Remove(poring);
 	}
 
 	void OnDrawGizmosSelected() {

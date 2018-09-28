@@ -63,7 +63,6 @@
      <Compile Include="Assets\AmplifyShaderEditor\Examples\Official\TemplateExamples\PostProcess\Sobel\PostProcessExample.cs" />
      <Compile Include="Assets\AmplifyShaderEditor\Examples\Official\TemplateExamples\Sprites\SpriteMask\SpriteMaskController.cs" />
      <Compile Include="Assets\Bezier3D.cs" />
-     <Compile Include="Assets\CameraController.cs" />
      <Compile Include="Assets\GameController.cs" />
      <Compile Include="Assets\GenerateMesh02.cs" />
      <Compile Include="Assets\Klak\Math\Perlin.cs" />
@@ -75,7 +74,6 @@
      <Compile Include="Assets\MeshTest.cs" />
      <Compile Include="Assets\NewBehaviourScript.cs" />
      <Compile Include="Assets\PanelPoringUI.cs" />
-     <Compile Include="Assets\Poring.cs" />
      <Compile Include="Assets\PoringTPS.cs" />
      <Compile Include="Assets\PoringUI.cs" />
      <Compile Include="Assets\PostProcessing\Runtime\Attributes\GetSetAttribute.cs" />
@@ -126,11 +124,16 @@
      <Compile Include="Assets\Resource.cs" />
      <Compile Include="Assets\Roll.cs" />
      <Compile Include="Assets\Rotator.cs" />
+     <Compile Include="Assets\Scripts\Camera\CameraController.cs" />
+     <Compile Include="Assets\Scripts\Extention\InstanceObject.cs" />
      <Compile Include="Assets\Scripts\GameMode\DokaponGameMode.cs" />
      <Compile Include="Assets\Scripts\GameMode\GameMode.cs" />
      <Compile Include="Assets\Scripts\GameMode\PrototypeGameMode.cs" />
+     <Compile Include="Assets\Scripts\Poring\Poring.cs" />
+     <Compile Include="Assets\Scripts\Poring\PoringBehavior.cs" />
+     <Compile Include="Assets\Scripts\Poring\PoringProperty.cs" />
      <Compile Include="Assets\Scripts\Tiles\Node.cs" />
-     <Compile Include="Assets\Scripts\Tiles\TilePreporty.cs" />
+     <Compile Include="Assets\Scripts\Tiles\TileProperty.cs" />
      <Compile Include="Assets\SFX.cs" />
      <Compile Include="Assets\SoundController.cs" />
      <Compile Include="Assets\SoundObject.cs" />

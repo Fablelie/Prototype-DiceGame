@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MagicCursor : MonoBehaviour {
+public class MagicCursor : InstanceObject<MagicCursor> {
 	private Animator animator;
-	static public MagicCursor Instance;
-	void Start () {
-		Instance = this;
+	void Awake () 
+	{
+		base.Awake();
 		animator = GetComponent<Animator>();
 	}
 	
