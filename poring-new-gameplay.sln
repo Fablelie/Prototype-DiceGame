@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "poring-new-gameplay", "Assembly-CSharp.csproj", "{A3A17C20-CB31-20EF-396C-3051330E319F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{A3A17C20-CB31-20EF-396C-3051330E319F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "poring-new-gameplay", "Assembly-CSharp-Editor.csproj", "{6F91C3BF-56E9-8ADD-9DC4-BA8AE8031F3D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor", "Assembly-CSharp-Editor.csproj", "{6F91C3BF-56E9-8ADD-9DC4-BA8AE8031F3D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

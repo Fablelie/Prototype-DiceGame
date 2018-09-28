@@ -1,3 +1,5 @@
+// Upgrade NOTE: upgraded instancing buffer 'NavigatorLine' to new syntax.
+
 // Made with Amplify Shader Editor
 // Available at the Unity Asset Store - http://u3d.as/y3X 
 Shader "NavigatorLine"
@@ -32,15 +34,17 @@ Shader "NavigatorLine"
 		uniform float4 _BaseColor;
 		uniform float4 _EmitColor;
 
-		UNITY_INSTANCING_CBUFFER_START(NavigatorLine)
+		UNITY_INSTANCING_BUFFER_START(NavigatorLine)
 			UNITY_DEFINE_INSTANCED_PROP(float2, _Tiling)
+#define _Tiling_arr NavigatorLine
 			UNITY_DEFINE_INSTANCED_PROP(float2, _Speed)
-		UNITY_INSTANCING_CBUFFER_END
+#define _Speed_arr NavigatorLine
+		UNITY_INSTANCING_BUFFER_END(NavigatorLine)
 
 		void surf( Input i , inout SurfaceOutputStandard o )
 		{
-			float2 _Tiling_Instance = UNITY_ACCESS_INSTANCED_PROP(_Tiling);
-			float2 _Speed_Instance = UNITY_ACCESS_INSTANCED_PROP(_Speed);
+			float2 _Tiling_Instance = UNITY_ACCESS_INSTANCED_PROP(_Tiling_arr, _Tiling);
+			float2 _Speed_Instance = UNITY_ACCESS_INSTANCED_PROP(_Speed_arr, _Speed);
 			float2 uv_TexCoord2 = i.uv_texcoord * _Tiling_Instance + ( _Speed_Instance * _Time.y );
 			float4 tex2DNode1 = tex2D( _TextureNavigator, uv_TexCoord2, float2( 0,0 ), float2( 0,0 ) );
 			o.Albedo = ( tex2DNode1 * _BaseColor ).rgb;
