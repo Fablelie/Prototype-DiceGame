@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class PrototypeGameMode : GameMode
 {
+
+    public Node[] Nodes;
+    [SerializeField] private Camera[] cameras;
+
     public override void OnRollEnd(int number)
     {
         throw new System.NotImplementedException();
