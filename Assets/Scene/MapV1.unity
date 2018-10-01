@@ -282,9 +282,6 @@ MonoBehaviour:
   m_roll: {fileID: 1203936181}
   m_propertyStarter:
   - {fileID: 11400000, guid: fd799e29e28828f4cb59de6851d66f0c, type: 2}
-  - {fileID: 11400000, guid: fd799e29e28828f4cb59de6851d66f0c, type: 2}
-  - {fileID: 11400000, guid: fd799e29e28828f4cb59de6851d66f0c, type: 2}
-  - {fileID: 11400000, guid: fd799e29e28828f4cb59de6851d66f0c, type: 2}
   m_player: []
 --- !u!1 &93712541
 GameObject:

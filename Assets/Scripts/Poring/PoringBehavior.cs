@@ -41,10 +41,12 @@ public class PoringBehavior : MonoBehaviour
 		// m_omActor.GetAnimator?.Play("Warp_down");
 	}
 
-	public void SetupJumpToNodeTarget(List<Node> nodeList)
+    private Node m_targetNode;
+
+	public void SetupJumpToNodeTarget(List<Node> nodeList, Node targetNode)
 	{
-		
-		//nodeList.RemoveAt(0);
+        //nodeList.RemoveAt(0);
+        m_targetNode = targetNode;
 		StartCoroutine(JumpTo(nodeList));
 	}
 
@@ -64,6 +66,10 @@ public class PoringBehavior : MonoBehaviour
 			yield return new WaitUntil(() => !m_isMove);
             
             node.AddPoring(Poring);
+            if (node == m_targetNode)
+            {
+                break;
+            }
 		}
 
         yield return wait;

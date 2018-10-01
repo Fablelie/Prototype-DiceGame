@@ -70,31 +70,47 @@ public class PrototypeGameMode : GameMode
                         // SFX.PlayClip(resource.sound[0]).GetComponent<AudioSource>().time = 0.3f;
                         node.PointRenderer.SetPropertyBlock(MaterialPreset.GetMaterialPreset(EMaterialPreset.selected));
 
-                        if (node.steps.Count > 0 && node.steps.Find(step => step == m_step) == m_step) 
+                        if (node.steps.Count > 0)
                         {
-                            MagicCursor.Instance.MoveTo(node);
-                            
-                            RouteList.Clear();
-                            RouteToNode(node);
-
-                            int indexRoute = Random.Range(0, RouteList.Count - 1);
-                            Debug.LogFormat("index >>>>>>>>>> {0}", indexRoute);
-                            Debug.LogFormat("RouteList >>>>>>>>>> {0}", RouteList.Count);
-                            // TODO send result route to rendar path with UI
-                            print(GetNodeString(RouteList[indexRoute]));
-                            m_currentPlayer.Poring.Behavior.SetupJumpToNodeTarget(RouteList[indexRoute]);
-                            isSelected = true;
-                            m_cameraController.Show(CameraType.Default);
-                            foreach (var item in Nodes)
+                            if (node.porings.Count > 0)
                             {
-                                item.steps.Clear();
-                                item.PointRenderer.material.SetColor("_Color", new Color(1, 1, 1, 0.37f));
-                                item.PointRenderer.material.SetColor("_EmissionColor", new Color(0.5f, 0.5f, 0.5f));
+
                             }
+                            else if (node.steps.Find(step => step == m_step) == m_step)
+                            {
+                                MagicCursor.Instance.MoveTo(node);
+
+                                RouteList.Clear();
+                                RouteToNode(node);
+
+                                int indexRoute = Random.Range(0, RouteList.Count - 1);
+                                Debug.LogFormat("index >>>>>>>>>> {0}", indexRoute);
+                                Debug.LogFormat("RouteList >>>>>>>>>> {0}", RouteList.Count);
+
+                                // TODO send result route to rendar path with UI
+                                print(GetNodeString(RouteList[indexRoute]));
+                                m_currentPlayer.Poring.Behavior.SetupJumpToNodeTarget(RouteList[indexRoute], node);
+                                
+                                
+                            }
+
+                            m_cameraController.Show(CameraType.Default);
+                            isSelected = true;
                         }
+                        ResetNodeColor();
                     }
                 }
             }
+        }
+    }
+
+    private void ResetNodeColor()
+    {
+        foreach (var item in Nodes)
+        {
+            item.steps.Clear();
+            item.PointRenderer.material.SetColor("_Color", new Color(1, 1, 1, 0.37f));
+            item.PointRenderer.material.SetColor("_EmissionColor", new Color(0.5f, 0.5f, 0.5f));
         }
     }
 
@@ -169,9 +185,9 @@ public class PrototypeGameMode : GameMode
         {
 			if(node.steps.Count == 0) continue;
 			node.steps.Sort();
-         	float step = node.steps [node.steps.Count - 1];
-			float val = Mathf.Floor(step / max);
-			node.PointRenderer.material.SetColor("_Color", Color.Lerp(Color.yellow, Color.green, val));
+            Color color = (node.porings.Count > 0) ? Color.red : (node.steps[node.steps.Count - 1] == max) ? Color.green : Color.yellow;
+            
+			node.PointRenderer.material.SetColor("_Color", color);
 			node.PointRenderer.material.SetColor("_EmissionColor", new Color(0.5f, 0.5f, 0.5f));
 		}
     }
