@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class MagicCursor : InstanceObject<MagicCursor> {
 	private Animator animator;
+    private WaitForSeconds wait = new WaitForSeconds(2);
 	void Awake () 
 	{
 		base.Awake();
@@ -11,6 +12,7 @@ public class MagicCursor : InstanceObject<MagicCursor> {
 	}
 	
 	public void MoveTo(Node node) {
+        gameObject.SetActive(true);
 		transform.parent = node.transform;
 		transform.localPosition = new Vector3(0, 0.8f, 0);
 		

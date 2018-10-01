@@ -8,11 +8,13 @@ using System;
 
 public class Node : MonoBehaviour {
 
+    public TileProperty TileProperty;
 	public List<Neighbor> NeighborList;
 	public List<Poring> porings;
 	public List<int> steps = new List<int>();
 	public GameObject prefebLine;
 	public Renderer PointRenderer;
+	public Renderer BlockRenderer;
 	static public Dictionary<string, GameObject> objectLines = new Dictionary<string, GameObject>();
 	static public int nidIndex = 0;
 	public int nid = 0;
@@ -21,7 +23,28 @@ public class Node : MonoBehaviour {
 		nid = nidIndex++;
 	}
 
+	[SerializeField]private bool m_setMaterial = false;
+	[SerializeField]private bool m_setBlockRenderer = false;
+	void OnValidate()
+	{
+		if(m_setMaterial)
+		{
+			m_setMaterial = !m_setMaterial;
+			BlockRenderer.material = TileProperty.Material;
+		}
 
+		if(m_setBlockRenderer)
+		{
+			m_setBlockRenderer = !m_setBlockRenderer;
+			foreach (var item in gameObject.GetComponentsInChildren<MeshRenderer>())
+			{
+				if(item.name == "block")
+				{
+					BlockRenderer = item;
+				}
+			}
+		}
+	}
 
 	static string GetObjectLineName(int nid1, int nid2) {
 		int[] nids = { nid1, nid2 };

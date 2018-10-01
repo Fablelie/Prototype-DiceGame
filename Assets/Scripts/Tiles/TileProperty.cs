@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TileProperty : ScriptableObject {
-	public int WeightStep;
+    public TileType Type;
+    public int WeightStep;
+	public Material Material;
 
 }
 

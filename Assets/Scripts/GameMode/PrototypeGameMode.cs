@@ -42,7 +42,7 @@ public class PrototypeGameMode : GameMode
     public override void OnRollEnd(int number)
     {
         m_step = number;
-
+        Debug.LogFormat("Roll number : {0}", number);
         m_cameraController.Show(CameraType.TopDown);
 		ParseMovableNode();
         DisplayNodeHeat();
@@ -52,6 +52,7 @@ public class PrototypeGameMode : GameMode
     private IEnumerator WaitForSelectNode()
     {
         bool isSelected = false;
+        MagicCursor.Instance.gameObject.SetActive(false);
         while (!isSelected)
         {
             yield return null;
@@ -69,23 +70,27 @@ public class PrototypeGameMode : GameMode
                         // SFX.PlayClip(resource.sound[0]).GetComponent<AudioSource>().time = 0.3f;
                         node.PointRenderer.SetPropertyBlock(MaterialPreset.GetMaterialPreset(EMaterialPreset.selected));
 
-                        if (node.steps.Count > 0) 
+                        if (node.steps.Count > 0 && node.steps.Find(step => step == m_step) == m_step) 
                         {
                             MagicCursor.Instance.MoveTo(node);
                             
                             RouteList.Clear();
                             RouteToNode(node);
 
+                            int indexRoute = Random.Range(0, RouteList.Count - 1);
+                            Debug.LogFormat("index >>>>>>>>>> {0}", indexRoute);
+                            Debug.LogFormat("RouteList >>>>>>>>>> {0}", RouteList.Count);
                             // TODO send result route to rendar path with UI
-                            m_currentPlayer.Poring.Behavior.SetupJumpToNodeTarget(RouteList[Random.Range(0, RouteList.Count - 1)]);
+                            print(GetNodeString(RouteList[indexRoute]));
+                            m_currentPlayer.Poring.Behavior.SetupJumpToNodeTarget(RouteList[indexRoute]);
                             isSelected = true;
                             m_cameraController.Show(CameraType.Default);
                             foreach (var item in Nodes)
                             {
                                 item.steps.Clear();
-                                item.PointRenderer.material.SetColor("_Color", Color.white);
+                                item.PointRenderer.material.SetColor("_Color", new Color(1, 1, 1, 0.37f));
                                 item.PointRenderer.material.SetColor("_EmissionColor", new Color(0.5f, 0.5f, 0.5f));
-                            } 
+                            }
                         }
                     }
                 }
@@ -93,23 +98,44 @@ public class PrototypeGameMode : GameMode
         }
     }
 
-    private void RouteToNode(Node target, Node node = null, Node prevNode = null, int step = 0, List<Node> result = null) {
-		if (step > m_step) return;
+    private string GetNodeString(List<Node> nodeList) 
+    {
+		if (nodeList == null) return "NULL";
+		if (nodeList.Count == 0) return "[]";
 
-		if (result == null) result = new List<Node>();
-		if (prevNode == null) prevNode = m_currentPlayer.Poring.Node;
-		if (node == null) node = prevNode;
-
-		result.Add(node);
-		if (node.nid == target.nid) 
-		{
-			if (step == m_step) RouteList.Add(result);
+		List<string> strings = new List<string>();
+		foreach(Node n in nodeList) {
+			strings.Add(n.nid.ToString());
 		}
-		
-		step++;
-		foreach (Neighbor neighbor in node.NeighborList) {
-			if (neighbor.Node.nid == prevNode.nid) continue;
-			//if (n.dir == pNode.dir) continue;
+		return "["+ string.Join(", ", strings.ToArray()) + "]";
+		// return string.Join(",".Join(), intList.Select(x => x.ToString()).ToArray());
+	}
+
+    private void RouteToNode(Node target, Node node = null, Node prevNode = null, int step = 0, List<Node> result = null) 
+    {
+		if (result == null) result = new List<Node>();
+		if (prevNode == null) prevNode = m_currentPlayer.Poring.PrevNode;
+        bool isFirstNode = false;
+        if (node == null)
+        {
+            isFirstNode = true;
+            node = m_currentPlayer.Poring.Node;
+        }
+        
+        if (step > 0)
+            result.Add(node);
+
+        step += (isFirstNode) ? 1 : node.TileProperty.WeightStep;
+
+        if (node.nid == target.nid) 
+			if (step >= m_step) RouteList.Add(result);
+            
+		if (step > m_step) return;
+		foreach (Neighbor neighbor in node.NeighborList) 
+        {
+            if (prevNode != null)
+			    if (neighbor.Node.nid == prevNode.nid)
+                    continue;
 
 			List<Node> result2 = new List<Node>();
 			result2.AddRange(result);
@@ -117,18 +143,21 @@ public class PrototypeGameMode : GameMode
 		}
 	}
 
-    private void ParseMovableNode(int max=0, int step=0, Node node=null, Node pNode=null) {
+    private void ParseMovableNode(int max=0, int step=0, Node node=null, Node prevNode=null) {
 		if (max == 0) max = m_step;
 		if (node == null) node = m_currentPlayer.Poring.Node;
-		if (pNode == null) pNode = node;
+		if (prevNode == null) prevNode = (m_currentPlayer.Poring.PrevNode != null) ? m_currentPlayer.Poring.PrevNode : m_currentPlayer.Poring.Node;
 
 		foreach(Neighbor neighbor in node.NeighborList) {
-			if (pNode.nid == neighbor.Node.nid || neighbor.eDirection == eDirection.INTO) continue;
+            if (prevNode != null)
+                if (prevNode.nid == neighbor.Node.nid) continue;
+            if (neighbor.eDirection == eDirection.INTO) continue;
 			
 			if (step < max) 
             {
-				neighbor.Node.steps.Add(step+1);
-				ParseMovableNode(max, step+1, neighbor.Node, node);
+                int newStep = Mathf.Min(step + neighbor.Node.TileProperty.WeightStep, max);
+				neighbor.Node.steps.Add(newStep);
+				ParseMovableNode(max, newStep, neighbor.Node, node);
 			} 
 		}
 	}

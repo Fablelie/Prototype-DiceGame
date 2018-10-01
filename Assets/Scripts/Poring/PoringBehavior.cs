@@ -28,7 +28,7 @@ public class PoringBehavior : MonoBehaviour
 		{
 			
 			float step = m_moveSpeed * m_moveSpeed * Time.deltaTime;
-			Debug.Log("MoveStep >>>>>>>>>>>>>>>>> " + step);
+			// Debug.Log("MoveStep >>>>>>>>>>>>>>>>> " + step);
 			transform.position = Vector3.MoveTowards(transform.position, m_targetPosition, step);
 			yield return new WaitForEndOfFrame();
 		}
@@ -44,32 +44,36 @@ public class PoringBehavior : MonoBehaviour
 	public void SetupJumpToNodeTarget(List<Node> nodeList)
 	{
 		
-		nodeList.RemoveAt(0);
+		//nodeList.RemoveAt(0);
 		StartCoroutine(JumpTo(nodeList));
 	}
 
-	private IEnumerator JumpTo(List<Node> nodeList)
+    private WaitForSeconds wait = new WaitForSeconds(1);
+
+    private IEnumerator JumpTo(List<Node> nodeList)
 	{
 		foreach(var node in nodeList)
 		{
-			Poring.Node.RemovePoring(Poring);
+            Poring.PrevNode = Poring.Node;
+            Poring.Node.RemovePoring(Poring);
 			m_targetPosition = node.transform.position;
 			TurnFaceTo(m_targetPosition);
 			Poring.Animator.Play("jump");
 			m_isMove = true;
 
 			yield return new WaitUntil(() => !m_isMove);
-
-			node.AddPoring(Poring);
+            
+            node.AddPoring(Poring);
 		}
 
+        yield return wait;
 		FinishMove();
 	}
 
 	// Call from animation event.
 	public void CallbackStartMove()
 	{
-		Debug.LogError("CallbackStartMove");
+		// Debug.LogError("CallbackStartMove");
 		m_moveSpeed = Vector3.Distance(Vector3.Scale(transform.localPosition, m_rightForward), Vector3.Scale(m_targetPosition, m_rightForward));
 		m_moveSpeed *= 1f; // moveSpeed with animation "Jump"
 

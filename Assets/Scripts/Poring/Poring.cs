@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Poring : MonoBehaviour {
 	public Node Node;
+    public Node PrevNode;
 
 	public PoringBehavior Behavior;
 	public Animator Animator;
