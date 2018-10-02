@@ -6,10 +6,17 @@ public class Poring : MonoBehaviour {
 	public Node Node;
     public Node PrevNode;
 
+    public Poring Target;
+
 	public PoringBehavior Behavior;
 	public Animator Animator;
 
-	[SerializeField] private PoringProperty m_property;
+	public PoringProperty Property;
+
+	public int WinCondition = 0;
+
+	public List<int> OffensiveResultList = new List<int>();
+	public List<int> DeffensiveResultList = new List<int>();
 
 	void Awake()
 	{
@@ -18,9 +25,10 @@ public class Poring : MonoBehaviour {
 		// Behavior.Poring = this;
 	}
 
-	public void Init(PoringProperty property)
+	public void Init(PoringProperty baseProperty)
 	{
-		m_property = property.CopyTo(m_property);
+        Property = new PoringProperty(baseProperty);
+		Debug.Log("Current hp : " + Property.CurrentHp);
 	}
 
 	void HeadTo(Vector3 position) {

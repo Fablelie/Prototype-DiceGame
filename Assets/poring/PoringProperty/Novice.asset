@@ -12,10 +12,20 @@ MonoBehaviour:
   m_Name: Novice
   m_EditorClassIdentifier: 
   Prefab: {fileID: 1594514244734316, guid: fddd19b1f8bcf4545bcf46c6c1825b0c, type: 2}
-  BaseHp: 20
+  BaseHp: 30
   CurrentHp: 0
-  BasePAtk: 5
-  BaseMAtk: 1
-  GrowupHp: 10
-  GrowupPAtk: 1
+  BasePAtk: 10
+  BaseMAtk: 5
+  MaxHp: 60
+  MaxPAtk: 30
+  MaxMAtk: 10
+  GrowupHp: 8
+  GrowupPAtk: 5
   GrowupMAtk: 1
+  MaxPoint: -1
+  MoveDices:
+  - {fileID: 11400000, guid: af2a03c204481d842903e99ac7a7a142, type: 2}
+  DeffensiveDices:
+  - {fileID: 11400000, guid: fe27273ab82e6824e994c73ca56a6f6d, type: 2}
+  OffensiveDices:
+  - {fileID: 11400000, guid: db3b6c9f8f439404f814dc2d31c57e05, type: 2}

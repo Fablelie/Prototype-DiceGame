@@ -3,8 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[System.Serializable]
+public enum DiceType
+{
+	Move,
+	Deffensive,
+	Offensive,
+}
+
 public class Roll : MonoBehaviour {
 
+	public DiceType Type;
 	public GameObject image;
 	public GameObject text;
 	public GameObject arrow;
@@ -77,7 +86,7 @@ public class Roll : MonoBehaviour {
 		image.SetActive(false);
 		int number = RadiusToNumber();
 		//print("NUMBER IS " + number);
-		GameMode.Instance.OnRollEnd(number);
+		GameMode.Instance.OnRollEnd(number, Type);
 
 	}
 }

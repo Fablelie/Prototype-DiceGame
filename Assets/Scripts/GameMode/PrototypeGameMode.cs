@@ -23,7 +23,10 @@ public class PrototypeGameMode : GameMode
     public eStateGameMode PrevGameState = eStateGameMode.None;
     public Node StartNode;
     public Node[] Nodes;
-    [SerializeField] private Roll m_roll;
+    [SerializeField] private Roll m_rollMove;
+    [SerializeField] private Roll m_rollOffsive;
+    [SerializeField] private Roll m_rollDeffsive;
+    
     [SerializeField] private List<PoringProperty> m_propertyStarter;
     [SerializeField] private List<Poring> m_player = new List<Poring>();
 
@@ -39,14 +42,27 @@ public class PrototypeGameMode : GameMode
         StartGameMode();
     }
 
-    public override void OnRollEnd(int number)
+    public override void OnRollEnd(int number, DiceType type)
     {
-        m_step = number;
-        Debug.LogFormat("Roll number : {0}", number);
-        m_cameraController.Show(CameraType.TopDown);
-		ParseMovableNode();
-        DisplayNodeHeat();
-        StartCoroutine(WaitForSelectNode());
+        switch (type)
+        {
+            case DiceType.Move:
+                m_step = number;
+                Debug.LogFormat("Roll move number : {0}", number);
+                m_cameraController.Show(CameraType.TopDown);
+                ParseMovableNode();
+                DisplayNodeHeat();
+                StartCoroutine(WaitForSelectNode());
+            break;
+            case DiceType.Offensive:
+                Debug.LogFormat("Roll offensive number : {0}", number - 1);
+                m_currentPlayer.Poring.OffensiveResultList.Add(number- 1);
+            break;
+            case DiceType.Deffensive:
+                Debug.LogFormat("Roll deffensive number : {0}", number- 1);
+                m_currentPlayer.Poring.DeffensiveResultList.Add(number- 1);
+            break;
+        }
     }
 
     private IEnumerator WaitForSelectNode()
@@ -70,38 +86,59 @@ public class PrototypeGameMode : GameMode
                         // SFX.PlayClip(resource.sound[0]).GetComponent<AudioSource>().time = 0.3f;
                         node.PointRenderer.SetPropertyBlock(MaterialPreset.GetMaterialPreset(EMaterialPreset.selected));
 
-                        if (node.steps.Count > 0)
+                        if (node == m_currentPlayer.Poring.Node && CheckPoringInTargetNode(node) > 0)
                         {
-                            if (node.porings.Count > 0)
-                            {
+                            List<Poring> porings = node.porings.FindAll(poring => poring != m_currentPlayer.Poring);
+                            m_currentPlayer.Poring.Target = porings[Random.Range(0, porings.Count - 1)];
+                            CurrentGameState = eStateGameMode.Encounter;
+                        }
+                        else if (node.steps.Count > 0)
+                        {
+                            MagicCursor.Instance.MoveTo(node);
 
+                            if (CheckPoringInTargetNode(node) > 0)
+                            {
+                                List<Poring> porings = node.porings.FindAll(poring => poring != m_currentPlayer.Poring);
+                                m_currentPlayer.Poring.Target = porings[Random.Range(0, porings.Count - 1)];
+
+                                RouteList.Clear();
+                                FindRouteNode(m_step, 0, m_currentPlayer.Poring.Node, m_currentPlayer.Poring.PrevNode);
+
+                                RouteList = FindTargetRoute(RouteList, node);
                             }
                             else if (node.steps.Find(step => step == m_step) == m_step)
                             {
-                                MagicCursor.Instance.MoveTo(node);
+                                m_currentPlayer.Poring.Target = null;
 
                                 RouteList.Clear();
                                 RouteToNode(node);
-
-                                int indexRoute = Random.Range(0, RouteList.Count - 1);
-                                Debug.LogFormat("index >>>>>>>>>> {0}", indexRoute);
-                                Debug.LogFormat("RouteList >>>>>>>>>> {0}", RouteList.Count);
-
-                                // TODO send result route to rendar path with UI
-                                print(GetNodeString(RouteList[indexRoute]));
-                                m_currentPlayer.Poring.Behavior.SetupJumpToNodeTarget(RouteList[indexRoute], node);
-                                
-                                
                             }
 
-                            m_cameraController.Show(CameraType.Default);
-                            isSelected = true;
+                            int indexRoute = Random.Range(0, RouteList.Count - 1);
+                            Debug.LogFormat("index >>>>>>>>>> {0}", indexRoute);
+                            Debug.LogFormat("RouteList >>>>>>>>>> {0}", RouteList.Count);
+
+                            // TODO send result route to rendar path with UI
+                            print(GetNodeString(RouteList[indexRoute]));
+                            m_currentPlayer.Poring.Behavior.SetupJumpToNodeTarget(RouteList[indexRoute]);
                         }
+
+                        m_cameraController.Show(CameraType.Default);
+                        isSelected = true;
                         ResetNodeColor();
                     }
                 }
             }
         }
+    }
+
+    private int CheckPoringInTargetNode(Node node)
+    {
+        int count = node.porings.Count;
+
+        if (node.porings.Find(poring => poring == m_currentPlayer.Poring) != null) count -= 1;
+
+        return count;
     }
 
     private void ResetNodeColor()
@@ -159,6 +196,60 @@ public class PrototypeGameMode : GameMode
 		}
 	}
 
+    private void FindRouteNode(int maxStep, int currentStep, Node currentNode, Node prevNode, List<Node> result = null)
+    {
+        bool isFirstNode = false;
+        if (result == null)
+        {
+            result = new List<Node>();
+            isFirstNode = true;
+        }
+
+        if (!isFirstNode)
+            result.Add(currentNode);
+
+        if (currentStep >= maxStep)
+        {
+            RouteList.Add(result);
+            return;
+        }
+
+        currentStep += (isFirstNode) ? 1 : currentNode.TileProperty.WeightStep;
+        
+        foreach (Neighbor neighbor in currentNode.NeighborList)
+        {
+            if (neighbor.eDirection == eDirection.INTO) continue;
+            if (prevNode != null && neighbor.Node == prevNode) continue;
+
+            List<Node> result2 = new List<Node>();
+            result2.AddRange(result);
+            FindRouteNode(maxStep, currentStep, neighbor.Node, currentNode, result2);
+        }
+    }
+
+    private List<List<Node>> FindTargetRoute(List<List<Node>> route, Node target)
+    {
+        List<List<Node>> result = new List<List<Node>>();
+        for(int i = 0; i < route.Count; i++)
+        {
+            List<Node> subResult = new List<Node>();
+            for(int j = route[i].Count - 1; j >= 0; j--)
+            {
+                if(route[i][j] == target)
+                {
+                    result.Add(route[i]);
+                    break;
+                }
+                else
+                {
+                    route[i].RemoveAt(j);
+                }
+            }
+        }
+
+        return result;
+    }
+
     private void ParseMovableNode(int max=0, int step=0, Node node=null, Node prevNode=null) {
 		if (max == 0) max = m_step;
 		if (node == null) node = m_currentPlayer.Poring.Node;
@@ -183,7 +274,8 @@ public class PrototypeGameMode : GameMode
 		if (max == 0) max = m_step;
 		foreach(Node node in Nodes) 
         {
-			if(node.steps.Count == 0) continue;
+            if (node == m_currentPlayer.Poring.Node && node.porings.Count > 1) node.PointRenderer.material.SetColor("_Color", Color.red);
+            if (node.steps.Count == 0) continue;
 			node.steps.Sort();
             Color color = (node.porings.Count > 0) ? Color.red : (node.steps[node.steps.Count - 1] == max) ? Color.green : Color.yellow;
             
@@ -233,7 +325,10 @@ public class PrototypeGameMode : GameMode
         m_cameraController.SetTarget(m_currentPlayer.Poring);
 
         //TODO enable UI Roll/another action.
-
+        if(m_currentPlayer.Poring.Property.CurrentHp <= 0)
+        {
+            m_currentPlayer.Poring.Behavior.Respawn();
+        }
 
         CurrentGameState = eStateGameMode.ActiveTurn;
     }
@@ -242,8 +337,12 @@ public class PrototypeGameMode : GameMode
     {
         // this state active when StartTurn enable UI for this.
         // TODO wait for animation roll end and user select path.
-        m_roll.SetRoll(6);
-
+        m_currentPlayer.Poring.OffensiveResultList.Clear();
+        m_currentPlayer.Poring.DeffensiveResultList.Clear();
+        m_rollMove.SetRoll(6);
+        m_rollOffsive.SetRoll(6);
+        m_rollDeffsive.SetRoll(6);
+        
         // CurrentGameState = eStateGameMode.Encounter;
     }
 
@@ -252,11 +351,22 @@ public class PrototypeGameMode : GameMode
         // this state has perpose for wait all animation finish after user select path.
         // TODO wait for animation finish.
 
-        CurrentGameState = eStateGameMode.EndTurn;
+        if(m_currentPlayer.Poring.Target != null)
+        {
+            m_currentPlayer.Poring.Behavior.AttackTarget();
+        }
+        else
+        {
+            CurrentGameState = eStateGameMode.EndTurn;
+        }
     }
 
     private void EndTurn()
     {
+        if(m_currentPlayer.Poring.WinCondition >= 3)
+        {
+            // TODO endgame
+        }
         m_currentPlayer.Index = (m_currentPlayer.Index + 1 >= m_player.Count) ? 0 : m_currentPlayer.Index + 1;
         m_currentPlayer.Poring = m_player[m_currentPlayer.Index];
 
@@ -274,6 +384,7 @@ public class PrototypeGameMode : GameMode
             Poring poring = GameObject.Instantiate(item.Prefab, StartNode.transform.position, Quaternion.identity).GetComponent<Poring>();
             m_player.Add(poring);
             poring.Node = StartNode;
+            poring.Init(item);
         }
         m_currentPlayer.Poring = m_player[0];
         m_currentPlayer.Index = 0;

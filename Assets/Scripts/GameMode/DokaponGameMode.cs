@@ -151,7 +151,7 @@ public class DokaponGameMode : GameMode {
 		panelRoll.SetRoll(6);
 	}
 
-	public override void OnRollEnd(int number) {
+	public override void OnRollEnd(int number, DiceType type) {
 		stepWalking = number;
 
 		state = DokaponGameState.plan;

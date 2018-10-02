@@ -132,6 +132,10 @@
     <Compile Include="Assets\Roll.cs" />
     <Compile Include="Assets\Rotator.cs" />
     <Compile Include="Assets\Scripts\Camera\CameraController.cs" />
+    <Compile Include="Assets\Scripts\Dice\BaseDice.cs" />
+    <Compile Include="Assets\Scripts\Dice\DeffensiveDice.cs" />
+    <Compile Include="Assets\Scripts\Dice\MoveDice.cs" />
+    <Compile Include="Assets\Scripts\Dice\OffensiveDice.cs" />
     <Compile Include="Assets\Scripts\Extention\InstanceObject.cs" />
     <Compile Include="Assets\Scripts\GameMode\DokaponGameMode.cs" />
     <Compile Include="Assets\Scripts\GameMode\GameMode.cs" />
