@@ -81,11 +81,13 @@ public class Node : MonoBehaviour {
 		poring.transform.position = transform.position;
 		poring.Node = this;
 		porings.Add(poring);
+		TileProperty.OnEnter(poring);
 	}
 
 	public void RemovePoring(Poring poring)
 	{
 		porings.Remove(poring);
+		TileProperty.OnExit(poring);
 	}
 
 	void OnDrawGizmosSelected() {
@@ -162,6 +164,8 @@ public class Node : MonoBehaviour {
 		poring.Property.CurrentPoint += AppleList.Count;
 		AppleList.ForEach(apple => DestroyImmediate(apple));
 		AppleList.Clear();
+
+		TileProperty.OnFinish(poring);
 	}
 }
 

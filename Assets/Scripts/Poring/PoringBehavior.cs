@@ -115,7 +115,7 @@ public class PoringBehavior : MonoBehaviour
     public void Respawn()
     {
         Poring.Property.CurrentPoint = Poring.Property.CurrentPoint / 2;
-        Poring.Property.CurrentHp = Poring.Property.BaseHp;
+        Poring.Property.CurrentHp = Poring.Property.CurrentMaxHp;
 
         gameObject.transform.position = m_gameMode.StartNode.transform.position;
         Poring.Animator.Play("Warp_down");

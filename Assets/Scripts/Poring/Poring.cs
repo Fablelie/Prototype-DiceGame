@@ -28,7 +28,7 @@ public class Poring : MonoBehaviour {
 	public void Init(PoringProperty baseProperty)
 	{
         Property = new PoringProperty(baseProperty);
-		Debug.Log("Current hp : " + Property.CurrentHp);
+		// Debug.Log("Current hp : " + Property.CurrentHp);
 	}
 
 	void HeadTo(Vector3 position) {

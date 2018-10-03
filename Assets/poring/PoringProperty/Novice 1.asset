@@ -9,9 +9,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e47813ad9534fd74ba78c98184527ba0, type: 3}
-  m_Name: Novice
+  m_Name: Novice 1
   m_EditorClassIdentifier: 
-  Prefab: {fileID: 1594514244734316, guid: fddd19b1f8bcf4545bcf46c6c1825b0c, type: 2}
+  Prefab: {fileID: 1851545479495634, guid: 5e71f9c3c1a786a4993a81dab7123063, type: 2}
   BaseHp: 30
   CurrentMaxHp: 0
   CurrentHp: 0

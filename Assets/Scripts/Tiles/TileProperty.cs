@@ -7,11 +7,32 @@ public class TileProperty : ScriptableObject {
     public int WeightStep;
 	public Material Material;
 
+	public virtual void OnEnter(Poring poring)
+	{
+
+	}
+
+	public virtual void OnFinish(Poring poring)
+	{
+
+	}
+
+	public virtual void OnExit(Poring poring)
+	{
+
+	}
+
+	public virtual void OnEndRound()
+	{
+
+	}
+
 }
 
 public enum TileType
 {
 	Normal,
 	Forest,
-	Sand
+	Sand,
+	Sanctuary,
 }

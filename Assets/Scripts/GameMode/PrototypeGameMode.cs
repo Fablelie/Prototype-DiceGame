@@ -49,19 +49,19 @@ public class PrototypeGameMode : GameMode
         switch (type)
         {
             case DiceType.Move:
-                m_step = number;
-                Debug.LogFormat("Roll move number : {0}", number);
+                m_step = 7;
+                // Debug.LogFormat("Roll move number : {0}", number);
                 m_cameraController.Show(CameraType.TopDown);
                 ParseMovableNode();
                 DisplayNodeHeat();
                 StartCoroutine(WaitForSelectNode());
             break;
             case DiceType.Offensive:
-                Debug.LogFormat("Roll offensive number : {0}", number - 1);
+                // Debug.LogFormat("Roll offensive number : {0}", number - 1);
                 m_currentPlayer.Poring.OffensiveResultList.Add(number- 1);
             break;
             case DiceType.Deffensive:
-                Debug.LogFormat("Roll deffensive number : {0}", number- 1);
+                // Debug.LogFormat("Roll deffensive number : {0}", number- 1);
                 m_currentPlayer.Poring.DeffensiveResultList.Add(number- 1);
             break;
         }
@@ -80,7 +80,7 @@ public class PrototypeGameMode : GameMode
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); 
                 if (Physics.Raycast(ray, out hit, 100.0f)) 
                 {
-                    Debug.Log(hit.transform.name);
+                    // Debug.Log(hit.transform.name);
                     Node node = hit.transform.parent.GetComponent<Node>();
                     if (node) 
                     {
@@ -92,9 +92,13 @@ public class PrototypeGameMode : GameMode
                         {
                             List<Poring> porings = node.porings.FindAll(poring => poring != m_currentPlayer.Poring);
                             m_currentPlayer.Poring.Target = porings[Random.Range(0, porings.Count - 1)];
+
+                            m_cameraController.Show(CameraType.Default);
+                            isSelected = true;
+                            ResetNodeColor();
                             CurrentGameState = eStateGameMode.Encounter;
                         }
-                        else if (node.steps.Count > 0)
+                        else if (node.steps.Count > 0 && (CheckPoringInTargetNode(node) > 0 || node.steps.Find(step => step == m_step) == m_step))
                         {
                             MagicCursor.Instance.MoveTo(node);
 
@@ -117,17 +121,17 @@ public class PrototypeGameMode : GameMode
                             }
 
                             int indexRoute = Random.Range(0, RouteList.Count - 1);
-                            Debug.LogFormat("index >>>>>>>>>> {0}", indexRoute);
-                            Debug.LogFormat("RouteList >>>>>>>>>> {0}", RouteList.Count);
+                            // Debug.LogFormat("index >>>>>>>>>> {0}", indexRoute);
+                            // Debug.LogFormat("RouteList >>>>>>>>>> {0}", RouteList.Count);
 
                             // TODO send result route to rendar path with UI
                             print(GetNodeString(RouteList[indexRoute]));
                             m_currentPlayer.Poring.Behavior.SetupJumpToNodeTarget(RouteList[indexRoute]);
-                        }
 
-                        m_cameraController.Show(CameraType.Default);
-                        isSelected = true;
-                        ResetNodeColor();
+                            m_cameraController.Show(CameraType.Default);
+                            isSelected = true;
+                            ResetNodeColor();
+                        }
                     }
                 }
             }
@@ -372,13 +376,13 @@ public class PrototypeGameMode : GameMode
         }
         else
         {
-            StartCoroutine(CheckForSpawnValueOnTile());
+            StartCoroutine(CheckEndRoundCondition());
         }
     }
 
     #endregion
 
-    private IEnumerator CheckForSpawnValueOnTile()
+    private IEnumerator CheckEndRoundCondition()
     {
         yield return null;
 
@@ -402,6 +406,11 @@ public class PrototypeGameMode : GameMode
     {
         foreach (var node in Nodes)
         {
+            if(!isStartGame)
+            {
+                node.TileProperty.OnEndRound();
+            }
+        
             for (int i = 0; i < ((isStartGame) ? node.StartValue : 1); i++)
             {
                 node.SpawnValue(PrefabValue);    
@@ -415,7 +424,7 @@ public class PrototypeGameMode : GameMode
         {
             Poring poring = GameObject.Instantiate(item.Prefab, StartNode.transform.position, Quaternion.identity).GetComponent<Poring>();
             m_player.Add(poring);
-            poring.Node = StartNode;
+            StartNode.AddPoring(poring);
             poring.Init(item);
         }
         m_currentPlayer.Poring = m_player[0];

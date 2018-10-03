@@ -4,9 +4,9 @@
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: poring
+  m_Name: poring_yellow
   m_Shader: {fileID: 4800000, guid: 54590c8a1e62b2a498f58af4d9cdc1f5, type: 3}
   m_ShaderKeywords: _ALBEDOTYPE_ALBEDO _INNERGLOW_ON
   m_LightmapFlags: 4
@@ -89,7 +89,7 @@ Material:
     - _Texture:
         m_Texture: {fileID: 2800000, guid: cf4a4eec750d252459964e0300539bb5, type: 3}
         m_Scale: {x: 0.5, y: 0.5}
-        m_Offset: {x: 0, y: 0.5}
+        m_Offset: {x: -0.5, y: -0.5}
     - _TextureSample0:
         m_Texture: {fileID: 2800000, guid: 207cd7d6bdf48884581528e5cefd1cd7, type: 3}
         m_Scale: {x: 1, y: 1}

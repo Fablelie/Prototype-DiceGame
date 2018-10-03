@@ -147,6 +147,7 @@
     <Compile Include="Assets\Scripts\Tiles\TileForest.cs" />
     <Compile Include="Assets\Scripts\Tiles\TileNormal.cs" />
     <Compile Include="Assets\Scripts\Tiles\TileProperty.cs" />
+    <Compile Include="Assets\Scripts\Tiles\TileSanctuary.cs" />
     <Compile Include="Assets\Scripts\Tiles\TileSand.cs" />
     <Compile Include="Assets\SFX.cs" />
     <Compile Include="Assets\SoundController.cs" />

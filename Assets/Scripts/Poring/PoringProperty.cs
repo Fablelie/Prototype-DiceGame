@@ -7,6 +7,7 @@ public class PoringProperty : ScriptableObject {
 	public GameObject Prefab;
 	[Header("Base")]
 	public int BaseHp;
+	[HideInInspector] public int CurrentMaxHp;
 	[HideInInspector]public int CurrentHp;
 	public int BasePAtk;
 	[HideInInspector]public int CurrentPAtk;
@@ -25,17 +26,31 @@ public class PoringProperty : ScriptableObject {
 	[Tooltip("use for mod with value and multiply with current value")] public int GrowupPAtk;
 	[Tooltip("use for mod with value and multiply with current value")] public int GrowupMAtk;
 
-	private int m_currentPorint = 0; 
+	private int m_currentPoint = 0; 
 	public int CurrentPoint {
 		get {
-			return m_currentPorint;
+			return m_currentPoint;
 		}
 
 		set {
-			m_currentPorint = (value > MaxPoint && MaxPoint != -1) ? MaxPoint : value;
-			BaseHp = (m_currentPorint <= 0)? BaseHp : ((m_currentPorint * GrowupHp) >= MaxHp)? MaxHp : BaseHp + (m_currentPorint * GrowupHp);
-			CurrentPAtk = (m_currentPorint <= 0)? CurrentPAtk : ((m_currentPorint * GrowupPAtk) >= MaxPAtk)? MaxPAtk : BasePAtk + (m_currentPorint * GrowupPAtk);
-			CurrentMAtk = (m_currentPorint <= 0)? CurrentMAtk : ((m_currentPorint * GrowupMAtk) >= MaxMAtk)? MaxMAtk : BaseMAtk + (m_currentPorint * GrowupMAtk);
+			m_currentPoint = (value > MaxPoint && MaxPoint != -1) ? MaxPoint : value;
+			UpdateProperty();
+		}
+	}
+
+	private int m_permanentPoint = 0;
+	public int PermanentPoint 
+	{
+		get 
+		{
+			return m_permanentPoint;
+		}
+
+		set
+		{
+			m_permanentPoint = value;
+			m_currentPoint = 0;
+			UpdateProperty();
 		}
 	}
 
@@ -51,6 +66,7 @@ public class PoringProperty : ScriptableObject {
     public PoringProperty(PoringProperty baseProperty)
     {
         BaseHp = baseProperty.BaseHp;
+		CurrentMaxHp = baseProperty.CurrentMaxHp;
         CurrentHp = baseProperty.BaseHp;
         BasePAtk = baseProperty.BasePAtk;
         CurrentPAtk = baseProperty.BasePAtk;
@@ -68,30 +84,19 @@ public class PoringProperty : ScriptableObject {
         OffensiveDices = baseProperty.OffensiveDices;
     }
 
-	//public PoringProperty CopyTo(PoringProperty p)
-	//{
- //       PoringProperty pro = new PoringProperty()
- //       {
- //           BaseHp = this.BaseHp,
+	private void UpdateProperty()
+	{
+		int result = m_currentPoint + m_permanentPoint;
 
- //       };
-	//	p.BaseHp          = BaseHp;
-	//	p.CurrentHp       = BaseHp;
-	//	p.BasePAtk        = BasePAtk;
-	//	p.CurrentPAtk     = BasePAtk;
-	//	p.BaseMAtk        = BaseMAtk;
-	//	p.CurrentMAtk     = BaseMAtk;
-	//	p.GrowupHp        = GrowupHp;
-	//	p.GrowupPAtk      = GrowupPAtk;
-	//	p.GrowupMAtk      = GrowupMAtk;
-	//	p.MaxHp           = MaxHp;
-	//	p.MaxMAtk         = MaxMAtk;
-	//	p.MaxPAtk         = MaxPAtk;
-	//	p.MaxPoint        = MaxPoint;
-	//	p.MoveDices       = MoveDices;
-	//	p.DeffensiveDices = DeffensiveDices;
-	//	p.OffensiveDices  = OffensiveDices;
-	//	return p;
-	//}
+		CurrentMaxHp = (result <= 0)? CurrentMaxHp: ((result * GrowupHp) + BaseHp >= MaxHp)		? MaxHp  : BaseHp + (result * GrowupHp);
+		CurrentPAtk  = (result <= 0)? CurrentPAtk : ((result * GrowupPAtk) + BasePAtk >= MaxPAtk)	? MaxPAtk: BasePAtk + (result * GrowupPAtk);
+		CurrentMAtk  = (result <= 0)? CurrentMAtk : ((result * GrowupMAtk) + BaseMAtk >= MaxMAtk)	? MaxMAtk: BaseMAtk + (result * GrowupMAtk);
 
+		Debug.LogFormat("Result : {0}", result);
+		Debug.LogFormat("Current Point : {0}", m_currentPoint);
+		Debug.LogFormat("Permanent Point : {0}", m_permanentPoint);
+		Debug.LogFormat("Current HP : {0}", CurrentMaxHp);
+		Debug.LogFormat("Current PAtk : {0}", CurrentPAtk);
+		Debug.LogFormat("Current MAtk : {0}", CurrentMAtk);
+	}
 }
