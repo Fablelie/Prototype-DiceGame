@@ -325,11 +325,6 @@ public class PrototypeGameMode : GameMode
         m_cameraController.SetTarget(m_currentPlayer.Poring);
 
         //TODO enable UI Roll/another action.
-        if(m_currentPlayer.Poring.Property.CurrentHp <= 0)
-        {
-            m_currentPlayer.Poring.Behavior.Respawn();
-        }
-
         CurrentGameState = eStateGameMode.ActiveTurn;
     }
 
@@ -363,20 +358,26 @@ public class PrototypeGameMode : GameMode
 
     private void EndTurn()
     {
-        if(m_currentPlayer.Poring.WinCondition >= 3)
+        if (m_currentPlayer.Poring.WinCondition >= 3)
         {
             // TODO endgame
+            m_currentPlayer.Poring.Animator.Play("Win");
+            m_player.ForEach(poring =>
+            {
+                if (poring != m_currentPlayer.Poring) poring.Animator.Play("Lose");
+            });
         }
-        m_currentPlayer.Index = (m_currentPlayer.Index + 1 >= m_player.Count) ? 0 : m_currentPlayer.Index + 1;
-        m_currentPlayer.Poring = m_player[m_currentPlayer.Index];
+        else
+        {
+            m_currentPlayer.Index = (m_currentPlayer.Index + 1 >= m_player.Count) ? 0 : m_currentPlayer.Index + 1;
+            m_currentPlayer.Poring = m_player[m_currentPlayer.Index];
 
-        CurrentGameState = eStateGameMode.StartTurn;
+            CurrentGameState = eStateGameMode.StartTurn;
+        }
     }
 
     #endregion
-
-
-
+    
     private void Spawn()
     {
         foreach (var item in m_propertyStarter)

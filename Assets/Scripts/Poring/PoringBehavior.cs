@@ -118,6 +118,10 @@ public class PoringBehavior : MonoBehaviour
 
         gameObject.transform.position = m_gameMode.StartNode.transform.position;
         Poring.Animator.Play("Warp_down");
+
+        Poring.PrevNode = null;
+        Poring.Node.RemovePoring(Poring);
+        m_gameMode.StartNode.AddPoring(Poring);
     }
 
     #region Callback from animation event
@@ -136,10 +140,11 @@ public class PoringBehavior : MonoBehaviour
 		Debug.Log("Current hp : " + Poring.Target.Property.CurrentHp);
 		Debug.Log("HP : " + hpResult);
 
-		if(hpResult > 0) // alive
+        Poring.Target.Property.CurrentHp = hpResult;
+        if (hpResult > 0) // alive
 		{
 			Poring.Target.Animator.Play("take_damage");
-			Poring.Target.Property.CurrentHp = hpResult;
+			
 			
 			if(!Poring.Target.Behavior.hasAttack)
 			{
@@ -148,9 +153,10 @@ public class PoringBehavior : MonoBehaviour
 			}
 			else
 			{
-				Poring.Target.Target = null;
-				Poring.Target = null;
-				m_gameMode.CurrentGameState = eStateGameMode.EndTurn;
+                Poring.Target.Behavior.hasAttack = hasAttack = false;
+                Poring.Target.Target = Poring.Target = null;
+
+                m_gameMode.CurrentGameState = eStateGameMode.EndTurn;
 			}
 		}
 		else // die
@@ -158,8 +164,11 @@ public class PoringBehavior : MonoBehaviour
             Poring.Target.Animator.Play("die");
 			Poring.Property.CurrentPoint += Poring.Target.Property.CurrentPoint / 2;
 			Poring.WinCondition += 1;
-            Poring.Target.Target = null;
-            Poring.Target = null;
+
+            Poring.Target.Behavior.Respawn();
+            Poring.Target.Behavior.hasAttack = hasAttack = false;
+            Poring.Target.Target = Poring.Target = null;
+
             m_gameMode.CurrentGameState = eStateGameMode.EndTurn;
 		}
 	}
