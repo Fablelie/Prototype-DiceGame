@@ -149,6 +149,8 @@
     <Compile Include="Assets\Scripts\Tiles\TileProperty.cs" />
     <Compile Include="Assets\Scripts\Tiles\TileSanctuary.cs" />
     <Compile Include="Assets\Scripts\Tiles\TileSand.cs" />
+    <Compile Include="Assets\Scripts\UI\HUDCell.cs" />
+    <Compile Include="Assets\Scripts\UI\HUDController.cs" />
     <Compile Include="Assets\SFX.cs" />
     <Compile Include="Assets\SoundController.cs" />
     <Compile Include="Assets\SoundObject.cs" />

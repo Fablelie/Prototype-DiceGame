@@ -66,7 +66,7 @@ public class PoringProperty : ScriptableObject {
     public PoringProperty(PoringProperty baseProperty)
     {
         BaseHp = baseProperty.BaseHp;
-		CurrentMaxHp = baseProperty.CurrentMaxHp;
+		CurrentMaxHp = baseProperty.BaseHp;
         CurrentHp = baseProperty.BaseHp;
         BasePAtk = baseProperty.BasePAtk;
         CurrentPAtk = baseProperty.BasePAtk;

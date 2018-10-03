@@ -25,6 +25,7 @@ public class PrototypeGameMode : GameMode
     public GameObject PrefabValue;
     public Node StartNode;
     public Node[] Nodes;
+    [SerializeField] private GameObject halo;
     [SerializeField] private Roll m_rollMove;
     [SerializeField] private Roll m_rollOffsive;
     [SerializeField] private Roll m_rollDeffsive;
@@ -49,7 +50,7 @@ public class PrototypeGameMode : GameMode
         switch (type)
         {
             case DiceType.Move:
-                m_step = 7;
+                m_step = number;
                 // Debug.LogFormat("Roll move number : {0}", number);
                 m_cameraController.Show(CameraType.TopDown);
                 ParseMovableNode();
@@ -292,9 +293,10 @@ public class PrototypeGameMode : GameMode
 
     public override void StartGameMode()
     {
-        Turn = 0;
+        Turn = 1;
         RespawnValueOnTile(true);
         Spawn();
+        HUDController.Instance.Init(m_player, this);
         m_cameraController.Show(CameraType.Default);
         m_cameraController.SetTarget(m_currentPlayer.Poring);
 
@@ -397,9 +399,19 @@ public class PrototypeGameMode : GameMode
             m_currentPlayer.Index += 1;
         }
 
-        m_currentPlayer.Poring = m_player[m_currentPlayer.Index];
+        Turn++;
+        SetCurrentPlayer(m_player[m_currentPlayer.Index]);
+
 
         CurrentGameState = eStateGameMode.StartTurn;
+    }
+
+    private void SetCurrentPlayer(Poring poring)
+    {
+        halo.transform.SetParent(poring.transform);
+        halo.transform.localPosition = new Vector3(0, 0.25f, 0);
+
+        m_currentPlayer.Poring = poring;
     }
 
     private void RespawnValueOnTile(bool isStartGame)
@@ -427,7 +439,7 @@ public class PrototypeGameMode : GameMode
             StartNode.AddPoring(poring);
             poring.Init(item);
         }
-        m_currentPlayer.Poring = m_player[0];
+        SetCurrentPlayer(m_player[0]);
         m_currentPlayer.Index = 0;
     }
 }
