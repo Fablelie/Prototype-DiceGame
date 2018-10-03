@@ -9,6 +9,10 @@ using System;
 public class Node : MonoBehaviour {
 
     public TileProperty TileProperty;
+	public int StartValue;
+	public int CurrentValue;
+	public int MaxValue;
+	public List<GameObject> AppleList = new List<GameObject>();
 	public List<Neighbor> NeighborList;
 	public List<Poring> porings;
 	public List<int> steps = new List<int>();
@@ -52,60 +56,24 @@ public class Node : MonoBehaviour {
 		return nids[0] + ":" + nids[1];
 	}
 
-	
-
 	void Start() {
-		//print("NODE->" + this.nid);
 		foreach(Neighbor neighbor in NeighborList){
-			//print(this.nid + "<>" + node.nid);
-			//int[] nids = { this.nid, node.nid };
-            //Array.Sort(nids);
 
 			string objectLineName = GetObjectLineName(this.nid, neighbor.Node.nid);
-			//print(objectLineName);
 
 			if (!objectLines.ContainsKey(objectLineName)) {
 
 				GameObject line = Instantiate(prefebLine);
 
-				//line.transform.position = transform.position;
 				line.transform.parent = transform;
 				line.transform.rotation = Quaternion.LookRotation(neighbor.Node.transform.position - transform.position);//Quaternion.LookRotation(node.transform.position, Vector3.up);//(,//node.transform.position.x, transform.position.y, node.transform.position.z);
 				line.transform.localScale = new Vector3(0.025f, 1f, (Vector3.Distance(transform.position, neighbor.Node.transform.position)-1.5f)/10);
 				line.transform.position = Vector3.Lerp(transform.position, neighbor.Node.transform.position, 0.5f);
 				line.transform.localPosition = new Vector3(line.transform.localPosition.x, -0.159f, line.transform.localPosition.z);
 				line.gameObject.name = objectLineName;
-				//Vector3 newPositionLine
-				// newPositionLine.y = -0.159f;
-				//line.transform.position = new Vector3(newPositionLine.x, -0.159f, newPositionLine.z);
 				objectLines.Add(objectLineName, line);
 
 			}
-			// Bezier3D bezier = new Bezier3D();
-			// bezier.start = transform.position;
-			// bezier.end = node.transform.position;
-			// bezier.thickness = 1f;
-			// bezier.resolution = 32;
-
-			// bezier.handle1 = transform.position + (transform.forward * 2);
-			// bezier.handle2 = node.transform.position + (node.transform.forward * 2);
-
-			// line.GetComponent<MeshFilter>().mesh = bezier.CreateMesh();
-
-			// float distance = Vector3.Distance(transform.position, node.transform.position);
-			// line.transform.position = Vector3.Lerp(transform.position, node.transform.position, 0.5f);
-
-			// CurveMesh mesh = new CurveMesh();
-			
-			// Vector3 p1 = transform.position;
-			// Vector3 p2 = transform.position;
-			// Vector3 p3 = node.transform.position;
-			// Vector3 p4 = node.transform.position;
-
-			// line.GetComponent<MeshFilter>().mesh = mesh.GenerateMesh(p1, p2, p3, p4);
-			// line.GetComponent<MeshFilter>().mesh = ;
-			//objectLines.Add(line);
-			// print(node);
 		}
 	}
 
@@ -174,42 +142,27 @@ public class Node : MonoBehaviour {
 		Handles.Label(transform.position + Vector3.up * 2, $"NID {nid}", style);
 	}
 
-	void Update() {
-		// if (lines.Count == 0) return;
-		// Mesh mesh = lines[0].GetComponent<MeshFilter>().mesh;
-        // Vector3[] vertices = mesh.vertices;
-        // Vector3[] normals = mesh.normals;
-        // int i = 0;
-        // while (i < vertices.Length) {
-        //     vertices[i] += normals[i] * Mathf.Sin(Time.time);
-        //     i++;
-        // }
-        // mesh.vertices = vertices;
-    }
+	private Vector3 basePositionApple = new Vector3(0, 0.62f, 0);
+	public void SpawnValue(GameObject prefab)
+	{
+		if((CurrentValue + 1) <= MaxValue && porings.Count == 0)
+		{
+			Vector3 newPosition = basePositionApple;
+			newPosition.x = -0.5f + ( 0.5f * AppleList.Count);
+			GameObject apple = GameObject.Instantiate(prefab);
+			apple.transform.SetParent(transform);
+			apple.transform.localPosition = newPosition;
+			AppleList.Add(apple);
+			CurrentValue++;
+		}
+	}
 
-	// public static void DrawLine(Vector3 p1, Vector3 p2, float width)
-	// {
-	// 	int count = Mathf.CeilToInt(width); // how many lines are needed.
-	// 	if(count == 1)
-	// 		Gizmos.DrawLine(p1,p2);
-	// 	else
-	// 	{
-	// 		Camera c = Camera.current;
-	// 		if (c == null)
-	// 		{
-	// 			Debug.LogError("Camera.current is null");
-	// 			return;
-	// 		}
-	// 		Vector3 v1 = (p2 - p1).normalized; // line direction
-	// 		Vector3 v2 = (c.transform.position - p1).normalized; // direction to camera
-	// 		Vector3 n = Vector3.Cross(v1,v2); // normal vector
-	// 		for(int i = 0; i < count; i++)
-	// 		{
-	// 			Vector3 o = (n * width) * ((float)i/(count-1) - 0.5f);
-	// 			Gizmos.DrawLine(p1+o,p2+o);
-	// 		}
-	// 	}
-	// }
+	public void PoringKeepValueOnTile(Poring poring)
+	{
+		poring.Property.CurrentPoint += AppleList.Count;
+		AppleList.ForEach(apple => DestroyImmediate(apple));
+		AppleList.Clear();
+	}
 }
 
 [System.Serializable]

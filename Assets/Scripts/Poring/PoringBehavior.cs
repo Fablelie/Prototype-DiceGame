@@ -73,6 +73,7 @@ public class PoringBehavior : MonoBehaviour
 
 	public void FinishMove()
 	{
+		Poring.Node.PoringKeepValueOnTile(Poring);
 		m_gameMode.CurrentGameState = eStateGameMode.Encounter;
 	}
 

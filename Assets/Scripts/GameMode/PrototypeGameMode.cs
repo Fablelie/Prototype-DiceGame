@@ -21,6 +21,8 @@ public class PrototypeGameMode : GameMode
 {
     public eStateGameMode CurrentGameState = eStateGameMode.StartTurn;
     public eStateGameMode PrevGameState = eStateGameMode.None;
+
+    public GameObject PrefabValue;
     public Node StartNode;
     public Node[] Nodes;
     [SerializeField] private Roll m_rollMove;
@@ -287,6 +289,7 @@ public class PrototypeGameMode : GameMode
     public override void StartGameMode()
     {
         Turn = 0;
+        RespawnValueOnTile(true);
         Spawn();
         m_cameraController.Show(CameraType.Default);
         m_cameraController.SetTarget(m_currentPlayer.Poring);
@@ -369,14 +372,42 @@ public class PrototypeGameMode : GameMode
         }
         else
         {
-            m_currentPlayer.Index = (m_currentPlayer.Index + 1 >= m_player.Count) ? 0 : m_currentPlayer.Index + 1;
-            m_currentPlayer.Poring = m_player[m_currentPlayer.Index];
-
-            CurrentGameState = eStateGameMode.StartTurn;
+            StartCoroutine(CheckForSpawnValueOnTile());
         }
     }
 
     #endregion
+
+    private IEnumerator CheckForSpawnValueOnTile()
+    {
+        yield return null;
+
+        if ((m_currentPlayer.Index + 1) >= m_player.Count)
+        {
+            m_currentPlayer.Index = 0;
+            RespawnValueOnTile(false);
+            yield return new WaitForSeconds(1);
+        }
+        else
+        {
+            m_currentPlayer.Index += 1;
+        }
+
+        m_currentPlayer.Poring = m_player[m_currentPlayer.Index];
+
+        CurrentGameState = eStateGameMode.StartTurn;
+    }
+
+    private void RespawnValueOnTile(bool isStartGame)
+    {
+        foreach (var node in Nodes)
+        {
+            for (int i = 0; i < ((isStartGame) ? node.StartValue : 1); i++)
+            {
+                node.SpawnValue(PrefabValue);    
+            }
+        }
+    }
     
     private void Spawn()
     {
