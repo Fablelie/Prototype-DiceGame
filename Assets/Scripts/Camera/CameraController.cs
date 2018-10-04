@@ -54,14 +54,48 @@ public class CameraController : InstanceObject<CameraController> {
 			break;
 			case CameraType.TopDown:
 				// if (Input.GetKeyDown(KeyCode.Z)) Focus();
+#if UNITY_ANDROID || UNITY_IOS
+				CameraMove();
+#endif
 
-	
+#if UNITY_EDITOR
 				transform.Translate(Input.GetAxis("Horizontal") * BridEyeViewSpeed * Time.deltaTime, 0, Input.GetAxis("Vertical") * BridEyeViewSpeed * Time.deltaTime);
+#endif
 				//GetComponent<Klak.Motion.BrownianMotion>().UpdateTransform();
 				//print(new Vector3(Input.GetAxis("Vertical") * speed * Time.deltaTime, 0, Input.GetAxis("Horizontal") * speed * Time.deltaTime));
 			break;
 		}  
 	}
+
+	Vector2 StartPosition;
+	bool isTouch = false;
+	private void CameraMove()
+	{
+		Debug.Log(Input.touchCount);
+		Debug.Log(isTouch);
+
+		if(Input.touchCount > 0 && !isTouch)
+		{
+			isTouch = true;
+			StartPosition = Input.GetTouch(0).position;
+		}
+		else if(Input.touchCount <= 0)
+		{
+			isTouch = false;
+		}
+
+		if(isTouch)
+		{
+			var moveTo = (StartPosition - Input.GetTouch(0).position).normalized;
+			transform.Translate((-moveTo.x * Time.deltaTime) * 2, 0, (-moveTo.y * Time.deltaTime) * 2);
+		}
+	}
+
+	Vector2 GetWorldPosition()
+    {
+        return CameraDatas[1].Camera.ScreenToWorldPoint(Input.GetTouch(0).position);
+    }
+ 
 
 	private void Focus(Animator ani) 
 	{

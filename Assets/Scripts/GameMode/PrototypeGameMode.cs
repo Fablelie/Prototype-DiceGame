@@ -390,6 +390,7 @@ public class PrototypeGameMode : GameMode
 
         if ((m_currentPlayer.Index + 1) >= m_player.Count)
         {
+            Turn++;
             m_currentPlayer.Index = 0;
             RespawnValueOnTile(false);
             yield return new WaitForSeconds(1);
@@ -399,7 +400,7 @@ public class PrototypeGameMode : GameMode
             m_currentPlayer.Index += 1;
         }
 
-        Turn++;
+        
         SetCurrentPlayer(m_player[m_currentPlayer.Index]);
 
 
@@ -410,7 +411,7 @@ public class PrototypeGameMode : GameMode
     {
         halo.transform.SetParent(poring.transform);
         halo.transform.localPosition = new Vector3(0, 0.25f, 0);
-
+        HUDController.Instance.UpdateCurrentHUD(m_currentPlayer.Index);
         m_currentPlayer.Poring = poring;
     }
 

@@ -89,7 +89,7 @@ public class Node : MonoBehaviour {
 		porings.Remove(poring);
 		TileProperty.OnExit(poring);
 	}
-
+#if UNITY_EDITOR
 	void OnDrawGizmosSelected() {
 		foreach(Neighbor neighbor in NeighborList){
 			if (neighbor.Node != null) {
@@ -101,11 +101,12 @@ public class Node : MonoBehaviour {
 			}
 		}
     }
-	
+#endif
 	private float m_arrowHeadLength = 1f;
 	private float m_arrowHeadAngle = 20.0f;
 	private Vector3 m_forward = new Vector3(0,0,1);
 
+#if UNITY_EDITOR
 	void OnDrawGizmos() {
 		foreach(Neighbor neighbor in NeighborList){
 			if (neighbor.Node != null) {
@@ -143,7 +144,7 @@ public class Node : MonoBehaviour {
 		Handles.Label(transform.position, str);
 		Handles.Label(transform.position + Vector3.up * 2, $"NID {nid}", style);
 	}
-
+#endif
 	private Vector3 basePositionApple = new Vector3(0, 0.62f, 0);
 	public void SpawnValue(GameObject prefab)
 	{
