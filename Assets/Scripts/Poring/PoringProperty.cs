@@ -88,9 +88,9 @@ public class PoringProperty : ScriptableObject {
 	{
 		int result = m_currentPoint + m_permanentPoint;
 
-		CurrentMaxHp = (result <= 0)? CurrentMaxHp: ((result * GrowupHp) + BaseHp >= MaxHp)		? MaxHp  : BaseHp + (result * GrowupHp);
-		CurrentPAtk  = (result <= 0)? CurrentPAtk : ((result * GrowupPAtk) + BasePAtk >= MaxPAtk)	? MaxPAtk: BasePAtk + (result * GrowupPAtk);
-		CurrentMAtk  = (result <= 0)? CurrentMAtk : ((result * GrowupMAtk) + BaseMAtk >= MaxMAtk)	? MaxMAtk: BaseMAtk + (result * GrowupMAtk);
+		CurrentMaxHp = (result <= 0)? CurrentMaxHp: ((m_permanentPoint * GrowupHp) + BaseHp >= MaxHp)		? MaxHp  : BaseHp + (m_permanentPoint * GrowupHp);
+		CurrentPAtk  = (result <= 0)? CurrentPAtk : ((m_permanentPoint * GrowupPAtk) + BasePAtk >= MaxPAtk)	? MaxPAtk: BasePAtk + (m_permanentPoint * GrowupPAtk);
+		CurrentMAtk  = (result <= 0)? CurrentMAtk : ((m_permanentPoint * GrowupMAtk) + BaseMAtk >= MaxMAtk)	? MaxMAtk: BaseMAtk + (m_permanentPoint * GrowupMAtk);
 
 		Debug.LogFormat("Result : {0}", result);
 		Debug.LogFormat("Current Point : {0}", m_currentPoint);

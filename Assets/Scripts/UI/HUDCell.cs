@@ -32,9 +32,13 @@ public class HUDCell : MonoBehaviour
 			PAtk.text = $"P.Atk : {poring.Property.CurrentPAtk} (+{poring.Property.GrowupPAtk * poring.Property.CurrentPoint})";
 			MAtk.text = $"M.Atk : {poring.Property.CurrentMAtk} (+{poring.Property.GrowupMAtk * poring.Property.CurrentPoint})";
 			
-			int offenResult = (poring.OffensiveResultList.Count > 0) ? poring.OffensiveResultList[0] * 10 : 0;
-			int DefResult = (poring.DeffensiveResultList.Count > 0) ? poring.DeffensiveResultList[0] * 10 : 0;
-			OffensiveDiceResult.text = $"{offenResult}%";
+			float offenResult = (poring.OffensiveResultList.Count > 0) ? poring.OffensiveResultList[0] * 10 : 0;
+			float DefResult = (poring.DeffensiveResultList.Count > 0) ? poring.DeffensiveResultList[0] * 10 : 0;
+			float atkResult = poring.Property.CurrentPAtk + (poring.Property.GrowupPAtk * poring.Property.CurrentPoint);
+			float adaptive = (float)(atkResult / 100) * offenResult;
+			// Debug.LogFormat($"{adaptive} = ({atkResult} / 100) * {offenResult}");
+			atkResult = atkResult + adaptive;
+			OffensiveDiceResult.text = $"{offenResult}% {atkResult}(+{adaptive})";
 			DeffensiveDiceResult.text = $"{DefResult}%";
 		}	
 	}

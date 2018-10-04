@@ -71,8 +71,8 @@ public class CameraController : InstanceObject<CameraController> {
 	bool isTouch = false;
 	private void CameraMove()
 	{
-		Debug.Log(Input.touchCount);
-		Debug.Log(isTouch);
+		// Debug.Log(Input.touchCount);
+		// Debug.Log(isTouch);
 
 		if(Input.touchCount > 0 && !isTouch)
 		{
@@ -87,7 +87,7 @@ public class CameraController : InstanceObject<CameraController> {
 		if(isTouch)
 		{
 			var moveTo = (StartPosition - Input.GetTouch(0).position).normalized;
-			transform.Translate((-moveTo.x * Time.deltaTime) * 2, 0, (-moveTo.y * Time.deltaTime) * 2);
+			transform.Translate((-moveTo.x * Time.deltaTime) * 10, 0, (-moveTo.y * Time.deltaTime) * 10);
 		}
 	}
 
