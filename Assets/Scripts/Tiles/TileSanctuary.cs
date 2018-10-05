@@ -45,7 +45,10 @@ public class TileSanctuary : TileProperty
 
 	private void ActivateHeal(Poring poring)
 	{
-		poring.Property.CurrentHp = poring.Property.CurrentMaxHp;
-		members[poring] = 3;
+		if (poring.Property.CurrentHp < poring.Property.CurrentMaxHp)
+		{
+			poring.Property.CurrentHp = poring.Property.CurrentMaxHp;
+			members[poring] = 3;
+		}
 	}
 }

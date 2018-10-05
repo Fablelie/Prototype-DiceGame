@@ -58,11 +58,13 @@ public class PrototypeGameMode : GameMode
                 StartCoroutine(WaitForSelectNode());
             break;
             case DiceType.Offensive:
-                // Debug.LogFormat("Roll offensive number : {0}", number - 1);
+                Debug.LogFormat("Roll offensive number : {0}", number - 1);
+                m_currentPlayer.Poring.OffensiveResult += m_currentPlayer.Poring.Property.OffensiveDices[0].GetDiceFace(number-1);
                 m_currentPlayer.Poring.OffensiveResultList.Add(number- 1);
             break;
             case DiceType.Deffensive:
                 // Debug.LogFormat("Roll deffensive number : {0}", number- 1);
+                m_currentPlayer.Poring.DeffensiveResult += m_currentPlayer.Poring.Property.DeffensiveDices[0].GetDiceFace(number-1);
                 m_currentPlayer.Poring.DeffensiveResultList.Add(number- 1);
             break;
         }
@@ -341,8 +343,8 @@ public class PrototypeGameMode : GameMode
     {
         // this state active when StartTurn enable UI for this.
         // TODO wait for animation roll end and user select path.
-        m_currentPlayer.Poring.OffensiveResultList.Clear();
-        m_currentPlayer.Poring.DeffensiveResultList.Clear();
+        m_currentPlayer.Poring.OffensiveResult = 0;//OffensiveResultList.Clear();
+        m_currentPlayer.Poring.DeffensiveResult = 0;//DeffensiveResultList.Clear();
         m_rollMove.SetRoll(6);
         m_rollOffsive.SetRoll(6);
         m_rollDeffsive.SetRoll(6);

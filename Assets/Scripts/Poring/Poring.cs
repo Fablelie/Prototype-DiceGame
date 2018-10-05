@@ -18,6 +18,9 @@ public class Poring : MonoBehaviour {
 	public List<int> OffensiveResultList = new List<int>();
 	public List<int> DeffensiveResultList = new List<int>();
 
+	public int OffensiveResult;
+	public int DeffensiveResult;
+
 	void Awake()
 	{
 		// Animator = GetComponent<Animator>();

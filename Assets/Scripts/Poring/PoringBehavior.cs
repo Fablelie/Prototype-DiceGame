@@ -94,7 +94,7 @@ public class PoringBehavior : MonoBehaviour
 			adaptiveDamage += Poring.Property.OffensiveDices[i].GetDiceFace(Poring.OffensiveResultList[i]);
 			Poring.OffensiveResultList[i] = Random.Range(0, 5);
 		}
-		Debug.LogFormat("AdaptiveDamage >>>>>>>>>>>>>>>> {0}", adaptiveDamage);
+		// Debug.LogFormat("AdaptiveDamage >>>>>>>>>>>>>>>> {0}", adaptiveDamage);
 		return adaptiveDamage * 10;
 	}
 
@@ -106,7 +106,7 @@ public class PoringBehavior : MonoBehaviour
 			adaptiveDefense += Poring.Target.Property.DeffensiveDices[i].GetDiceFace(Poring.Target.DeffensiveResultList[i]);
 			Poring.Target.DeffensiveResultList[i] = Random.Range(0, 5);
 		}
-		Debug.LogFormat("adaptiveDefense >>>>>>>>>>>>>>>> {0}", adaptiveDefense);
+		// Debug.LogFormat("adaptiveDefense >>>>>>>>>>>>>>>> {0}", adaptiveDefense);
 		return adaptiveDefense * 10;
 	}
 
@@ -115,14 +115,15 @@ public class PoringBehavior : MonoBehaviour
     public void Respawn()
     {
         Poring.Property.CurrentPoint = Poring.Property.CurrentPoint / 2;
-        Poring.Property.CurrentHp = Poring.Property.CurrentMaxHp;
-
+        
         gameObject.transform.position = m_gameMode.StartNode.transform.position;
         Poring.Animator.Play("Warp_down");
 
         Poring.PrevNode = null;
         Poring.Node.RemovePoring(Poring);
         m_gameMode.StartNode.AddPoring(Poring);
+
+		Poring.Property.CurrentHp = Poring.Property.CurrentMaxHp;
     }
 
     #region Callback from animation event
@@ -133,13 +134,13 @@ public class PoringBehavior : MonoBehaviour
 		float hpResult = Poring.Target.Property.CurrentHp;
 
 		damageResult = damageResult + (damageResult / 100) * AdaptiveDamageCalculate(); 
-		Debug.LogFormat("Damage + AdaptiveDamage >>>>>>>>>>>>>>> {0}", damageResult);
+		// Debug.LogFormat("Damage + AdaptiveDamage >>>>>>>>>>>>>>> {0}", damageResult);
 		damageResult = damageResult - (damageResult / 100) * AdaptiveDefenseCalculate();
-		Debug.LogFormat("Damage - adaptiveDefense >>>>>>>>>>>>>>> {0}", damageResult);
+		// Debug.LogFormat("Damage - adaptiveDefense >>>>>>>>>>>>>>> {0}", damageResult);
 
 		hpResult -= damageResult;
-		Debug.Log("Current hp : " + Poring.Target.Property.CurrentHp);
-		Debug.Log("HP : " + hpResult);
+		// Debug.Log("Current hp : " + Poring.Target.Property.CurrentHp);
+		// Debug.Log("HP : " + hpResult);
 
         Poring.Target.Property.CurrentHp = hpResult = Mathf.Ceil(hpResult);
         if (hpResult > 0) // alive
