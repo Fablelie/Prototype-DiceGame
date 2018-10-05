@@ -34,7 +34,7 @@ public class HUDCell : MonoBehaviour
 			
 			float offenResult = (poring.OffensiveResultList.Count > 0) ? poring.OffensiveResultList[0] * 10 : 0;
 			float DefResult = (poring.DeffensiveResultList.Count > 0) ? poring.DeffensiveResultList[0] * 10 : 0;
-			float atkResult = poring.Property.CurrentPAtk + (poring.Property.GrowupPAtk * poring.Property.CurrentPoint);
+			float atkResult = poring.Property.CurrentPAtk;// + (poring.Property.GrowupPAtk * poring.Property.CurrentPoint);
 			float adaptive = (float)(atkResult / 100) * offenResult;
 			// Debug.LogFormat($"{adaptive} = ({atkResult} / 100) * {offenResult}");
 			atkResult = atkResult + adaptive;

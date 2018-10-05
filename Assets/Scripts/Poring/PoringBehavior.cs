@@ -129,7 +129,7 @@ public class PoringBehavior : MonoBehaviour
 
 	public void CallbackDamageActive()
 	{
-		float damageResult = Poring.Property.CurrentPAtk + (Poring.Property.CurrentPoint * Poring.Property.GrowupPAtk);
+		float damageResult = Poring.Property.CurrentPAtk;// + (Poring.Property.CurrentPoint * Poring.Property.GrowupPAtk);
 		float hpResult = Poring.Target.Property.CurrentHp;
 
 		damageResult = damageResult + (damageResult / 100) * AdaptiveDamageCalculate(); 
@@ -141,7 +141,7 @@ public class PoringBehavior : MonoBehaviour
 		Debug.Log("Current hp : " + Poring.Target.Property.CurrentHp);
 		Debug.Log("HP : " + hpResult);
 
-        Poring.Target.Property.CurrentHp = (int)hpResult;
+        Poring.Target.Property.CurrentHp = hpResult = Mathf.Ceil(hpResult);
         if (hpResult > 0) // alive
 		{
 			Poring.Target.Animator.Play("take_damage");

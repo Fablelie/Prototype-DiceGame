@@ -8,11 +8,11 @@ public class PoringProperty : ScriptableObject {
 	[Header("Base")]
 	public int BaseHp;
 	[HideInInspector] public int CurrentMaxHp;
-	[HideInInspector]public int CurrentHp;
+	[HideInInspector]public float CurrentHp;
 	public int BasePAtk;
-	[HideInInspector]public int CurrentPAtk;
+	[HideInInspector]public float CurrentPAtk;
 	public int BaseMAtk;
-	[HideInInspector]public int CurrentMAtk;
+	[HideInInspector]public float CurrentMAtk;
 
 	[Header("Max")]
     public int MaxHp;

@@ -89,7 +89,7 @@ public class PrototypeGameMode : GameMode
                         // SFX.PlayClip(resource.sound[0]).GetComponent<AudioSource>().time = 0.3f;
                         node.PointRenderer.SetPropertyBlock(MaterialPreset.GetMaterialPreset(EMaterialPreset.selected));
 
-                        if (node == m_currentPlayer.Poring.Node && CheckPoringInTargetNode(node) > 0)
+                        if (node == m_currentPlayer.Poring.Node && CheckPoringInTargetNode(node) > 0 && node.TileProperty.Type != TileType.Sanctuary)
                         {
                             List<Poring> porings = node.porings.FindAll(poring => poring != m_currentPlayer.Poring);
                             m_currentPlayer.Poring.Target = porings[Random.Range(0, porings.Count - 1)];
@@ -103,7 +103,7 @@ public class PrototypeGameMode : GameMode
                         {
                             MagicCursor.Instance.MoveTo(node);
 
-                            if (CheckPoringInTargetNode(node) > 0)
+                            if (CheckPoringInTargetNode(node) > 0 && node.TileProperty.Type != TileType.Sanctuary)
                             {
                                 List<Poring> porings = node.porings.FindAll(poring => poring != m_currentPlayer.Poring);
                                 m_currentPlayer.Poring.Target = porings[Random.Range(0, porings.Count - 1)];
@@ -281,10 +281,10 @@ public class PrototypeGameMode : GameMode
 		if (max == 0) max = m_step;
 		foreach(Node node in Nodes) 
         {
-            if (node == m_currentPlayer.Poring.Node && node.porings.Count > 1) node.PointRenderer.material.SetColor("_Color", Color.red);
+            if (node == m_currentPlayer.Poring.Node && CheckPoringInTargetNode(node) > 0 && node.TileProperty.Type != TileType.Sanctuary) node.PointRenderer.material.SetColor("_Color", Color.red);
             if (node.steps.Count == 0) continue;
 			node.steps.Sort();
-            Color color = (node.porings.Count > 0) ? Color.red : (node.steps[node.steps.Count - 1] == max) ? Color.green : Color.yellow;
+            Color color = (CheckPoringInTargetNode(node) > 0 && node.TileProperty.Type != TileType.Sanctuary) ? Color.red : (node.steps[node.steps.Count - 1] == max) ? Color.green : Color.yellow;
             
 			node.PointRenderer.material.SetColor("_Color", color);
 			node.PointRenderer.material.SetColor("_EmissionColor", new Color(0.5f, 0.5f, 0.5f));
@@ -410,7 +410,7 @@ public class PrototypeGameMode : GameMode
     private void SetCurrentPlayer(Poring poring)
     {
         halo.transform.SetParent(poring.transform);
-        halo.transform.localPosition = new Vector3(0, 0.25f, 0);
+        halo.transform.localPosition = Vector3.zero;// new Vector3(0, 0.25f, 0);
         HUDController.Instance.UpdateCurrentHUD(m_currentPlayer.Index);
         m_currentPlayer.Poring = poring;
     }
