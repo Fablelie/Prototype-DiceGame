@@ -31,7 +31,7 @@ public class Roll : MonoBehaviour {
 		for (int i = 0; i < maxNumber; i++) {
 			GameObject ob = Instantiate(text);
 			ob.GetComponent<Text>().text = i + 1 + "";
-			ob.transform.parent = transform;
+			ob.transform.SetParent(transform);
 			ob.SetActive(true);
 			// Vector3.ClampMagnitude(v, radiusStep*i);
 			// Vector3.Magnitude();
@@ -45,7 +45,7 @@ public class Roll : MonoBehaviour {
 			texts.Add(ob);
 		}
 
-		arrow.transform.Rotate(new Vector3(0, 0, Random.RandomRange(0, 360)));
+		arrow.transform.Rotate(new Vector3(0, 0, Random.Range(0, 360)));
 		rollSpeed = 32;
 		isRolling = true;
 	}

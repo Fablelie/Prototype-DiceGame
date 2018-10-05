@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class MagicCursor : InstanceObject<MagicCursor> {
 	private Animator animator;
-    private WaitForSeconds wait = new WaitForSeconds(2);
-	void Awake () 
+    
+
+    new void Awake () 
 	{
 		base.Awake();
 		animator = GetComponent<Animator>();

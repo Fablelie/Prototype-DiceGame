@@ -36,7 +36,7 @@ public class DokaponGameMode : GameMode {
 	public List<PoringUI> listPoringUI = new List<PoringUI>();
 	public PoringUI poringUI;
 	
-	static DokaponGameMode Dokapon;
+	// static DokaponGameMode Dokapon;
 	public Node[] nodes;
 	private int stepWalking = 0;
 	private Resource resource;
@@ -48,7 +48,7 @@ public class DokaponGameMode : GameMode {
 	private float m_timeForRoll = 10;
 	// private List<Node> _resultPointer;
 	public override void StartGameMode() {
-		Dokapon = this;
+		// Dokapon = this;
 
 		this.Name = "Dokapon/Bank";
 		this.Turn = 0;
@@ -124,7 +124,6 @@ public class DokaponGameMode : GameMode {
 
 							if (node.steps.Count > 0) {
 								MagicCursor.Instance.MoveTo(node);
-								string s = "";
 								Route.Clear();
 								// PathToNode(node);
 								// foreach (Node n in PathToNode(node)) {
@@ -382,7 +381,7 @@ public class DokaponGameMode : GameMode {
 	// 	}
 	// 	return resultChunk[indexOfResultChunk];
 		
-		return result;
+		// return result;
 	}
 
 	// List<Node> PathToNode(Node target, Node node=null, Node pNode=null, int step=1, List<Node> result=null) {

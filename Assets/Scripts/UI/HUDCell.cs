@@ -25,7 +25,7 @@ public class HUDCell : MonoBehaviour
 		this.poring.ObserveEveryValueChanged(p => p.WinCondition, FrameCountType.FixedUpdate).Subscribe((i) => 
 		{
 			KillCount.text = $"Kill : {i}";
-			print("Update Kill");
+			// print("Update Kill");
 		});
 
 		this.poring.ObserveEveryValueChanged(p => p.Property.CurrentPoint, FrameCountType.FixedUpdate).Subscribe(i => 
@@ -35,7 +35,7 @@ public class HUDCell : MonoBehaviour
 			HP.text = $"HP : {property.CurrentHp} / {property.CurrentMaxHp} (+{property.GrowupHp * i})";
 			PAtk.text = $"P.Atk : {property.CurrentPAtk} (+{property.GrowupPAtk * i})";
 			MAtk.text = $"P.Atk : {property.CurrentMAtk} (+{property.GrowupMAtk * i})";
-			print("UPdate Point");
+			// print("UPdate Point");
 		});
 
 		this.poring.ObserveEveryValueChanged(p => p.Property.PermanentPoint, FrameCountType.FixedUpdate).Subscribe(i => PermanentPoint.text = $"Permanent Point : {i}");
@@ -45,7 +45,7 @@ public class HUDCell : MonoBehaviour
 
 		this.poring.ObserveEveryValueChanged(p => p.OffensiveResult, FrameCountType.FixedUpdate).Subscribe(i => 
 		{
-			print("Update Dice offen");
+			// print("Update Dice offen");
 			float offenResult = (i > 0) ? i * 10 : 0;
 			float atkResult = property.CurrentPAtk;
 			float adaptive = (float)(atkResult / 100) * offenResult;
@@ -56,7 +56,7 @@ public class HUDCell : MonoBehaviour
 
 		this.poring.ObserveEveryValueChanged(p => p.DeffensiveResult, FrameCountType.FixedUpdate).Subscribe(i => 
 		{
-			print("Update Dice def");
+			// print("Update Dice def");
 			float DefResult = (i > 0) ? i * 10 : 0;
 			DeffensiveDiceResult.text = $"{DefResult}%";
 		});

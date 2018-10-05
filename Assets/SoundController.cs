@@ -6,12 +6,12 @@ public class SoundController : MonoBehaviour {
 
 	public float startTime = 3;
 	public AudioClip[] sounds;
-	private AudioSource audio;
+	private AudioSource m_audio;
 	// Use this for initialization
 	void Start () {
-		audio = GetComponent<AudioSource>();
-		audio.time = startTime;
-		audio.Play();
+		m_audio = GetComponent<AudioSource>();
+		m_audio.time = startTime;
+		m_audio.Play();
 	}
 	
 	// Update is called once per frame

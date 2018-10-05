@@ -5,7 +5,7 @@ using UnityEngine;
 //[RequireComponent(typeof(MeshFilter))]
     public class CurveMesh : MonoBehaviour {
         /* scratchpad */
-        private MeshFilter mf;
+        private MeshFilter mf = new MeshFilter();
  
  
         // void Start () {

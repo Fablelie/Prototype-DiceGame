@@ -63,7 +63,7 @@ public class PoringProperty : ScriptableObject {
 	public List<DeffensiveDice> DeffensiveDices;
 	public List<OffensiveDice> OffensiveDices;
 
-    public PoringProperty(PoringProperty baseProperty)
+    public void Init(PoringProperty baseProperty)
     {
         BaseHp = baseProperty.BaseHp;
 		CurrentMaxHp = baseProperty.BaseHp;

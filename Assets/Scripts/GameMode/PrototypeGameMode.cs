@@ -41,6 +41,7 @@ public class PrototypeGameMode : GameMode
 
     private void Start() 
     {
+        Application.targetFrameRate = 120;
         m_cameraController = CameraController.Instance;
         StartGameMode();
     }
@@ -58,7 +59,7 @@ public class PrototypeGameMode : GameMode
                 StartCoroutine(WaitForSelectNode());
             break;
             case DiceType.Offensive:
-                Debug.LogFormat("Roll offensive number : {0}", number - 1);
+                // Debug.LogFormat("Roll offensive number : {0}", number - 1);
                 m_currentPlayer.Poring.OffensiveResult += m_currentPlayer.Poring.Property.OffensiveDices[0].GetDiceFace(number-1);
                 m_currentPlayer.Poring.OffensiveResultList.Add(number- 1);
             break;
@@ -87,7 +88,7 @@ public class PrototypeGameMode : GameMode
                     Node node = hit.transform.parent.GetComponent<Node>();
                     if (node) 
                     {
-                        Debug.Log("You selected the " + node.nid);
+                        // Debug.Log("You selected the " + node.nid);
                         // SFX.PlayClip(resource.sound[0]).GetComponent<AudioSource>().time = 0.3f;
                         node.PointRenderer.SetPropertyBlock(MaterialPreset.GetMaterialPreset(EMaterialPreset.selected));
 
@@ -128,7 +129,7 @@ public class PrototypeGameMode : GameMode
                             // Debug.LogFormat("RouteList >>>>>>>>>> {0}", RouteList.Count);
 
                             // TODO send result route to rendar path with UI
-                            print(GetNodeString(RouteList[indexRoute]));
+                            // print(GetNodeString(RouteList[indexRoute]));
                             m_currentPlayer.Poring.Behavior.SetupJumpToNodeTarget(RouteList[indexRoute]);
 
                             m_cameraController.Show(CameraType.Default);
@@ -241,7 +242,6 @@ public class PrototypeGameMode : GameMode
         List<List<Node>> result = new List<List<Node>>();
         for(int i = 0; i < route.Count; i++)
         {
-            List<Node> subResult = new List<Node>();
             for(int j = route[i].Count - 1; j >= 0; j--)
             {
                 if(route[i][j] == target)

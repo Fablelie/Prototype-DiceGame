@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class PoringTPS : MonoBehaviour {
 
-	private Poring poring;
+	// private Poring poring;
 	private int m_moveStep = 0;
 	private bool m_canMove = false;
 	void Start () {
-		poring = GetComponent<Poring>();
+		// poring = GetComponent<Poring>();
 	}
 
 	void FixedUpdate() {

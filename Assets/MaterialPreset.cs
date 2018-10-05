@@ -41,7 +41,7 @@ public class MaterialPreset : MonoBehaviour {
 				return mp.PropertyBlock;
 			}
 		}
-		print("GetMaterialPreset -> NULL");
+		// print("GetMaterialPreset -> NULL");
 		return null;
 	}
 

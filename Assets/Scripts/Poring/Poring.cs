@@ -30,7 +30,8 @@ public class Poring : MonoBehaviour {
 
 	public void Init(PoringProperty baseProperty)
 	{
-        Property = new PoringProperty(baseProperty);
+		Property = ScriptableObject.CreateInstance<PoringProperty>();
+        Property.Init(baseProperty);
 		// Debug.Log("Current hp : " + Property.CurrentHp);
 	}
 
