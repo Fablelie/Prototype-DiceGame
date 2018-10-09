@@ -13,7 +13,7 @@ public class PoringBehavior : MonoBehaviour
 
 	private void Awake() 
 	{
-		m_gameMode = (PrototypeGameMode)GameMode.Instance;
+		m_gameMode = PrototypeGameMode.Instance;
 	}
 
 	private void TurnFaceTo(Vector3 pos)

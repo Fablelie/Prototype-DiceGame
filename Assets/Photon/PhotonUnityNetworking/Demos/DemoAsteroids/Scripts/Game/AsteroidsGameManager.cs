@@ -174,7 +174,7 @@ namespace Photon.Pun.Demo.Asteroids
             Vector3 position = new Vector3(x, 0.0f, z);
             Quaternion rotation = Quaternion.Euler(0.0f, angularStart, 0.0f);
 
-            PhotonNetwork.Instantiate("Spaceship", position, rotation, 0);
+            PhotonNetwork.Instantiate("Poring", position, rotation, 0);
 
             if (PhotonNetwork.IsMasterClient)
             {

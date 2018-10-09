@@ -195,6 +195,7 @@ namespace Photon.Realtime
 
             private set
             {
+                UnityEngine.Debug.Log("");
                 this.players = value;
             }
         }

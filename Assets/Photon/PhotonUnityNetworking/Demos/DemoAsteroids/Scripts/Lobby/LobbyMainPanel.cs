@@ -113,7 +113,7 @@ namespace Photon.Pun.Demo.Asteroids
                 entry.GetComponent<PlayerListEntry>().Initialize(p.ActorNumber, p.NickName);
 
                 object isPlayerReady;
-                if (p.CustomProperties.TryGetValue(AsteroidsGame.PLAYER_READY, out isPlayerReady))
+                if (p.CustomProperties.TryGetValue(PoringPrototype.PLAYER_READY, out isPlayerReady))
                 {
                     entry.GetComponent<PlayerListEntry>().SetPlayerReady((bool) isPlayerReady);
                 }
@@ -125,7 +125,7 @@ namespace Photon.Pun.Demo.Asteroids
 
             Hashtable props = new Hashtable
             {
-                {AsteroidsGame.PLAYER_LOADED_LEVEL, false}
+                {PoringPrototype.PLAYER_LOADED_LEVEL, false}
             };
             PhotonNetwork.LocalPlayer.SetCustomProperties(props);
         }
@@ -182,7 +182,7 @@ namespace Photon.Pun.Demo.Asteroids
             if (playerListEntries.TryGetValue(targetPlayer.ActorNumber, out entry))
             {
                 object isPlayerReady;
-                if (changedProps.TryGetValue(AsteroidsGame.PLAYER_READY, out isPlayerReady))
+                if (changedProps.TryGetValue(PoringPrototype.PLAYER_READY, out isPlayerReady))
                 {
                     entry.GetComponent<PlayerListEntry>().SetPlayerReady((bool) isPlayerReady);
                 }
@@ -207,7 +207,7 @@ namespace Photon.Pun.Demo.Asteroids
 
             byte maxPlayers;
             byte.TryParse(MaxPlayersInputField.text, out maxPlayers);
-            maxPlayers = (byte) Mathf.Clamp(maxPlayers, 2, 8);
+            maxPlayers = 4;//(byte) Mathf.Clamp(maxPlayers, 2, 8);
 
             RoomOptions options = new RoomOptions {MaxPlayers = maxPlayers};
 
@@ -256,7 +256,8 @@ namespace Photon.Pun.Demo.Asteroids
             PhotonNetwork.CurrentRoom.IsOpen = false;
             PhotonNetwork.CurrentRoom.IsVisible = false;
 
-            PhotonNetwork.LoadLevel("DemoAsteroids-GameScene");
+            PhotonNetwork.LoadLevel("MapV1");
+            // PhotonNetwork.LoadLevel("DemoAsteroids-GameScene");
         }
 
         #endregion
@@ -271,7 +272,7 @@ namespace Photon.Pun.Demo.Asteroids
             foreach (Player p in PhotonNetwork.PlayerList)
             {
                 object isPlayerReady;
-                if (p.CustomProperties.TryGetValue(AsteroidsGame.PLAYER_READY, out isPlayerReady))
+                if (p.CustomProperties.TryGetValue(PoringPrototype.PLAYER_READY, out isPlayerReady))
                 {
                     if (!(bool) isPlayerReady)
                     {

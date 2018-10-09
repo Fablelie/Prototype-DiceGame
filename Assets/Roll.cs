@@ -1,5 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using ExitGames.Client.Photon;
+using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -86,7 +89,12 @@ public class Roll : MonoBehaviour {
 		image.SetActive(false);
 		int number = RadiusToNumber();
 		//print("NUMBER IS " + number);
-		GameMode.Instance.OnRollEnd(number, Type);
+		object[] content = new object[] { number, (int)Type };
+		RaiseEventOptions raiseEventOptions = new RaiseEventOptions{ Receivers = ReceiverGroup.All, };
+		SendOptions sendOptions = new SendOptions{ Reliability = true};
 
+		PhotonNetwork.RaiseEvent((byte)EventCode.RollEnd, content, raiseEventOptions, sendOptions);
+		// PrototypeGameMode.Instance.OnRollEnd(number, Type);
+		// PrototypeGameMode.Instance.photonView.RPC("OnRollEnd", RpcTarget.All, number, Type);
 	}
 }

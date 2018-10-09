@@ -8,9 +8,9 @@ public class HUDController : InstanceObject<HUDController>
 	[SerializeField] private Text Turn; 
 	private int currentTurn;
 	public List<HUDCell> Cells;
-	private GameMode m_gameMode;
+	private PrototypeGameMode m_gameMode;
 
-	public void Init(List<Poring> porings, GameMode gameMode)
+	public void Init(List<Poring> porings, PrototypeGameMode gameMode)
 	{
 		m_gameMode = gameMode;
 		Cells.ForEach(cell => cell.gameObject.SetActive(false));

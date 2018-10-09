@@ -1,6 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
+
+using Photon.Pun;
+using Photon.Realtime;
+using Photon.Pun.UtilityScripts;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
+using ExitGames.Client.Photon;
+
+public class PoringPrototype
+{
+    public const string PLAYER_LIVES = "PlayerLives";
+    public const string PLAYER_READY = "IsPlayerReady";
+    public const string PLAYER_LOADED_LEVEL = "PlayerLoadedLevel";
+}
+
+public enum EventCode
+{
+    SelectNode = 0,
+    RollEnd = 1,
+}
 
 public enum eStateGameMode
 {
@@ -17,14 +37,15 @@ public struct CurrentPlayer
     public int Index;
 }
 
-public class PrototypeGameMode : GameMode
+public class PrototypeGameMode : MonoBehaviourPunCallbacks
 {
+    public static PrototypeGameMode Instance;
     public eStateGameMode CurrentGameState = eStateGameMode.StartTurn;
     public eStateGameMode PrevGameState = eStateGameMode.None;
-
     public GameObject PrefabValue;
     public Node StartNode;
     public Node[] Nodes;
+    public int Turn;
     [SerializeField] private GameObject halo;
     [SerializeField] private Roll m_rollMove;
     [SerializeField] private Roll m_rollOffsive;
@@ -39,14 +60,116 @@ public class PrototypeGameMode : GameMode
 
     private List<List<Node>> RouteList = new List<List<Node>>();
 
+    void Awake()
+    {
+        Instance = this;
+    }
+
+    public override void OnEnable()
+    {
+        base.OnEnable();
+
+        CountdownTimer.OnCountdownTimerHasExpired += StartGameMode;
+        PhotonNetwork.NetworkingClient.EventReceived += OnEvent;
+    }
+
+    public override void OnDisable()
+    {
+        base.OnDisable();
+
+        CountdownTimer.OnCountdownTimerHasExpired -= StartGameMode;
+        PhotonNetwork.NetworkingClient.EventReceived -= OnEvent;
+    }
+
     private void Start() 
     {
         Application.targetFrameRate = 120;
         m_cameraController = CameraController.Instance;
-        StartGameMode();
+
+        Hashtable props = new Hashtable
+        {
+            {PoringPrototype.PLAYER_LOADED_LEVEL, true}
+        };
+        PhotonNetwork.LocalPlayer.SetCustomProperties(props);
     }
 
-    public override void OnRollEnd(int number, DiceType type)
+    private void OnEvent(EventData photonEvent)
+    {
+        object[] data = (object[])photonEvent.CustomData;
+        switch (photonEvent.Code)
+        {
+            case (byte)EventCode.SelectNode:
+                foreach (var node in Nodes)
+                {
+                    if ((int)data[0] == node.nid)
+                    {
+                        ReceiveNodeSelected(node);        
+                        break;
+                    }
+                }
+            break;
+            case (byte)EventCode.RollEnd:
+                OnRollEnd((int)data[0], (DiceType)((int)data[1]));
+            break;
+        }
+    }
+
+    private void ReceiveNodeSelected(Node node)
+    {
+        if (node) 
+        {
+            // Debug.Log("You selected the " + node.nid);
+            // SFX.PlayClip(resource.sound[0]).GetComponent<AudioSource>().time = 0.3f;
+            node.PointRenderer.SetPropertyBlock(MaterialPreset.GetMaterialPreset(EMaterialPreset.selected));
+
+            if (node == m_currentPlayer.Poring.Node && CheckPoringInTargetNode(node) > 0 && node.TileProperty.Type != TileType.Sanctuary)
+            {
+                List<Poring> porings = node.porings.FindAll(poring => poring != m_currentPlayer.Poring);
+                m_currentPlayer.Poring.Target = porings[Random.Range(0, porings.Count - 1)];
+
+                m_cameraController.Show(CameraType.Default);
+                isSelectedNode = true;
+                ResetNodeColor();
+                CurrentGameState = eStateGameMode.Encounter;
+            }
+            else if (node.steps.Count > 0 && (CheckPoringInTargetNode(node) > 0 || node.steps.Find(step => step == m_step) == m_step))
+            {
+                MagicCursor.Instance.MoveTo(node);
+
+                if (CheckPoringInTargetNode(node) > 0 && node.TileProperty.Type != TileType.Sanctuary)
+                {
+                    List<Poring> porings = node.porings.FindAll(poring => poring != m_currentPlayer.Poring);
+                    m_currentPlayer.Poring.Target = porings[Random.Range(0, porings.Count - 1)];
+
+                    RouteList.Clear();
+                    FindRouteNode(m_step, 0, m_currentPlayer.Poring.Node, m_currentPlayer.Poring.PrevNode);
+
+                    RouteList = FindTargetRoute(RouteList, node);
+                }
+                else if (node.steps.Find(step => step == m_step) == m_step)
+                {
+                    m_currentPlayer.Poring.Target = null;
+
+                    RouteList.Clear();
+                    RouteToNode(node);
+                }
+
+                int indexRoute = Random.Range(0, RouteList.Count - 1);
+                // Debug.LogFormat("index >>>>>>>>>> {0}", indexRoute);
+                // Debug.LogFormat("RouteList >>>>>>>>>> {0}", RouteList.Count);
+
+                // TODO send result route to rendar path with UI
+                // print(GetNodeString(RouteList[indexRoute]));
+                m_currentPlayer.Poring.Behavior.SetupJumpToNodeTarget(RouteList[indexRoute]);
+
+                m_cameraController.Show(CameraType.Default);
+                isSelectedNode = true;
+                ResetNodeColor();
+            }
+        }
+    }
+
+    public void OnRollEnd(int number, DiceType type)
     {
         switch (type)
         {
@@ -56,7 +179,9 @@ public class PrototypeGameMode : GameMode
                 m_cameraController.Show(CameraType.TopDown);
                 ParseMovableNode();
                 DisplayNodeHeat();
-                StartCoroutine(WaitForSelectNode());
+                isSelectedNode = false;
+                if (PlayerNumberingExtensions.GetPlayerNumber(PhotonNetwork.LocalPlayer) == m_currentPlayer.Index)
+                    StartCoroutine(WaitForSelectNode());
             break;
             case DiceType.Offensive:
                 // Debug.LogFormat("Roll offensive number : {0}", number - 1);
@@ -71,11 +196,11 @@ public class PrototypeGameMode : GameMode
         }
     }
 
+    private bool isSelectedNode = false;
     private IEnumerator WaitForSelectNode()
     {
-        bool isSelected = false;
         MagicCursor.Instance.gameObject.SetActive(false);
-        while (!isSelected)
+        while (!isSelectedNode)
         {
             yield return null;
             if (Input.GetMouseButtonDown(0))
@@ -86,56 +211,13 @@ public class PrototypeGameMode : GameMode
                 {
                     // Debug.Log(hit.transform.name);
                     Node node = hit.transform.parent.GetComponent<Node>();
-                    if (node) 
+                    if(node != null)
                     {
-                        // Debug.Log("You selected the " + node.nid);
-                        // SFX.PlayClip(resource.sound[0]).GetComponent<AudioSource>().time = 0.3f;
-                        node.PointRenderer.SetPropertyBlock(MaterialPreset.GetMaterialPreset(EMaterialPreset.selected));
+                        object[] content = new object[] { node.nid };
+                        RaiseEventOptions raiseEventOptions = new RaiseEventOptions{ Receivers = ReceiverGroup.All, };
+                        SendOptions sendOptions = new SendOptions{ Reliability = true};
 
-                        if (node == m_currentPlayer.Poring.Node && CheckPoringInTargetNode(node) > 0 && node.TileProperty.Type != TileType.Sanctuary)
-                        {
-                            List<Poring> porings = node.porings.FindAll(poring => poring != m_currentPlayer.Poring);
-                            m_currentPlayer.Poring.Target = porings[Random.Range(0, porings.Count - 1)];
-
-                            m_cameraController.Show(CameraType.Default);
-                            isSelected = true;
-                            ResetNodeColor();
-                            CurrentGameState = eStateGameMode.Encounter;
-                        }
-                        else if (node.steps.Count > 0 && (CheckPoringInTargetNode(node) > 0 || node.steps.Find(step => step == m_step) == m_step))
-                        {
-                            MagicCursor.Instance.MoveTo(node);
-
-                            if (CheckPoringInTargetNode(node) > 0 && node.TileProperty.Type != TileType.Sanctuary)
-                            {
-                                List<Poring> porings = node.porings.FindAll(poring => poring != m_currentPlayer.Poring);
-                                m_currentPlayer.Poring.Target = porings[Random.Range(0, porings.Count - 1)];
-
-                                RouteList.Clear();
-                                FindRouteNode(m_step, 0, m_currentPlayer.Poring.Node, m_currentPlayer.Poring.PrevNode);
-
-                                RouteList = FindTargetRoute(RouteList, node);
-                            }
-                            else if (node.steps.Find(step => step == m_step) == m_step)
-                            {
-                                m_currentPlayer.Poring.Target = null;
-
-                                RouteList.Clear();
-                                RouteToNode(node);
-                            }
-
-                            int indexRoute = Random.Range(0, RouteList.Count - 1);
-                            // Debug.LogFormat("index >>>>>>>>>> {0}", indexRoute);
-                            // Debug.LogFormat("RouteList >>>>>>>>>> {0}", RouteList.Count);
-
-                            // TODO send result route to rendar path with UI
-                            // print(GetNodeString(RouteList[indexRoute]));
-                            m_currentPlayer.Poring.Behavior.SetupJumpToNodeTarget(RouteList[indexRoute]);
-
-                            m_cameraController.Show(CameraType.Default);
-                            isSelected = true;
-                            ResetNodeColor();
-                        }
+                        PhotonNetwork.RaiseEvent((byte)EventCode.SelectNode, content, raiseEventOptions, sendOptions);
                     }
                 }
             }
@@ -293,7 +375,7 @@ public class PrototypeGameMode : GameMode
 		}
     }
 
-    public override void StartGameMode()
+    public void StartGameMode()
     {
         Turn = 1;
         RespawnValueOnTile(true);
@@ -302,27 +384,32 @@ public class PrototypeGameMode : GameMode
         m_cameraController.Show(CameraType.Default);
         m_cameraController.SetTarget(m_currentPlayer.Poring);
 
+        StartCoroutine(UpdateState());
     }
 
-    public override void UpdateGameMode()
+    public IEnumerator UpdateState()
     {
-        if(PrevGameState != CurrentGameState)
+        while (true)
         {
-            PrevGameState = CurrentGameState;
-            switch (CurrentGameState)
+            yield return new WaitForEndOfFrame();
+            if (PrevGameState != CurrentGameState)
             {
-                case eStateGameMode.StartTurn:
-                    StartTurn();
-                break;
-                case eStateGameMode.ActiveTurn:
-                    ActiveTurn();
-                break;
-                case eStateGameMode.Encounter:
-                    Encounter();
-                break;
-                case eStateGameMode.EndTurn:
-                    EndTurn();
-                break;
+                PrevGameState = CurrentGameState;
+                switch (CurrentGameState)
+                {
+                    case eStateGameMode.StartTurn:
+                        StartTurn();
+                        break;
+                    case eStateGameMode.ActiveTurn:
+                        ActiveTurn();
+                        break;
+                    case eStateGameMode.Encounter:
+                        Encounter();
+                        break;
+                    case eStateGameMode.EndTurn:
+                        EndTurn();
+                        break;
+                }
             }
         }
     }
@@ -345,10 +432,12 @@ public class PrototypeGameMode : GameMode
         // TODO wait for animation roll end and user select path.
         m_currentPlayer.Poring.OffensiveResult = 0;//OffensiveResultList.Clear();
         m_currentPlayer.Poring.DeffensiveResult = 0;//DeffensiveResultList.Clear();
-        m_rollMove.SetRoll(6);
-        m_rollOffsive.SetRoll(6);
-        m_rollDeffsive.SetRoll(6);
-        
+        if (PlayerNumberingExtensions.GetPlayerNumber(PhotonNetwork.LocalPlayer) == m_currentPlayer.Index)
+        {
+            m_rollMove.SetRoll(6);
+            m_rollOffsive.SetRoll(6);
+            m_rollDeffsive.SetRoll(6);
+        }
         // CurrentGameState = eStateGameMode.Encounter;
     }
 
@@ -435,14 +524,77 @@ public class PrototypeGameMode : GameMode
     
     private void Spawn()
     {
-        foreach (var item in m_propertyStarter)
+        foreach (var player in PhotonNetwork.PlayerList)
         {
-            Poring poring = GameObject.Instantiate(item.Prefab, StartNode.transform.position, Quaternion.identity).GetComponent<Poring>();
+            Poring poring = GameObject.Instantiate(m_propertyStarter[0].Prefab, StartNode.transform.position, Quaternion.identity).GetComponent<Poring>();
             m_player.Add(poring);
             StartNode.AddPoring(poring);
-            poring.Init(item);
+            poring.Init(m_propertyStarter[0]);
         }
+        // foreach (var item in m_propertyStarter)
+        // {
+        //     Poring poring = GameObject.Instantiate(item.Prefab, StartNode.transform.position, Quaternion.identity).GetComponent<Poring>();
+        //     m_player.Add(poring);
+        //     StartNode.AddPoring(poring);
+        //     poring.Init(item);
+        // }
         SetCurrentPlayer(m_player[0]);
         m_currentPlayer.Index = 0;
+    }
+
+    public override void OnDisconnected(DisconnectCause cause)
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("DemoAsteroids-LobbyScene");
+    }
+
+    public override void OnLeftRoom()
+    {
+        PhotonNetwork.Disconnect();
+    }
+
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
+    {
+        if (changedProps.ContainsKey(PoringPrototype.PLAYER_LIVES))
+        {
+            // CheckEndOfGame();
+            return;
+        }
+
+        if (!PhotonNetwork.IsMasterClient)
+        {
+            return;
+        }
+
+        if (changedProps.ContainsKey(PoringPrototype.PLAYER_LOADED_LEVEL))
+        {
+            if (CheckAllPlayerLoadedLevel())
+            {
+                Hashtable props = new Hashtable
+                {
+                    {CountdownTimer.CountdownStartTime, (float) PhotonNetwork.Time}
+                };
+                PhotonNetwork.CurrentRoom.SetCustomProperties(props);
+            }
+        }
+    }
+
+    private bool CheckAllPlayerLoadedLevel()
+    {
+        foreach (Player p in PhotonNetwork.PlayerList)
+        {
+            object playerLoadedLevel;
+
+            if (p.CustomProperties.TryGetValue(PoringPrototype.PLAYER_LOADED_LEVEL, out playerLoadedLevel))
+            {
+                if ((bool) playerLoadedLevel)
+                {
+                    continue;
+                }
+            }
+
+            return false;
+        }
+
+        return true;
     }
 }

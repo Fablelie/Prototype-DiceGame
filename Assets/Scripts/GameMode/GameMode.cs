@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class GameMode : InstanceObject<GameMode> {
+public abstract class GameMode : InstanceObject<GameMode>
+{
 	[Header("General Settings")]
     public string Name;
 	public int MaxPlayer = 4;
