@@ -10,7 +10,8 @@ public class TileSanctuary : TileProperty
 
 	public override void OnEnter(Poring poring)
 	{
-		poring.Property.PermanentPoint += poring.Property.CurrentPoint;
+		CaculateLevelUp(poring.Property);
+		// poring.Property.PermanentPoint += poring.Property.CurrentPoint;
 	}
 
 	public override void OnFinish(Poring poring)
@@ -50,5 +51,28 @@ public class TileSanctuary : TileProperty
 			poring.Property.CurrentHp = poring.Property.CurrentMaxHp;
 			members[poring] = 3;
 		}
+	}
+
+	private bool CaculateLevelUp(PoringProperty p)
+	{
+		if(p.CurrentPoint >= p.CurrentRequestExp)
+		{
+			// level up!!
+			if (p.CurrentLevel < p.MaxLevel)
+				p.CurrentLevel = p.CurrentLevel + 1;
+				
+			p.CurrentPoint -= p.CurrentRequestExp;
+			p.CurrentRequestExp += p.MultiplyPerLevel;
+			CaculateLevelUp(p);
+			// TODO active effect.
+			return true;
+		}
+		else
+		{
+			// skip!! not think happen.
+			return false;
+		}
+
+		
 	}
 }

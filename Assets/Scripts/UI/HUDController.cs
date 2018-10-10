@@ -29,13 +29,14 @@ public class HUDController : InstanceObject<HUDController>
 	{
 		if(m_gameMode != null)
 		{
+
 			Turn.text = $"Round : {m_gameMode.Turn}";
 		}
 	}
 
 	public void UpdateCurrentHUD(int index)
 	{
-		Cells.ForEach(cell => cell.GetComponent<Image>().color = Color.white);
-		Cells[index].GetComponent<Image>().color = Color.red;
+		Cells.ForEach(cell => cell.BG.enabled = false);
+		Cells[index].BG.enabled = true;
 	}
 }
