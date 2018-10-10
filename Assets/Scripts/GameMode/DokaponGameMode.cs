@@ -99,7 +99,7 @@ public class DokaponGameMode : GameMode {
 					state = DokaponGameState.roll;
 					m_timeForRoll = TimeForRoll;
 
-					panelRoll.SetRoll(6);
+					// panelRoll.SetRoll(6);
 				}
 			break;
 
@@ -147,10 +147,10 @@ public class DokaponGameMode : GameMode {
 	}
 
 	public void Roll() {
-		panelRoll.SetRoll(6);
+		// panelRoll.SetRoll(6);
 	}
 
-	public override void OnRollEnd(int number, DiceType type) {
+	public override void OnRollEnd(int number, DiceType type, Poring poring = null) {
 		stepWalking = number;
 
 		state = DokaponGameState.plan;

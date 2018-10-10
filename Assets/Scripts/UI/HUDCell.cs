@@ -14,6 +14,11 @@ public class HUDCell : MonoBehaviour
 	[SerializeField] private Text MAtk;
 	[SerializeField] private Text OffensiveDiceResult;
 	[SerializeField] private Text DeffensiveDiceResult;
+
+	[SerializeField] private Roll _moveRoll;
+	[SerializeField] private Roll _offensiveRoll;
+	[SerializeField] private Roll _deffensiveRoll;
+	
 	public Image BG;
 
 	private Poring poring;
@@ -22,6 +27,9 @@ public class HUDCell : MonoBehaviour
 	{
 		this.poring = poring;
 		var property = this.poring.Property;
+		poring.MoveRoll = _moveRoll;
+		poring.OffensiveRoll = _offensiveRoll;
+		poring.DeffensiveRoll = _deffensiveRoll;
 
 		this.poring.ObserveEveryValueChanged(p => p.WinCondition, FrameCountType.FixedUpdate).Subscribe((i) => 
 		{

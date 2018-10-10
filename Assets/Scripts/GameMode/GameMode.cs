@@ -12,7 +12,7 @@ public abstract class GameMode : InstanceObject<GameMode>
 
 	public abstract void StartGameMode();
 	public abstract void UpdateGameMode();
-	public abstract void OnRollEnd(int number, DiceType type);
+	public abstract void OnRollEnd(int number, DiceType type, Poring poring = null);
 
 	void Update() {
 		UpdateGameMode();

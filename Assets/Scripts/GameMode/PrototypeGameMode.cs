@@ -47,9 +47,6 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
     public Node[] Nodes;
     public int Turn;
     [SerializeField] private GameObject halo;
-    [SerializeField] private Roll m_rollMove;
-    [SerializeField] private Roll m_rollOffsive;
-    [SerializeField] private Roll m_rollDeffsive;
     
     [SerializeField] private List<PoringProperty> m_propertyStarter;
     [SerializeField] private List<Poring> m_player = new List<Poring>();
@@ -169,12 +166,12 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         }
     }
 
-    public void OnRollEnd(int number, DiceType type)
+    public void OnRollEnd(int index, DiceType type, Poring poring)
     {
         switch (type)
         {
             case DiceType.Move:
-                m_step = number;
+                m_step = m_currentPlayer.Poring.Property.MoveDices[0].GetDiceFace(index);
                 // Debug.LogFormat("Roll move number : {0}", number);
                 m_cameraController.Show(CameraType.TopDown);
                 ParseMovableNode();
@@ -185,13 +182,13 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
             break;
             case DiceType.Offensive:
                 // Debug.LogFormat("Roll offensive number : {0}", number - 1);
-                m_currentPlayer.Poring.OffensiveResult += m_currentPlayer.Poring.Property.OffensiveDices[0].GetDiceFace(number-1);
-                m_currentPlayer.Poring.OffensiveResultList.Add(number- 1);
+                poring.OffensiveResult += poring.Property.OffensiveDices[0].GetDiceFace(index);
+                poring.OffensiveResultList.Add(index);
             break;
             case DiceType.Deffensive:
                 // Debug.LogFormat("Roll deffensive number : {0}", number- 1);
-                m_currentPlayer.Poring.DeffensiveResult += m_currentPlayer.Poring.Property.DeffensiveDices[0].GetDiceFace(number-1);
-                m_currentPlayer.Poring.DeffensiveResultList.Add(number- 1);
+                poring.DeffensiveResult += poring.Property.DeffensiveDices[0].GetDiceFace(index);
+                poring.DeffensiveResultList.Add(index);
             break;
         }
     }
@@ -432,12 +429,8 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         // TODO wait for animation roll end and user select path.
         m_currentPlayer.Poring.OffensiveResult = 0;//OffensiveResultList.Clear();
         m_currentPlayer.Poring.DeffensiveResult = 0;//DeffensiveResultList.Clear();
-        if (PlayerNumberingExtensions.GetPlayerNumber(PhotonNetwork.LocalPlayer) == m_currentPlayer.Index)
-        {
-            m_rollMove.SetRoll(6);
-            m_rollOffsive.SetRoll(6);
-            m_rollDeffsive.SetRoll(6);
-        }
+        m_currentPlayer.Poring.MoveRoll.SetRoll(m_currentPlayer.Poring.Property.MoveDices[0].FaceDiceList);
+        
         // CurrentGameState = eStateGameMode.Encounter;
     }
 

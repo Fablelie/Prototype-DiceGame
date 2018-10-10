@@ -21,6 +21,10 @@ public class Poring : MonoBehaviour {
 	public int OffensiveResult;
 	public int DeffensiveResult;
 
+	public Roll MoveRoll;
+	public Roll OffensiveRoll;
+	public Roll DeffensiveRoll;
+
 	void Awake()
 	{
 		// Animator = GetComponent<Animator>();

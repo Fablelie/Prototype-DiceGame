@@ -24,16 +24,20 @@ public class Roll : MonoBehaviour {
 	public bool isRolling = false;
 	public float rollSpeed = 0;
 	private int radiusStep = 0;
-	private List<GameObject> texts = new List<GameObject>();
+	private List<GameObject> _texts = new List<GameObject>();
+	private List<FaceDice> _diceFacelist = new List<FaceDice>();
+	private Poring _poring;
 	
-	public void SetRoll(int maxNumber) {
+	public void SetRoll(List<FaceDice> valueList, Poring poring = null) {
 		if (isRolling) return;
-		texts.Clear();
-		image.SetActive(true);
-		radiusStep = 360/maxNumber;
-		for (int i = 0; i < maxNumber; i++) {
+		_texts.Clear();
+		gameObject.SetActive(true);
+		_diceFacelist = valueList;
+		_poring = poring;
+		radiusStep = 360/valueList.Count;
+		for (int i = 0; i < valueList.Count; i++) {
 			GameObject ob = Instantiate(text);
-			ob.GetComponent<Text>().text = i + 1 + "";
+			ob.GetComponent<Text>().text = (int)valueList[i]+ "";
 			ob.transform.SetParent(transform);
 			ob.SetActive(true);
 			// Vector3.ClampMagnitude(v, radiusStep*i);
@@ -45,7 +49,7 @@ public class Roll : MonoBehaviour {
 			// ob.GetComponent<RectTransform>().anchoredPosition = Dir;
 			// print(Dir);
 			// Vector3.
-			texts.Add(ob);
+			_texts.Add(ob);
 		}
 
 		arrow.transform.Rotate(new Vector3(0, 0, Random.Range(0, 360)));
@@ -60,23 +64,23 @@ public class Roll : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (isRolling) {
-			rollSpeed -= rollSpeed / 48;
+			rollSpeed -= rollSpeed / 30;
 
 			if (rollSpeed < 1) { 
 				rollSpeed = 0;
-				Invoke ("OnRollEnd", 1);
+				Invoke ("OnRollEnd", 0.5f);
 				isRolling = false;
 			}
 
 			arrow.transform.Rotate(new Vector3(0, 0, rollSpeed));
 			//print(arrow.transform.eulerAngles.z);
-			foreach (GameObject text in texts) text.GetComponent<Text>().fontSize = 48;
-			texts[RadiusToNumber()-1].GetComponent<Text>().fontSize = 64;
+			foreach (GameObject text in _texts) text.GetComponent<Text>().fontSize = 24;
+			_texts[RadiusToNumber()-1].GetComponent<Text>().fontSize = 48;
 		}
 
-		if (Input.GetKeyDown(KeyCode.R)) {
-			SetRoll(6);
-		}
+		// if (Input.GetKeyDown(KeyCode.R)) {
+		// 	SetRoll(6);
+		// }
 	}
 
 
@@ -85,9 +89,9 @@ public class Roll : MonoBehaviour {
 	}
 
 	void OnRollEnd() {
-		foreach (GameObject text in texts) Destroy(text.gameObject);
-		image.SetActive(false);
-		int number = RadiusToNumber();
+		foreach (GameObject text in _texts) Destroy(text.gameObject);
+		gameObject.SetActive(false);
+		int index = RadiusToNumber()-1;
 		//print("NUMBER IS " + number);
 		object[] content = new object[] { number, (int)Type };
 		RaiseEventOptions raiseEventOptions = new RaiseEventOptions{ Receivers = ReceiverGroup.All, };
