@@ -58,7 +58,7 @@ public class CameraController : InstanceObject<CameraController> {
 				CameraMove();
 #endif
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR || UNITY_STANDALONE
 				transform.Translate(Input.GetAxis("Horizontal") * BridEyeViewSpeed * Time.deltaTime, 0, Input.GetAxis("Vertical") * BridEyeViewSpeed * Time.deltaTime);
 #endif
 				//GetComponent<Klak.Motion.BrownianMotion>().UpdateTransform();

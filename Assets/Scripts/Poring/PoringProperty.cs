@@ -114,8 +114,12 @@ public class PoringProperty : ScriptableObject {
 
 	private void UpdateProperty()
 	{
-		CurrentMaxHp = BaseHp + (m_currentLevel * GrowupHp);
-		CurrentPAtk  = BasePAtk + (m_currentLevel * GrowupPAtk);
-		CurrentMAtk  = BaseMAtk + (m_currentLevel * GrowupMAtk);
+		CurrentMaxHp = BaseHp + ((m_currentLevel-1) * GrowupHp);
+		CurrentPAtk  = BasePAtk + ((m_currentLevel-1) * GrowupPAtk);
+		CurrentMAtk  = BaseMAtk + ((m_currentLevel-1) * GrowupMAtk);
+
+		CurrentMaxHp = (CurrentMaxHp <= MaxHp) ? CurrentMaxHp : MaxHp;
+		CurrentPAtk = (CurrentPAtk <= MaxPAtk) ? CurrentPAtk : MaxPAtk;
+		CurrentMAtk = (CurrentMAtk <= MaxMAtk) ? CurrentMAtk : MaxMAtk;
 	}
 }
