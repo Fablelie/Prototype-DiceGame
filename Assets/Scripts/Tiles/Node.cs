@@ -10,7 +10,7 @@ public class Node : MonoBehaviour {
 
     public TileProperty TileProperty;
 	public int StartValue;
-	public int CurrentValue;
+	// public int CurrentValue;
 	public int MaxValue;
 	public List<GameObject> AppleList = new List<GameObject>();
 	public List<Neighbor> NeighborList;
@@ -148,7 +148,7 @@ public class Node : MonoBehaviour {
 	private Vector3 basePositionApple = new Vector3(0, 0.62f, 0);
 	public void SpawnValue(GameObject prefab)
 	{
-		if((CurrentValue + 1) <= MaxValue && porings.Count == 0)
+		if(AppleList.Count < MaxValue && porings.Count == 0)
 		{
 			Vector3 newPosition = basePositionApple;
 			newPosition.x = -0.5f + ( 0.5f * AppleList.Count);
@@ -156,7 +156,6 @@ public class Node : MonoBehaviour {
 			apple.transform.SetParent(transform);
 			apple.transform.localPosition = newPosition;
 			AppleList.Add(apple);
-			CurrentValue++;
 		}
 	}
 

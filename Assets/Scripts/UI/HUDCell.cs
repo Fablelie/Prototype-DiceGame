@@ -36,6 +36,7 @@ public class HUDCell : MonoBehaviour
 		});
 
 		// this.poring.ObserveEveryValueChanged(p => p.Property.PermanentPoint, FrameCountType.FixedUpdate).Subscribe(i => PermanentPoint.text = $"Permanent Point : {i}");
+		this.poring.ObserveEveryValueChanged(p => p.Property.CurrentMaxHp, FrameCountType.FixedUpdate).Subscribe(i => HP.text = $"HP : {property.CurrentHp} / {i}");
 		this.poring.ObserveEveryValueChanged(p => p.Property.CurrentHp, FrameCountType.FixedUpdate).Subscribe(i => HP.text = $"HP : {i} / {property.CurrentMaxHp}");
 		this.poring.ObserveEveryValueChanged(p => p.Property.CurrentPAtk, FrameCountType.FixedUpdate).Subscribe(i => PAtk.text = $"P.Atk : {i}");
 		this.poring.ObserveEveryValueChanged(p => p.Property.CurrentMAtk, FrameCountType.FixedUpdate).Subscribe(i => MAtk.text = $"P.Atk : {i}");
