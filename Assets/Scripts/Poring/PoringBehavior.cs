@@ -83,8 +83,8 @@ public class PoringBehavior : MonoBehaviour
     {
 		Poring.OffensiveResultList.Clear();
 		Poring.Target.DeffensiveResultList.Clear();
-		Poring.OffensiveRoll.SetRoll(Poring.Property.OffensiveDices[0].FaceDiceList, Poring);
-		Poring.Target.DeffensiveRoll.SetRoll(Poring.Target.Property.DeffensiveDices[0].FaceDiceList, Poring.Target);
+		Poring.OffensiveRoll.SetRoll(Poring.Property.OffensiveDices[0].FaceDiceList, m_gameMode.GetPoringIndexByPoring(Poring));
+		Poring.Target.DeffensiveRoll.SetRoll(Poring.Target.Property.DeffensiveDices[0].FaceDiceList, m_gameMode.GetPoringIndexByPoring(Poring.Target));
 		StartCoroutine(WaitForDiceResult());
     }
 

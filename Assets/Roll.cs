@@ -25,15 +25,13 @@ public class Roll : MonoBehaviour {
 	public float rollSpeed = 0;
 	private int radiusStep = 0;
 	private List<GameObject> _texts = new List<GameObject>();
-	private List<FaceDice> _diceFacelist = new List<FaceDice>();
-	private Poring _poring;
+	private int _poringIndex;
 	
-	public void SetRoll(List<FaceDice> valueList, Poring poring = null) {
+	public void SetRoll(List<FaceDice> valueList, int poringIndex) {
 		if (isRolling) return;
 		_texts.Clear();
 		gameObject.SetActive(true);
-		_diceFacelist = valueList;
-		_poring = poring;
+		_poringIndex = poringIndex;
 		radiusStep = 360/valueList.Count;
 		for (int i = 0; i < valueList.Count; i++) {
 			GameObject ob = Instantiate(text);
@@ -93,7 +91,7 @@ public class Roll : MonoBehaviour {
 		gameObject.SetActive(false);
 		int index = RadiusToNumber()-1;
 		//print("NUMBER IS " + number);
-		object[] content = new object[] { number, (int)Type };
+		object[] content = new object[] { index, (int)Type, _poringIndex };
 		RaiseEventOptions raiseEventOptions = new RaiseEventOptions{ Receivers = ReceiverGroup.All, };
 		SendOptions sendOptions = new SendOptions{ Reliability = true};
 

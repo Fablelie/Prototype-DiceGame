@@ -106,7 +106,8 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
                 }
             break;
             case (byte)EventCode.RollEnd:
-                OnRollEnd((int)data[0], (DiceType)((int)data[1]));
+                Poring poring = m_player[(int)data[2]];
+                OnRollEnd((int)data[0], (DiceType)((int)data[1]), poring);
             break;
         }
     }
@@ -429,7 +430,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         // TODO wait for animation roll end and user select path.
         m_currentPlayer.Poring.OffensiveResult = 0;//OffensiveResultList.Clear();
         m_currentPlayer.Poring.DeffensiveResult = 0;//DeffensiveResultList.Clear();
-        m_currentPlayer.Poring.MoveRoll.SetRoll(m_currentPlayer.Poring.Property.MoveDices[0].FaceDiceList);
+        m_currentPlayer.Poring.MoveRoll.SetRoll(m_currentPlayer.Poring.Property.MoveDices[0].FaceDiceList, m_currentPlayer.Index);
         
         // CurrentGameState = eStateGameMode.Encounter;
     }
@@ -589,5 +590,13 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         }
 
         return true;
+    }
+
+    public int GetPoringIndexByPoring(Poring poring)
+    {
+        for (int i = 0; i < m_player.Count; i++)
+            if (m_player[i] == poring) return i;
+
+        return -1;
     }
 }
