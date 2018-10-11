@@ -52,6 +52,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
     [SerializeField] private List<Poring> m_player = new List<Poring>();
 
     private CurrentPlayer m_currentPlayer;
+    public int IndexCurrentPlayer;
     private CameraController m_cameraController;
     private int m_step = 0;    
 
@@ -476,13 +477,14 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         if ((m_currentPlayer.Index + 1) >= m_player.Count)
         {
             Turn++;
-            m_currentPlayer.Index = 0;
+            m_currentPlayer.Index = IndexCurrentPlayer = 0;
             RespawnValueOnTile(false);
             yield return new WaitForSeconds(1);
         }
         else
         {
             m_currentPlayer.Index += 1;
+            IndexCurrentPlayer = m_currentPlayer.Index;
         }
 
         
@@ -533,7 +535,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         //     poring.Init(item);
         // }
         SetCurrentPlayer(m_player[0]);
-        m_currentPlayer.Index = 0;
+        m_currentPlayer.Index = IndexCurrentPlayer = 0;
     }
 
     public override void OnDisconnected(DisconnectCause cause)

@@ -97,6 +97,8 @@ GameObject:
   - component: {fileID: 95989685488154732}
   - component: {fileID: 114075234008829938}
   - component: {fileID: 114391034534571780}
+  - component: {fileID: 114602172312211526}
+  - component: {fileID: 114876565258531164}
   m_Layer: 0
   m_Name: Poring
   m_TagString: Untagged
@@ -460,6 +462,9 @@ MonoBehaviour:
   DeffensiveResultList: 
   OffensiveResult: 0
   DeffensiveResult: 0
+  MoveRoll: {fileID: 0}
+  OffensiveRoll: {fileID: 0}
+  DeffensiveRoll: {fileID: 0}
 --- !u!114 &114391034534571780
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -473,6 +478,41 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Poring: {fileID: 114075234008829938}
   hasAttack: 0
+--- !u!114 &114602172312211526
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1594514244734316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  ObservedComponents:
+  - {fileID: 114876565258531164}
+  viewIdField: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &114876565258531164
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1594514244734316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
 --- !u!137 &137163024643113384
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

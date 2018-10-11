@@ -1,7 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
+using Photon.Pun.UtilityScripts;
 using UnityEngine;
 using UnityEngine.UI;
+using UniRx;
 
 public class HUDController : InstanceObject<HUDController> 
 {
@@ -23,16 +26,21 @@ public class HUDController : InstanceObject<HUDController>
 			cell.gameObject.SetActive(true);
 		}
 		
-	}
-
-	private void FixedUpdate() 
-	{
-		if(m_gameMode != null)
+		m_gameMode.ObserveEveryValueChanged(g => g.IndexCurrentPlayer, FrameCountType.FixedUpdate).Subscribe(i =>
 		{
-
-			Turn.text = $"Round : {m_gameMode.Turn}";
-		}
+			string s = (PlayerNumberingExtensions.GetPlayerNumber(PhotonNetwork.LocalPlayer) == i) ? "You turn!!" : "";
+			Turn.text = $"Round : {m_gameMode.Turn} \n<color=#FF0000>{s}</color>";
+		});
 	}
+
+	// private void FixedUpdate() 
+	// {
+	// 	if(m_gameMode != null)
+	// 	{
+	// 		string s = (PlayerNumberingExtensions.GetPlayerNumber(PhotonNetwork.LocalPlayer) == PrototypeGameMode.Instance.IndexCurrentPlayer) ? "You turn!!" : "";
+	// 		Turn.text = $"Round : {m_gameMode.Turn} \n<color=#FF0000>{s}</color>";
+	// 	}
+	// }
 
 	public void UpdateCurrentHUD(int index)
 	{
