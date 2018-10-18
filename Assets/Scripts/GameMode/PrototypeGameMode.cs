@@ -179,7 +179,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
                 ParseMovableNode();
                 DisplayNodeHeat();
                 isSelectedNode = false;
-                if (PlayerNumberingExtensions.GetPlayerNumber(PhotonNetwork.LocalPlayer) == m_currentPlayer.Index)
+                if (PhotonNetwork.LocalPlayer.GetPlayerNumber() == m_currentPlayer.Index)
                     StartCoroutine(WaitForSelectNode());
             break;
             case DiceType.Offensive:
@@ -388,6 +388,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
 
     public IEnumerator UpdateState()
     {
+        yield return new WaitForSeconds(2);
         while (true)
         {
             yield return new WaitForEndOfFrame();
@@ -431,7 +432,9 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         // TODO wait for animation roll end and user select path.
         m_currentPlayer.Poring.OffensiveResult = 0;//OffensiveResultList.Clear();
         m_currentPlayer.Poring.DeffensiveResult = 0;//DeffensiveResultList.Clear();
-        m_currentPlayer.Poring.MoveRoll.SetRoll(m_currentPlayer.Poring.Property.MoveDices[0].FaceDiceList, m_currentPlayer.Index);
+
+        // if (PhotonNetwork.LocalPlayer.GetPlayerNumber() == m_currentPlayer.Index)
+            m_currentPlayer.Poring.MoveRoll.SetRoll(m_currentPlayer.Poring.Property.MoveDices[0].FaceDiceList, m_currentPlayer.Index);
         
         // CurrentGameState = eStateGameMode.Encounter;
     }

@@ -30,12 +30,12 @@ public class HUDCell : MonoBehaviour
 		this.poring = poring;
 		var property = this.poring.Property;
 
-		if (PrototypeGameMode.Instance.GetPoringIndexByPoring(poring) == PlayerNumberingExtensions.GetPlayerNumber(PhotonNetwork.LocalPlayer))
-		{
+		// if (PrototypeGameMode.Instance.GetPoringIndexByPoring(poring) == PlayerNumberingExtensions.GetPlayerNumber(PhotonNetwork.LocalPlayer))
+		// {
 			poring.MoveRoll = _moveRoll;
 			poring.OffensiveRoll = _offensiveRoll;
 			poring.DeffensiveRoll = _deffensiveRoll;
-		}
+		// }
 
 		this.poring.ObserveEveryValueChanged(p => p.WinCondition, FrameCountType.FixedUpdate).Subscribe((i) => 
 		{

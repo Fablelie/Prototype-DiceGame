@@ -21,8 +21,6 @@ GameObject:
   - component: {fileID: 224139522638471738}
   - component: {fileID: 114617997759886690}
   - component: {fileID: 114991050486521668}
-  - component: {fileID: 114054861676432148}
-  - component: {fileID: 114992995895614042}
   m_Layer: 5
   m_Name: panelRollMove
   m_TagString: Untagged
@@ -84,27 +82,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &114054861676432148
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1663437836132808}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 3
-  OwnershipTransfer: 0
-  ObservedComponents:
-  - {fileID: 114992995895614042}
-  viewIdField: 0
-  InstantiationId: 3
-  isRuntimeInstantiated: 0
 --- !u!114 &114204148204164794
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -270,20 +247,6 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
---- !u!114 &114992995895614042
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1663437836132808}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
 --- !u!222 &222501578814555380
 CanvasRenderer:
   m_ObjectHideFlags: 1

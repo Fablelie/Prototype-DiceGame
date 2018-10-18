@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using ExitGames.Client.Photon;
 using Photon.Pun;
+using Photon.Pun.UtilityScripts;
 using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.UI;
@@ -35,7 +36,7 @@ public class Roll : MonoBehaviour {
 		radiusStep = 360/valueList.Count;
 		for (int i = 0; i < valueList.Count; i++) {
 			GameObject ob = Instantiate(text);
-			ob.GetComponent<Text>().text = (int)valueList[i]+ "";
+			ob.GetComponent<Text>().text = (_poringIndex == PhotonNetwork.LocalPlayer.GetPlayerNumber()) ? (int)valueList[i]+ "" : "?";
 			ob.transform.SetParent(transform);
 			ob.SetActive(true);
 			// Vector3.ClampMagnitude(v, radiusStep*i);
@@ -91,11 +92,15 @@ public class Roll : MonoBehaviour {
 		gameObject.SetActive(false);
 		int index = RadiusToNumber()-1;
 		//print("NUMBER IS " + number);
-		object[] content = new object[] { index, (int)Type, _poringIndex };
-		RaiseEventOptions raiseEventOptions = new RaiseEventOptions{ Receivers = ReceiverGroup.All, };
-		SendOptions sendOptions = new SendOptions{ Reliability = true};
+		if (_poringIndex == PhotonNetwork.LocalPlayer.GetPlayerNumber())
+		{
+			object[] content = new object[] { index, (int)Type, _poringIndex };
+			RaiseEventOptions raiseEventOptions = new RaiseEventOptions{ Receivers = ReceiverGroup.All, };
+			SendOptions sendOptions = new SendOptions{ Reliability = true};
 
-		PhotonNetwork.RaiseEvent((byte)EventCode.RollEnd, content, raiseEventOptions, sendOptions);
+			PhotonNetwork.RaiseEvent((byte)EventCode.RollEnd, content, raiseEventOptions, sendOptions);
+		}
+		
 		// PrototypeGameMode.Instance.OnRollEnd(number, Type);
 		// PrototypeGameMode.Instance.photonView.RPC("OnRollEnd", RpcTarget.All, number, Type);
 	}
