@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -41,13 +42,13 @@ public class PoringBehavior : MonoBehaviour
 		// m_omActor.GetAnimator?.Play("Warp_down");
 	}
     
-	public void SetupJumpToNodeTarget(List<Node> nodeList)
+	public void SetupJumpToNodeTarget(List<Node> nodeList, Action callbackForSkillMove = null)
 	{
-		StartCoroutine(JumpTo(nodeList));
+		StartCoroutine(JumpTo(nodeList, callbackForSkillMove));
 	}
 
     private WaitForSeconds wait = new WaitForSeconds(0.1f);
-    private IEnumerator JumpTo(List<Node> nodeList)
+    private IEnumerator JumpTo(List<Node> nodeList, Action callbackForSkillMove = null)
 	{
         
         foreach (var node in nodeList)
@@ -66,7 +67,11 @@ public class PoringBehavior : MonoBehaviour
 		}
 
         yield return wait;
-		FinishMove();
+
+		if (callbackForSkillMove != null)
+			callbackForSkillMove();
+		else
+			FinishMove();
 	}
 
 	
@@ -92,6 +97,8 @@ public class PoringBehavior : MonoBehaviour
 	{
 		yield return new WaitUntil(() => Poring.OffensiveResultList.Count > 0 && Poring.Target.DeffensiveResultList.Count > 0);
 		hasAttack = true;
+
+		// Caculate dice face.
 		Poring.Animator.Play("Skill");
 	}
 	#region Calculate

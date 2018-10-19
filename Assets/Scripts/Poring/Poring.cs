@@ -42,4 +42,9 @@ public class Poring : MonoBehaviour {
 	void HeadTo(Vector3 position) {
 		transform.LookAt(position, transform.up);
 	}
+
+	public void OnReceiveStatus(int statusResult)
+	{
+		
+	}
 }
