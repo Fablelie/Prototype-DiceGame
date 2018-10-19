@@ -104,7 +104,11 @@ public class BaseSkill : ScriptableObject
 	public bool MoveToTarget;
 	public int CurrentCD = 0;
 
-	[SerializeField] [EnumFlags] public SkillStatus SkillStatus;
+	[SerializeField] 
+	 #if UNITY_EDITOR
+	[EnumFlags] 
+	#endif
+	public SkillStatus SkillStatus;
 
 	public virtual void Init(BaseSkill baseSkill)
 	{
