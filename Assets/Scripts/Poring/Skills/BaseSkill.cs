@@ -51,13 +51,34 @@ public class BaseSkill : ScriptableObject
 	public float DamageMultiple;
 
 	public TargetType TargetType;
-	[Tooltip("0 is not AOE skill will skin this value.")] [Range(0, 4)] public int AOEValue;
+	[Tooltip("0 is not AOE skill will skip this value.")] [Range(0, 4)] public int AOEValue;
 	public bool IsIgnoreSelf;
 	public int SkillDuration;
 	public int TurnCD;
 	public bool MoveToTarget;
+	public int CurrentCD = 0;
 
 	[SerializeField] [EnumFlags] public SkillStatus SkillStatus;
+
+	public void Init(BaseSkill baseSkill)
+	{
+		this.name          = baseSkill.name;
+		AnimationStateName = baseSkill.AnimationStateName;
+		PrefabEffect       = baseSkill.PrefabEffect;
+		SkillIcon          = baseSkill.SkillIcon;
+		MinRangeValue      = baseSkill.MinRangeValue;
+		MaxRangeValue      = baseSkill.MaxRangeValue;
+		SkillMode          = baseSkill.SkillMode;
+		DamageType         = baseSkill.DamageType;
+		DamageMultiple     = baseSkill.DamageMultiple;
+		TargetType         = baseSkill.TargetType;
+		AOEValue           = baseSkill.AOEValue;
+		IsIgnoreSelf       = baseSkill.IsIgnoreSelf;
+		SkillDuration      = baseSkill.SkillDuration;
+		TurnCD             = baseSkill.TurnCD;
+		MoveToTarget       = baseSkill.MoveToTarget;
+		CurrentCD          = 0;
+	}
 
 	public virtual void OnActivate(Poring poring, Poring targetPoring = null, Node targetNode = null, List<Node> nodeList = null)
 	{

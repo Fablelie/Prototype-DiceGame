@@ -58,6 +58,8 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
 
     private List<List<Node>> RouteList = new List<List<Node>>();
 
+    private bool isSelectedNode = false;
+
     void Awake()
     {
         Instance = this;
@@ -176,7 +178,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
                 m_step = m_currentPlayer.Poring.Property.MoveDices[0].GetDiceFace(index);
                 // Debug.LogFormat("Roll move number : {0}", number);
                 m_cameraController.Show(CameraType.TopDown);
-                ParseMovableNode();
+                ParseMovableNode(m_step);
                 DisplayNodeHeat();
                 isSelectedNode = false;
                 if (PhotonNetwork.LocalPlayer.GetPlayerNumber() == m_currentPlayer.Index)
@@ -195,7 +197,8 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         }
     }
 
-    private bool isSelectedNode = false;
+    #region Move Process (find node, select node, change node color)
+
     private IEnumerator WaitForSelectNode()
     {
         MagicCursor.Instance.gameObject.SetActive(false);
@@ -232,7 +235,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         return count;
     }
 
-    private void ResetNodeColor()
+    public void ResetNodeColor()
     {
         foreach (var item in Nodes)
         {
@@ -340,6 +343,12 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         return result;
     }
 
+    private void SetColorNode(Node node, Color color)
+    {
+        node.PointRenderer.material.SetColor("_Color", color);
+        node.PointRenderer.material.SetColor("_EmissionColor", new Color(0.5f, 0.5f, 0.5f));
+    }
+
     private void ParseMovableNode(int max=0, int step=0, Node node=null, Node prevNode=null) {
 		if (max == 0) max = m_step;
 		if (node == null) node = m_currentPlayer.Poring.Node;
@@ -373,6 +382,161 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
 			node.PointRenderer.material.SetColor("_EmissionColor", new Color(0.5f, 0.5f, 0.5f));
 		}
     }
+
+    #endregion
+
+    #region Skill process (find target, select target etc.)
+
+    public IEnumerator WaitForSelectTarget(BaseSkill skill)
+    {
+        bool isSelected = false;
+        MagicCursor.Instance.gameObject.SetActive(false);
+        while (!isSelected)
+        {
+            yield return null;
+            OnMouseClickSelectSkillTarget(skill, out isSelected);
+        }
+    }
+
+    private void OnMouseClickSelectSkillTarget(BaseSkill skill, out bool isSelected)
+    {
+        isSelected = false;
+        if (Input.GetMouseButtonDown(0))
+        { 
+            RaycastHit hit; 
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); 
+            if (Physics.Raycast(ray, out hit, 100.0f)) 
+            {
+                Node node = hit.transform.parent.GetComponent<Node>();
+                if (node) 
+                {
+                    node.PointRenderer.SetPropertyBlock(MaterialPreset.GetMaterialPreset(EMaterialPreset.selected));
+                    MagicCursor.Instance.MoveTo(node);
+                    switch (skill.TargetType)
+                    {
+                        case TargetType.Self:
+                            if (node.TileProperty.Type != TileType.Sanctuary)
+                            {
+                                m_cameraController.Show(CameraType.Default);
+                                isSelected = true;
+                                ResetNodeColor();
+                                skill.OnActivate(m_currentPlayer.Poring);
+                            }
+                        break;
+                        case TargetType.Another:
+                            if (node.steps.Count > 0 && CheckPoringInTargetNode(node) > 0)
+                                SkillSelectPoringTarget(skill, node, out isSelected);
+                        break;
+                        case TargetType.Tile:
+                            if (node.steps.Count > 0)
+                                SkillSelectTile(skill, node, out isSelected);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private void SkillSelectPoringTarget(BaseSkill skill, Node node, out bool isSelected)
+    {
+        m_cameraController.Show(CameraType.Default);
+        isSelected = true;
+        ResetNodeColor();
+
+        if (skill.MoveToTarget)
+        {
+            RouteList.Clear();
+            FindRouteNode(skill.MaxRangeValue, 0, m_currentPlayer.Poring.Node, null);
+            RouteList = FindTargetRoute(RouteList, node);
+            int indexRoute = Random.Range(0, RouteList.Count - 1);
+            
+            skill.OnActivate(
+                poring: m_currentPlayer.Poring, 
+                targetPoring: node.porings.Find(poring => poring != m_currentPlayer.Poring),
+                nodeList: RouteList[indexRoute]
+            );
+        }
+        else 
+        {
+            skill.OnActivate(
+                poring: m_currentPlayer.Poring,
+                targetPoring: node.porings.Find(poring => poring != m_currentPlayer.Poring)
+            );
+        }
+    }
+
+    private void SkillSelectTile(BaseSkill skill, Node node, out bool isSelected)
+    {
+        m_cameraController.Show(CameraType.Default);
+        isSelected = true;
+        ResetNodeColor();
+
+        if (skill.MoveToTarget)
+        {
+            RouteList.Clear();
+            FindRouteNode(skill.MaxRangeValue, 0, m_currentPlayer.Poring.Node, null);
+            RouteList = FindTargetRoute(RouteList, node);
+            int indexRoute = Random.Range(0, RouteList.Count - 1);
+
+            skill.OnActivate(
+                poring: m_currentPlayer.Poring, 
+                targetNode: node,
+                nodeList: RouteList[indexRoute]
+            );
+        }
+        else
+        {
+            skill.OnActivate(
+                poring: m_currentPlayer.Poring,
+                targetNode: node
+            );
+        }
+    }
+
+    public void ParseSelectableNode(BaseSkill skill, int step = 0, Node node = null, Node prevNode = null)
+    {
+        int max = skill.MaxRangeValue;
+        int min = skill.MinRangeValue;
+		if (node == null)
+        { 
+            node = m_currentPlayer.Poring.Node;
+            if(skill.MinRangeValue == 0 && node.TileProperty.Type != TileType.Sanctuary) node.steps.Add(0);
+        }
+
+		foreach(Neighbor neighbor in node.NeighborList) {
+			if (step < max) 
+            {
+                if (neighbor.Node == prevNode) continue;
+                int newStep = Mathf.Min(step + 1, max);
+                if (neighbor.Node.TileProperty.Type != TileType.Sanctuary && newStep >= min)
+				    neighbor.Node.steps.Add(newStep);
+				ParseSelectableNode(skill, newStep, neighbor.Node, node);
+			}
+		}
+    }
+
+    public void DisplayNodeHeatBySkill(BaseSkill skill)
+    {
+        foreach (var node in Nodes)
+        {
+            if (node.steps.Count == 0 || node.TileProperty.Type == TileType.Sanctuary) continue;
+            switch (skill.TargetType)
+            {
+                case TargetType.Self:
+                    SetColorNode(m_currentPlayer.Poring.Node, Color.red);
+                return;
+                case TargetType.Another:
+                    if (CheckPoringInTargetNode(node) > 0)
+                        SetColorNode(node, Color.red);
+                break;
+                case TargetType.Tile:
+                    SetColorNode(node, Color.red);
+                break;
+            }
+        }
+    }
+
+    #endregion
 
     public void StartGameMode()
     {
@@ -430,13 +594,9 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
     {
         // this state active when StartTurn enable UI for this.
         // TODO wait for animation roll end and user select path.
-        m_currentPlayer.Poring.OffensiveResult = 0;//OffensiveResultList.Clear();
-        m_currentPlayer.Poring.DeffensiveResult = 0;//DeffensiveResultList.Clear();
-
-        // if (PhotonNetwork.LocalPlayer.GetPlayerNumber() == m_currentPlayer.Index)
-            m_currentPlayer.Poring.MoveRoll.SetRoll(m_currentPlayer.Poring.Property.MoveDices[0].FaceDiceList, m_currentPlayer.Index);
-        
-        // CurrentGameState = eStateGameMode.Encounter;
+        m_currentPlayer.Poring.OffensiveResult = 0;
+        m_currentPlayer.Poring.DeffensiveResult = 0;
+        TurnActiveUIController.Instance.ActiveCurrentPoringTurn(m_currentPlayer.Poring, m_currentPlayer.Index, this);
     }
 
     private void Encounter()

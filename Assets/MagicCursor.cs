@@ -19,5 +19,12 @@ public class MagicCursor : InstanceObject<MagicCursor> {
 		
 		//animator.playbackTime = 0;
 		animator.Play("magicCursorFocus");
+
+		Invoke("SetDiable", 0.5f);
+	}
+
+	private void SetDiable()
+	{
+		gameObject.SetActive(false);
 	}
 }

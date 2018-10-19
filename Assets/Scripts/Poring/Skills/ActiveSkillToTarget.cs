@@ -5,19 +5,26 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "ActiveSkill", menuName = "Poring/Skills/ActiveSkill")]
 public class ActiveSkillToTarget : BaseSkill 
 {
+    private PrototypeGameMode gameMode;
+    private eStateGameMode nextState;
+
     public override void OnActivate(Poring poring, Poring targetPoring = null, Node targetNode = null, List<Node> nodeList = null)
     {
         GameObject target = (targetPoring != null) ? targetPoring.gameObject : targetNode.gameObject;
+        gameMode = (PrototypeGameMode)PrototypeGameMode.Instance;
 
         poring.transform.LookAt(target.transform.position);
+        CurrentCD = TurnCD;
 
         if (nodeList != null)
         {
             // Move first!!
+            nextState = eStateGameMode.EndTurn;
             poring.Behavior.SetupJumpToNodeTarget(nodeList, () => SkillEffectActivate(poring, targetPoring, targetNode));
         }
         else
         {
+            nextState = gameMode.CurrentGameState;
             SkillEffectActivate(poring, targetPoring, targetNode);
         }
     }
@@ -32,12 +39,13 @@ public class ActiveSkillToTarget : BaseSkill
 
     private IEnumerator WaitForAnimation(Poring poring, float damage, Poring targetPoring = null, Node targetNode = null)
     {
+        
         if (targetPoring != null)
         {
             // bash
             poring.transform.LookAt(targetPoring.gameObject.transform);
             poring.Animator.Play(AnimationStateName);
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(2f);
             
             if (PrefabEffect != null)
                 GameObject.Instantiate(PrefabEffect, targetPoring.transform.position, Quaternion.identity);
@@ -48,12 +56,24 @@ public class ActiveSkillToTarget : BaseSkill
         {
             // thunder bolt
             poring.transform.LookAt(targetNode.gameObject.transform);
+            poring.Animator.Play(AnimationStateName);
+            yield return new WaitForSeconds(2f);
             AOESkillActivate(poring, targetNode, AOEValue, damage);
         }
         else
         {
             // Magnum Break
+            poring.Animator.Play(AnimationStateName);
+            yield return new WaitForSeconds(2f);
+            if (PrefabEffect != null)
+                GameObject.Instantiate(PrefabEffect, targetPoring.transform.position, Quaternion.identity);
+            AOESkillActivate(poring, targetNode, AOEValue, damage);
         }
+
+        if (!MoveToTarget)
+            TurnActiveUIController.Instance.SetActivePanel(true);
+        gameMode.CurrentGameState = nextState;
+        
     }
 
     private void AOESkillActivate(Poring poring, Node currentNode, int value, float damage, Node prevNode = null)
@@ -91,6 +111,8 @@ public class ActiveSkillToTarget : BaseSkill
     {
         targetPoring.Animator.Play("take_damage");
         targetPoring.Property.CurrentHp -= damage;
+
+        targetPoring.OnReceiveStatus((int)SkillStatus);
 
         CheckTargetAlive(poring, targetPoring);
     }

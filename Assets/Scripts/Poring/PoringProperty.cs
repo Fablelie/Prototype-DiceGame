@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -85,6 +86,8 @@ public class PoringProperty : ScriptableObject {
 	public List<DeffensiveDice> DeffensiveDices;
 	public List<OffensiveDice> OffensiveDices;
 
+	public List<BaseSkill> SkillList = new List<BaseSkill>();
+
     public void Init(PoringProperty baseProperty)
     {
         BaseHp          = baseProperty.BaseHp;
@@ -110,6 +113,15 @@ public class PoringProperty : ScriptableObject {
 		MaxLevel              = baseProperty.MaxLevel;
 		StartRequestExp       = baseProperty.StartRequestExp;
 		MultiplyPerLevel      = baseProperty.MultiplyPerLevel;
+
+		baseProperty.SkillList.ForEach(baseSkill => 
+		{
+			Type type = baseSkill.GetType();
+			
+			var skill = ScriptableObject.CreateInstance(type.ToString()) as BaseSkill;
+			skill.Init(baseSkill);
+			SkillList.Add(skill);
+		});
     }
 
 	private void UpdateProperty()
