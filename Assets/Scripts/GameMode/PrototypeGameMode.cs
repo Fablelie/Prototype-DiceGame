@@ -567,7 +567,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
 
 		foreach(Neighbor neighbor in node.NeighborList) 
         {
-			if (remeaningRange <= maxRange) 
+			if (remeaningRange < maxRange) 
             {
                 int newRemeaningRange = remeaningRange + 1;
                 if (neighbor.Node == prevNode) continue;
