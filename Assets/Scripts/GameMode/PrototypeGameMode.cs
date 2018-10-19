@@ -394,13 +394,12 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         while (!isSelected)
         {
             yield return null;
-            OnMouseClickSelectSkillTarget(skill, out isSelected);
+            isSelected = OnMouseClickSelectSkillTarget(skill);
         }
     }
 
-    private void OnMouseClickSelectSkillTarget(BaseSkill skill, out bool isSelected)
+    private bool OnMouseClickSelectSkillTarget(BaseSkill skill)
     {
-        isSelected = false;
         if (Input.GetMouseButtonDown(0))
         { 
             RaycastHit hit; 
@@ -418,29 +417,30 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
                             if (node.TileProperty.Type != TileType.Sanctuary)
                             {
                                 m_cameraController.Show(CameraType.Default);
-                                isSelected = true;
                                 ResetNodeColor();
                                 skill.OnActivate(m_currentPlayer.Poring);
+                                return true;
                             }
                         break;
                         case TargetType.Another:
                             if (node.steps.Count > 0 && CheckPoringInTargetNode(node) > 0)
-                                SkillSelectPoringTarget(skill, node, out isSelected);
+                                return SkillSelectPoringTarget(skill, node);
                         break;
                         case TargetType.Tile:
                             if (node.steps.Count > 0)
-                                SkillSelectTile(skill, node, out isSelected);
+                                return SkillSelectTile(skill, node);
                         break;
                     }
                 }
             }
+            return false;
         }
+        else return false;
     }
 
-    private void SkillSelectPoringTarget(BaseSkill skill, Node node, out bool isSelected)
+    private bool SkillSelectPoringTarget(BaseSkill skill, Node node)
     {
         m_cameraController.Show(CameraType.Default);
-        isSelected = true;
         ResetNodeColor();
 
         if (skill.MoveToTarget)
@@ -463,12 +463,13 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
                 targetPoring: node.porings.Find(poring => poring != m_currentPlayer.Poring)
             );
         }
+
+        return true;
     }
 
-    private void SkillSelectTile(BaseSkill skill, Node node, out bool isSelected)
+    private bool SkillSelectTile(BaseSkill skill, Node node)
     {
         m_cameraController.Show(CameraType.Default);
-        isSelected = true;
         ResetNodeColor();
 
         if (skill.MoveToTarget)
@@ -491,6 +492,8 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
                 targetNode: node
             );
         }
+
+        return true;
     }
 
     public void ParseSelectableNode(BaseSkill skill, int step = 0, Node node = null, Node prevNode = null)
@@ -507,6 +510,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
 			if (step < max) 
             {
                 if (neighbor.Node == prevNode) continue;
+                if (skill.MoveToTarget && neighbor.eDirection == eDirection.INTO) continue;
                 int newStep = Mathf.Min(step + 1, max);
                 if (neighbor.Node.TileProperty.Type != TileType.Sanctuary && newStep >= min)
 				    neighbor.Node.steps.Add(newStep);

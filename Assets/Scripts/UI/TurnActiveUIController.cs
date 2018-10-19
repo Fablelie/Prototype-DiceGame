@@ -13,6 +13,8 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
 
     private PrototypeGameMode gameMode = null;
 
+    private List<BaseSkill> SkillList = new List<BaseSkill>();
+
     public void SetActivePanel(bool isEnable)
     {
         RollDiceBtn.gameObject.SetActive(isEnable);
@@ -31,8 +33,8 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
             poring.MoveRoll.SetRoll(poring.Property.MoveDices[0].FaceDiceList, index);
             RollDiceBtn.onClick.RemoveAllListeners();
         });
-
-        SetSkillsEvent(poring.Property.SkillList, poring);
+        SkillList = poring.Property.SkillList;
+        SetSkillsEvent(SkillList, poring);
     }
 
     private void SetSkillsEvent(List<BaseSkill> skillList, Poring poring)
@@ -46,6 +48,7 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
         {
             ButtonGroup group = BtnGroup[i];
             BaseSkill skill = skillList[i];
+
             skill.CurrentCD--;
             group.BtnName.text = skill.name;
             group.BtnObject.gameObject.SetActive(true);
@@ -73,6 +76,11 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
 
     public void OnClickCancel()
     {
+        for (int i = 0; i < SkillList.Count; i++)
+        {
+            BtnGroup[i].BtnObject.interactable = (SkillList[i].CurrentCD <= 0);
+        }
+        
         CameraController.Instance.Show(CameraType.Default);
         SetActivePanel(true);
         gameMode.ResetNodeColor();
