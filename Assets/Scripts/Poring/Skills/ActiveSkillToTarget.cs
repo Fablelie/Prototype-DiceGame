@@ -10,10 +10,14 @@ public class ActiveSkillToTarget : BaseSkill
 
     public override void OnActivate(Poring poring, Poring targetPoring = null, Node targetNode = null, List<Node> nodeList = null)
     {
-        GameObject target = (targetPoring != null) ? targetPoring.gameObject : targetNode.gameObject;
         gameMode = (PrototypeGameMode)PrototypeGameMode.Instance;
+        
+        if(targetPoring != null || targetNode != null)
+        {
+            GameObject target = (targetPoring != null) ? targetPoring.gameObject : targetNode.gameObject;
+            poring.transform.LookAt(target.transform.position);
+        }
 
-        poring.transform.LookAt(target.transform.position);
         CurrentCD = TurnCD;
 
         if (nodeList != null)
@@ -67,7 +71,7 @@ public class ActiveSkillToTarget : BaseSkill
             yield return new WaitForSeconds(2f);
             if (PrefabEffect != null)
                 GameObject.Instantiate(PrefabEffect, targetPoring.transform.position, Quaternion.identity);
-            AOESkillActivate(poring, targetNode, AOEValue, damage);
+            AOESkillActivate(poring, poring.Node, AOEValue, damage);
         }
 
         if (!MoveToTarget)
@@ -86,11 +90,13 @@ public class ActiveSkillToTarget : BaseSkill
         if (value > 0)
         {
             value--;
-            currentNode.NeighborList.ForEach(neighbor =>
+            foreach (var neighbor in currentNode.NeighborList)
             {
-                AddDamageToTargetNode(poring, damage, neighbor.Node);
+                if (neighbor.Node == prevNode) continue;
+                if (neighbor.Node.TileProperty.Type != TileType.Sanctuary)
+                    AddDamageToTargetNode(poring, damage, neighbor.Node);
                 AOESkillActivate(poring, neighbor.Node, value, damage, currentNode);    
-            });
+            }
         }
     }
 

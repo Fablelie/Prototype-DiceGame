@@ -15,6 +15,8 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
 
     private List<BaseSkill> SkillList = new List<BaseSkill>();
 
+    public bool SkillMode = false;
+
     public void SetActivePanel(bool isEnable)
     {
         RollDiceBtn.gameObject.SetActive(isEnable);
@@ -68,6 +70,7 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
 
     private void ChangeModeToSelectTarget(BaseSkill skill, Poring poring)
     {
+        SkillMode = true;
         CameraController.Instance.Show(CameraType.TopDown);
         gameMode.ParseSelectableNode(skill);
         gameMode.DisplayNodeHeatBySkill(skill);
@@ -76,6 +79,7 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
 
     public void OnClickCancel()
     {
+        SkillMode = false;
         for (int i = 0; i < SkillList.Count; i++)
         {
             BtnGroup[i].BtnObject.interactable = (SkillList[i].CurrentCD <= 0);

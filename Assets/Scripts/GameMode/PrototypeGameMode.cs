@@ -391,7 +391,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
     {
         bool isSelected = false;
         MagicCursor.Instance.gameObject.SetActive(false);
-        while (!isSelected)
+        while (!isSelected && TurnActiveUIController.Instance.SkillMode)
         {
             yield return null;
             isSelected = OnMouseClickSelectSkillTarget(skill);
