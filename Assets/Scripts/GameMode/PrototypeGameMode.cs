@@ -397,6 +397,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
             yield return null;
             isSelected = OnMouseClickSelectSkillTarget(skill);
         }
+        TurnActiveUIController.Instance.CancelSkillBtn.gameObject.SetActive(false);
     }
 
     private bool OnMouseClickSelectSkillTarget(BaseSkill skill)
@@ -542,6 +543,83 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
     }
 
     #endregion
+
+    public void DisplayNodeHeatByAttackRange()
+    {
+        foreach (var node in Nodes)
+        {
+            if (node.steps.Count == 0 || node.TileProperty.Type == TileType.Sanctuary) continue;
+            if (CheckPoringInTargetNode(node) > 0)
+                SetColorNode(node, Color.red);
+        }
+    }
+
+    public void CheckHasTargetInRange(int maxRange, int remeaningRange = 0, Node node = null, Node prevNode = null)
+    {
+		if (node == null)
+        { 
+            node = m_currentPlayer.Poring.Node;
+            // remeaningRange = maxRange;
+            if(node.TileProperty.Type != TileType.Sanctuary && CheckPoringInTargetNode(node) > 0) node.steps.Add(0);
+        }
+
+        if(maxRange == 0) return;
+
+		foreach(Neighbor neighbor in node.NeighborList) 
+        {
+			if (remeaningRange <= maxRange) 
+            {
+                int newRemeaningRange = remeaningRange + 1;
+                if (neighbor.Node == prevNode) continue;
+                
+                // if (neighbor.Node.TileProperty.Type != TileType.Sanctuary && CheckPoringInTargetNode(node) > 0)
+                neighbor.Node.steps.Add(newRemeaningRange);
+				CheckHasTargetInRange(maxRange, newRemeaningRange, neighbor.Node, node);
+			}
+		}
+    }
+    public IEnumerator WaitForSelectTarget()
+    {
+        bool isSelected = false;
+        MagicCursor.Instance.gameObject.SetActive(false);
+        while (!isSelected && TurnActiveUIController.Instance.isActiveAttack)
+        {
+            yield return null;
+            isSelected = OnMouseClickSelectSkillTarget();
+        }
+        TurnActiveUIController.Instance.CancelSkillBtn.gameObject.SetActive(false);
+    }
+
+    private bool OnMouseClickSelectSkillTarget()
+    {
+        if (Input.GetMouseButtonDown(0))
+        { 
+            RaycastHit hit; 
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); 
+            if (Physics.Raycast(ray, out hit, 100.0f)) 
+            {
+                Node node = hit.transform.parent.GetComponent<Node>();
+                if (node) 
+                {
+                    node.PointRenderer.SetPropertyBlock(MaterialPreset.GetMaterialPreset(EMaterialPreset.selected));
+                    MagicCursor.Instance.MoveTo(node);
+                    if (CheckPoringInTargetNode(node) > 0 && node.TileProperty.Type != TileType.Sanctuary && node.steps.Count > 0)
+                    {
+                        List<Poring> porings = node.porings.FindAll(poring => poring != m_currentPlayer.Poring);
+                        m_currentPlayer.Poring.Target = porings[Random.Range(0, porings.Count - 1)];
+
+                        m_cameraController.Show(CameraType.Default);
+                        
+                        ResetNodeColor();
+                        CurrentGameState = eStateGameMode.Encounter;
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        else return false;
+    }
 
     public void StartGameMode()
     {

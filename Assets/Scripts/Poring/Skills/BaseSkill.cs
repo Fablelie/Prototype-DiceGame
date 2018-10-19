@@ -128,7 +128,7 @@ public class BaseSkill : ScriptableObject
 
 	public virtual void OnActivate(Poring poring, Poring targetPoring = null, Node targetNode = null, List<Node> nodeList = null){}
 	public virtual OnAttackSkillResult OnAttack(Poring poring, FaceDice faceDice){ return new OnAttackSkillResult(AttackTypeResult.None, DamageType.PAtk, 0, 0); }
-	public virtual OnDefenseSkillResult OnDefense(Poring poring, FaceDice faceDice){ return new OnDefenseSkillResult(DefenseTypeResult.None, DamageType.PAtk, 0, 0); }
+	public virtual OnDefenseSkillResult OnDefense(Poring attacker, Poring poring, FaceDice faceDice){ return new OnDefenseSkillResult(DefenseTypeResult.None, DamageType.PAtk, 0, 0); }
 	public virtual void OnEndTurn(){}
 	public virtual void OnStartTurn(){}
 	public virtual void OnReceiveStatus(int skillStatusResult){}

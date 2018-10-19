@@ -94,10 +94,10 @@ public class PoringBehavior : MonoBehaviour
 	private IEnumerator WaitForDiceResult()
 	{
 		yield return new WaitUntil(() => Poring.OffensiveResultList.Count > 0 && Poring.Target.DeffensiveResultList.Count > 0);
-		
+		TurnFaceTo(Poring.Target.transform.position);
 		hasAttack = true;
 		var attackerDiceResult = CalculateAtackerDiceResult(Poring);
-		var defenderDiceResult = CalculateDefenderDiceResult(Poring.Target);
+		var defenderDiceResult = CalculateDefenderDiceResult(Poring, Poring.Target);
 
 		switch (defenderDiceResult.Type)
 		{
@@ -113,7 +113,7 @@ public class PoringBehavior : MonoBehaviour
 					Poring.Animator.Play("take_damage");
 					yield return waitSecond;
 
-					if(!Poring.Target.Behavior.hasAttack)
+					if(!Poring.Target.Behavior.hasAttack && Poring.Node == Poring.Target.Node)
 					{
 						Poring.Target.Target = Poring;
 						Poring.Target.Behavior.AttackTarget();
@@ -170,7 +170,7 @@ public class PoringBehavior : MonoBehaviour
 		Poring.Target.Property.CurrentHp = hpResult;
 		if (hpResult > 0) // alive
 		{
-			if(!Poring.Target.Behavior.hasAttack)
+			if(!Poring.Target.Behavior.hasAttack && Poring.Node == Poring.Target.Node)
 			{
 				Poring.Target.Target = Poring;
 				Poring.Target.Behavior.AttackTarget();
@@ -213,13 +213,13 @@ public class PoringBehavior : MonoBehaviour
 		return result;
 	}
 
-	private OnDefenseSkillResult CalculateDefenderDiceResult(Poring poring)
+	private OnDefenseSkillResult CalculateDefenderDiceResult(Poring attacker, Poring poring)
 	{
 		OnDefenseSkillResult result = new OnDefenseSkillResult(DefenseTypeResult.None, DamageType.PAtk, 0, 0);
 		FaceDice faceDice = poring.Property.DeffensiveDices[0].GetDiceFace(poring.DeffensiveResultList[0]);
 		poring.Property.SkillList.ForEach(skill =>
 		{
-			var subResult = skill.OnDefense(poring, faceDice);
+			var subResult = skill.OnDefense(attacker, poring, faceDice);
 			if(subResult.Type != DefenseTypeResult.None)
 			{
 				result = subResult;

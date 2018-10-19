@@ -14,6 +14,7 @@ public class PoringProperty : ScriptableObject {
 	[HideInInspector]public float CurrentPAtk;
 	public int BaseMAtk;
 	[HideInInspector]public float CurrentMAtk;
+	public int AttackRange;	
 
 	[Header("Max")]
     public int MaxHp;
@@ -90,13 +91,15 @@ public class PoringProperty : ScriptableObject {
 
     public void Init(PoringProperty baseProperty)
     {
-        BaseHp          = baseProperty.BaseHp;
+        BaseHp      	= baseProperty.BaseHp;
 		CurrentMaxHp    = baseProperty.BaseHp;
-        CurrentHp       = baseProperty.BaseHp;
-        BasePAtk        = baseProperty.BasePAtk;
-        CurrentPAtk     = baseProperty.BasePAtk;
-        BaseMAtk        = baseProperty.BaseMAtk;
-        CurrentMAtk     = baseProperty.BaseMAtk;
+        CurrentHp   	= baseProperty.BaseHp;
+        BasePAtk    	= baseProperty.BasePAtk;
+        CurrentPAtk 	= baseProperty.BasePAtk;
+        BaseMAtk    	= baseProperty.BaseMAtk;
+        CurrentMAtk 	= baseProperty.BaseMAtk;
+		AttackRange     = baseProperty.AttackRange;
+
         GrowupHp        = baseProperty.GrowupHp;
         GrowupPAtk      = baseProperty.GrowupPAtk;
         GrowupMAtk      = baseProperty.GrowupMAtk;

@@ -6,8 +6,9 @@ using UnityEngine.UI;
 public class TurnActiveUIController : InstanceObject<TurnActiveUIController> 
 {
     public Button RollDiceBtn;
+    public Button AttackBtn;
     public GameObject PanelSkills;
-    public GameObject CancelSkillBtn;
+    public Button CancelSkillBtn;
 
     public List<ButtonGroup> BtnGroup = new List<ButtonGroup>();
 
@@ -16,12 +17,14 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
     private List<BaseSkill> SkillList = new List<BaseSkill>();
 
     public bool isActiveSkill = false;
+    public bool isActiveAttack = false;
 
     public void SetActivePanel(bool isEnable)
     {
         RollDiceBtn.gameObject.SetActive(isEnable);
+        AttackBtn.gameObject.SetActive(isEnable);
         PanelSkills.SetActive(isEnable);
-        CancelSkillBtn.SetActive(!isEnable);
+        CancelSkillBtn.gameObject.SetActive(!isEnable);
     }
 
     public void ActiveCurrentPoringTurn(Poring poring, int index, PrototypeGameMode gameMode)
@@ -32,9 +35,25 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
         RollDiceBtn.onClick.AddListener(() =>
         {
             BtnGroup.ForEach(group => group.BtnObject.gameObject.SetActive(false));    
+            AttackBtn.gameObject.SetActive(false);
+            RollDiceBtn.gameObject.SetActive(false);
             poring.MoveRoll.SetRoll(poring.Property.MoveDices[0].FaceDiceList, index);
             RollDiceBtn.onClick.RemoveAllListeners();
         });
+
+        AttackBtn.onClick.RemoveAllListeners();
+        AttackBtn.onClick.AddListener(() =>
+        {
+            isActiveAttack = true;
+            CameraController.Instance.Show(CameraType.TopDown);
+            gameMode.CheckHasTargetInRange(poring.Property.AttackRange);
+            gameMode.DisplayNodeHeatByAttackRange();
+            StartCoroutine(gameMode.WaitForSelectTarget());
+            SetActivePanel(false);
+            CancelSkillBtn.onClick.RemoveAllListeners();
+            CancelSkillBtn.onClick.AddListener(OnClickCancelAttack);
+        });
+        
         SkillList = poring.Property.SkillList;
         SetSkillsEvent(SkillList, poring);
     }
@@ -75,15 +94,29 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
         gameMode.ParseSelectableNode(skill);
         gameMode.DisplayNodeHeatBySkill(skill);
         StartCoroutine(gameMode.WaitForSelectTarget(skill));
+
+        CancelSkillBtn.onClick.RemoveAllListeners();
+        CancelSkillBtn.onClick.AddListener(OnClickCancelSkill);
     }
 
-    public void OnClickCancel()
+    private void OnClickCancelSkill()
     {
+        CancelSkillBtn.onClick.RemoveAllListeners();
         isActiveSkill = false;
         for (int i = 0; i < SkillList.Count; i++)
         {
             BtnGroup[i].BtnObject.interactable = (SkillList[i].CurrentCD <= 0 && SkillList[i].SkillMode == SkillMode.Activate);
         }
+        
+        CameraController.Instance.Show(CameraType.Default);
+        SetActivePanel(true);
+        gameMode.ResetNodeColor();
+    }
+
+    private void OnClickCancelAttack()
+    {
+        CancelSkillBtn.onClick.RemoveAllListeners();
+        isActiveAttack = false;
         
         CameraController.Instance.Show(CameraType.Default);
         SetActivePanel(true);

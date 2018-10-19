@@ -59,12 +59,11 @@ public class PassiveSkill : BaseSkill
 		}
 	}
 
-	public override OnDefenseSkillResult OnDefense(Poring poring, FaceDice faceDice)
+	public override OnDefenseSkillResult OnDefense(Poring attacker, Poring poring, FaceDice faceDice)
 	{
 		if (faceDice == ActiveOnType && CurrentCD <= 0)
 		{
 			// Debug.LogError($"{poring.name} : {this.name}!!");
-			CurrentCD = TurnCD;
 			float damage = 0;
 			switch (DefenseType)
 			{
@@ -73,6 +72,11 @@ public class PassiveSkill : BaseSkill
 				break;
 				case DefenseTypeResult.Counter:
 					damage = (DamageType == DamageType.PAtk) ? poring.Property.CurrentPAtk : poring.Property.CurrentMAtk;
+					if (attacker.Node != poring.Node)
+					{
+						DefenseType = DefenseTypeResult.None;
+						damage = 0;
+					}
 				break;
 				case DefenseTypeResult.Dodge:
 					damage = 0;
