@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9b6573d30a7dba48a9c5ff820b4bbdc, type: 3}
+  m_Name: CounterAttack
+  m_EditorClassIdentifier: 
+  AnimationStateName: 
+  PrefabEffect: {fileID: 0}
+  SkillIcon: {fileID: 0}
+  MinRangeValue: 0
+  MaxRangeValue: 0
+  SkillMode: 1
+  DamageType: 0
+  DamageMultiple: 0
+  TargetType: 5
+  AOEValue: 0
+  IsIgnoreSelf: 0
+  SkillDuration: 0
+  TurnCD: 3
+  MoveToTarget: 0
+  CurrentCD: 0
+  SkillStatus: 0
+  AttackType: 0
+  DefenseType: 1
+  ActiveOnType: 7

@@ -37,6 +37,52 @@ public enum SkillStatus
 	Ambursh = 64,
 }
 
+public enum AttackTypeResult
+{
+	None,
+	Double,
+	PowerUp,
+}
+
+public struct OnAttackSkillResult
+{	
+	public AttackTypeResult Type;
+	public DamageType DamageType;
+	public int StatusResult;
+	public float DamageResult;
+
+	public OnAttackSkillResult(AttackTypeResult type, DamageType damageType, int statusResult, float damageResult)
+	{
+		Type         = type;
+		DamageType   = damageType;
+		StatusResult = statusResult;
+		DamageResult = damageResult;
+	}
+}
+
+public enum DefenseTypeResult
+{
+	None,
+	Counter,
+	Dodge,
+}
+
+public struct OnDefenseSkillResult
+{
+	public DefenseTypeResult Type;
+	public DamageType DamageType;
+	public int StatusResult;
+	public float DamageResult;
+
+	public OnDefenseSkillResult(DefenseTypeResult type, DamageType damageType, int statusResult, float damageResult)
+	{
+		Type         = type;
+		DamageType   = damageType;
+		StatusResult = statusResult;
+		DamageResult = damageResult;
+	}
+}
+
 
 public class BaseSkill : ScriptableObject 
 {
@@ -60,7 +106,7 @@ public class BaseSkill : ScriptableObject
 
 	[SerializeField] [EnumFlags] public SkillStatus SkillStatus;
 
-	public void Init(BaseSkill baseSkill)
+	public virtual void Init(BaseSkill baseSkill)
 	{
 		this.name          = baseSkill.name;
 		AnimationStateName = baseSkill.AnimationStateName;
@@ -80,33 +126,10 @@ public class BaseSkill : ScriptableObject
 		CurrentCD          = 0;
 	}
 
-	public virtual void OnActivate(Poring poring, Poring targetPoring = null, Node targetNode = null, List<Node> nodeList = null)
-	{
-
-	}
-
-	public virtual void OnAttack()
-	{
-
-	}
-
-	public virtual void OnDefense()
-	{
-
-	}
-
-	public virtual void OnEndTurn()
-	{
-
-	}
-
-	public virtual void OnStartTurn()
-	{
-
-	}
-
-	public virtual void OnReceiveStatus(int skillStatusResult)
-	{
-		// TODO 
-	}
+	public virtual void OnActivate(Poring poring, Poring targetPoring = null, Node targetNode = null, List<Node> nodeList = null){}
+	public virtual OnAttackSkillResult OnAttack(Poring poring, FaceDice faceDice){ return new OnAttackSkillResult(AttackTypeResult.None, DamageType.PAtk, 0, 0); }
+	public virtual OnDefenseSkillResult OnDefense(Poring poring, FaceDice faceDice){ return new OnDefenseSkillResult(DefenseTypeResult.None, DamageType.PAtk, 0, 0); }
+	public virtual void OnEndTurn(){}
+	public virtual void OnStartTurn(){}
+	public virtual void OnReceiveStatus(int skillStatusResult){}
 }

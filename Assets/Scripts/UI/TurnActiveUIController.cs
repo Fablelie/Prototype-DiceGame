@@ -15,7 +15,7 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
 
     private List<BaseSkill> SkillList = new List<BaseSkill>();
 
-    public bool SkillMode = false;
+    public bool isActiveSkill = false;
 
     public void SetActivePanel(bool isEnable)
     {
@@ -55,7 +55,7 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
             group.BtnName.text = skill.name;
             group.BtnObject.gameObject.SetActive(true);
 
-            group.BtnObject.interactable = (skill.CurrentCD <= 0);
+            group.BtnObject.interactable = (skill.CurrentCD <= 0 && skill.SkillMode == SkillMode.Activate);
             
             group.BtnObject.onClick.AddListener(() =>
             {
@@ -70,7 +70,7 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
 
     private void ChangeModeToSelectTarget(BaseSkill skill, Poring poring)
     {
-        SkillMode = true;
+        isActiveSkill = true;
         CameraController.Instance.Show(CameraType.TopDown);
         gameMode.ParseSelectableNode(skill);
         gameMode.DisplayNodeHeatBySkill(skill);
@@ -79,10 +79,10 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
 
     public void OnClickCancel()
     {
-        SkillMode = false;
+        isActiveSkill = false;
         for (int i = 0; i < SkillList.Count; i++)
         {
-            BtnGroup[i].BtnObject.interactable = (SkillList[i].CurrentCD <= 0);
+            BtnGroup[i].BtnObject.interactable = (SkillList[i].CurrentCD <= 0 && SkillList[i].SkillMode == SkillMode.Activate);
         }
         
         CameraController.Instance.Show(CameraType.Default);

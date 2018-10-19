@@ -175,7 +175,8 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         switch (type)
         {
             case DiceType.Move:
-                m_step = m_currentPlayer.Poring.Property.MoveDices[0].GetDiceFace(index);
+                MoveDice moveDice = m_currentPlayer.Poring.Property.MoveDices[0];
+                m_step = moveDice.GetNumberFromDiceFace(moveDice.GetDiceFace(index));
                 // Debug.LogFormat("Roll move number : {0}", number);
                 m_cameraController.Show(CameraType.TopDown);
                 ParseMovableNode(m_step);
@@ -185,13 +186,13 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
                     StartCoroutine(WaitForSelectNode());
             break;
             case DiceType.Offensive:
-                // Debug.LogFormat("Roll offensive number : {0}", number - 1);
-                poring.OffensiveResult += poring.Property.OffensiveDices[0].GetDiceFace(index);
+                OffensiveDice offDice = poring.Property.OffensiveDices[0];
+                poring.OffensiveResult += offDice.GetNumberFromDiceFace(offDice.GetDiceFace(index));
                 poring.OffensiveResultList.Add(index);
             break;
             case DiceType.Deffensive:
-                // Debug.LogFormat("Roll deffensive number : {0}", number- 1);
-                poring.DeffensiveResult += poring.Property.DeffensiveDices[0].GetDiceFace(index);
+                DeffensiveDice defDice = poring.Property.DeffensiveDices[0];
+                poring.DeffensiveResult += defDice.GetNumberFromDiceFace(defDice.GetDiceFace(index));
                 poring.DeffensiveResultList.Add(index);
             break;
         }
@@ -391,7 +392,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
     {
         bool isSelected = false;
         MagicCursor.Instance.gameObject.SetActive(false);
-        while (!isSelected && TurnActiveUIController.Instance.SkillMode)
+        while (!isSelected && TurnActiveUIController.Instance.isActiveSkill)
         {
             yield return null;
             isSelected = OnMouseClickSelectSkillTarget(skill);

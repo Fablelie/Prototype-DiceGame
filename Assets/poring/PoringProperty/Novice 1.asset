@@ -25,6 +25,10 @@ MonoBehaviour:
   GrowupHp: 8
   GrowupPAtk: 5
   GrowupMAtk: 1
+  CurrentRequestExp: 2
+  MaxLevel: 10
+  StartRequestExp: 2
+  MultiplyPerLevel: 2
   MaxPoint: -1
   MoveDices:
   - {fileID: 11400000, guid: af2a03c204481d842903e99ac7a7a142, type: 2}
@@ -32,3 +36,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: fe27273ab82e6824e994c73ca56a6f6d, type: 2}
   OffensiveDices:
   - {fileID: 11400000, guid: db3b6c9f8f439404f814dc2d31c57e05, type: 2}
+  SkillList:
+  - {fileID: 11400000, guid: 58f24c86147386341ae62738487d987a, type: 2}
+  - {fileID: 11400000, guid: 96376bc47ab208f459e48ca2fd03960b, type: 2}
+  - {fileID: 11400000, guid: 0149e08c0be52a842a570dadeb6c8ec7, type: 2}

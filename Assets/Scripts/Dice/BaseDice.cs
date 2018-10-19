@@ -7,9 +7,21 @@ public class BaseDice : ScriptableObject
 	public string DiceName;
 	public List<FaceDice> FaceDiceList;
 
-	public virtual int GetDiceFace(int index)
+	public virtual FaceDice GetDiceFace(int index)
 	{
-		return (int)FaceDiceList[index];
+		return FaceDiceList[index];
+	}
+
+	public virtual int GetNumberFromDiceFace(FaceDice e)
+	{
+		if ((int)e >= (int)FaceDice.Miss && (int)e <= (int)FaceDice.Six)
+		{
+			return (int)e;
+		}
+		else
+		{
+			return 0;
+		}
 	}
 }
 
