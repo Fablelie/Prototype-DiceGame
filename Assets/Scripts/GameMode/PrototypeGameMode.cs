@@ -18,8 +18,14 @@ public class PoringPrototype
 
 public enum EventCode
 {
-    SelectNode = 0,
-    RollEnd = 1,
+    BeginRollMove,
+    SelectNodeMove,
+    SelectNodeSkill,
+    HighlightNodeSkill,
+    SelectNodeAttack,
+    HighlightNodeAttack,
+    RollEnd,
+    OnClickCancel,
 }
 
 public enum eStateGameMode
@@ -93,26 +99,109 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         PhotonNetwork.LocalPlayer.SetCustomProperties(props);
     }
 
+#region OnEvent && On receive event function
+
+    public void PhotonNetworkRaiseEvent(EventCode eventCode, object[] content = null, RaiseEventOptions raiseEventOptions = null)
+    {
+        if (content == null) content = new object[]{};
+        if (raiseEventOptions == null) raiseEventOptions = new RaiseEventOptions{ Receivers = ReceiverGroup.All, };
+        SendOptions sendOptions = new SendOptions{ Reliability = true};
+
+        PhotonNetwork.RaiseEvent((byte)eventCode, content, raiseEventOptions, sendOptions);
+    }
+
     private void OnEvent(EventData photonEvent)
     {
         object[] data = (object[])photonEvent.CustomData;
         switch (photonEvent.Code)
         {
-            case (byte)EventCode.SelectNode:
-                foreach (var node in Nodes)
-                {
-                    if ((int)data[0] == node.nid)
-                    {
-                        ReceiveNodeSelected(node);        
-                        break;
-                    }
-                }
+            // Move
+            case (byte)EventCode.BeginRollMove:
+                BeginRollMove((int)data[0]);
             break;
+            case (byte)EventCode.SelectNodeMove:
+                ReceiveNodeSelected(GetNodeByNodeId((int)data[0]));        
+            break;
+
+            // Attack
+            case (byte)EventCode.SelectNodeAttack:
+                Node node = GetNodeByNodeId((int)data[0]);
+                if (!IsMineTurn())
+                {
+                    node.PointRenderer.SetPropertyBlock(MaterialPreset.GetMaterialPreset(EMaterialPreset.selected));
+                    MagicCursor.Instance.MoveTo(node);
+                }
+                ReceiveNodeAttackTarget(node);
+            break;
+            case (byte)EventCode.HighlightNodeAttack:
+                CheckHasTargetInRange((int)data[0]);
+                DisplayNodeHeatByAttackRange();
+                if (IsMineTurn())
+                    StartCoroutine(WaitForSelectTarget());
+            break;
+
+            // Use skill
+            case (byte)EventCode.SelectNodeSkill:
+                ReceiveNodeSkillSelected(GetNodeByNodeId((int)data[0]), GetSkillOfPoring((string)data[1], (int)data[2]));
+            break;
+            case (byte)EventCode.HighlightNodeSkill:
+                BaseSkill skill = GetSkillOfPoring((string)data[0], (int)data[1]);
+                ParseSelectableNode(skill);
+                DisplayNodeHeatBySkill(skill);
+                if (IsMineTurn())
+                    StartCoroutine(WaitForSelectTarget(skill));
+            break;
+
+            // Roll end
             case (byte)EventCode.RollEnd:
                 Poring poring = m_player[(int)data[2]];
                 OnRollEnd((int)data[0], (DiceType)((int)data[1]), poring);
             break;
+
+            // On click cancel
+            case (byte)EventCode.OnClickCancel:
+                ResetNodeColor();
+            break;
+            
         }
+    }
+
+    private void ReceiveNodeSkillSelected(Node node, BaseSkill skill)
+    {
+        node.PointRenderer.SetPropertyBlock(MaterialPreset.GetMaterialPreset(EMaterialPreset.selected));
+        MagicCursor.Instance.MoveTo(node);
+        switch (skill.TargetType)
+        {
+            case TargetType.Self:
+                if (node.TileProperty.Type != TileType.Sanctuary)
+                {
+                    m_cameraController.Show(CameraType.Default);
+                    ResetNodeColor();
+                    skill.OnActivate(m_currentPlayer.Poring);
+                    isSelectedTargetSkill = true;
+                }
+            break;
+            case TargetType.Another:
+                if (node.steps.Count > 0 && CheckPoringInTargetNode(node) > 0)
+                    
+                    isSelectedTargetSkill = SkillSelectPoringTarget(skill, node);
+            break;
+            case TargetType.Tile:
+                if (node.steps.Count > 0)
+                    isSelectedTargetSkill = SkillSelectTile(skill, node);
+            break;
+        }
+    }
+
+    private void ReceiveNodeAttackTarget(Node node)
+    {
+        List<Poring> porings = node.porings.FindAll(poring => poring != m_currentPlayer.Poring);
+        m_currentPlayer.Poring.Target = porings[Random.Range(0, porings.Count - 1)];
+
+        m_cameraController.Show(CameraType.Default);
+        
+        ResetNodeColor();
+        CurrentGameState = eStateGameMode.Encounter;
     }
 
     private void ReceiveNodeSelected(Node node)
@@ -122,7 +211,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
             // Debug.Log("You selected the " + node.nid);
             // SFX.PlayClip(resource.sound[0]).GetComponent<AudioSource>().time = 0.3f;
             node.PointRenderer.SetPropertyBlock(MaterialPreset.GetMaterialPreset(EMaterialPreset.selected));
-
+            MagicCursor.Instance.MoveTo(node);
             if (node == m_currentPlayer.Poring.Node && CheckPoringInTargetNode(node) > 0 && node.TileProperty.Type != TileType.Sanctuary)
             {
                 List<Poring> porings = node.porings.FindAll(poring => poring != m_currentPlayer.Poring);
@@ -170,7 +259,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         }
     }
 
-    public void OnRollEnd(int index, DiceType type, Poring poring)
+    private void OnRollEnd(int index, DiceType type, Poring poring)
     {
         switch (type)
         {
@@ -182,7 +271,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
                 ParseMovableNode(m_step);
                 DisplayNodeHeat();
                 isSelectedNode = false;
-                if (PhotonNetwork.LocalPlayer.GetPlayerNumber() == m_currentPlayer.Index)
+                if (IsMineTurn())
                     StartCoroutine(WaitForSelectNode());
             break;
             case DiceType.Offensive:
@@ -197,6 +286,13 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
             break;
         }
     }
+    
+    private void BeginRollMove(int poringIndex)
+    {
+        m_player[poringIndex].MoveRoll.SetRoll(m_player[poringIndex].Property.MoveDices[0].FaceDiceList, poringIndex);
+    }
+
+    #endregion
 
     #region Move Process (find node, select node, change node color)
 
@@ -216,11 +312,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
                     Node node = hit.transform.parent.GetComponent<Node>();
                     if(node != null)
                     {
-                        object[] content = new object[] { node.nid };
-                        RaiseEventOptions raiseEventOptions = new RaiseEventOptions{ Receivers = ReceiverGroup.All, };
-                        SendOptions sendOptions = new SendOptions{ Reliability = true};
-
-                        PhotonNetwork.RaiseEvent((byte)EventCode.SelectNode, content, raiseEventOptions, sendOptions);
+                        PhotonNetworkRaiseEvent(EventCode.SelectNodeMove, new object[] { node.nid });
                     }
                 }
             }
@@ -388,19 +480,20 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
 
     #region Skill process (find target, select target etc.)
 
+    bool isSelectedTargetSkill = false;
     public IEnumerator WaitForSelectTarget(BaseSkill skill)
     {
-        bool isSelected = false;
+        isSelectedTargetSkill = false;
         MagicCursor.Instance.gameObject.SetActive(false);
-        while (!isSelected && TurnActiveUIController.Instance.isActiveSkill)
+        while (!isSelectedTargetSkill && TurnActiveUIController.Instance.isActiveSkill)
         {
             yield return null;
-            isSelected = OnMouseClickSelectSkillTarget(skill);
+            OnMouseClickSelectSkillTarget(skill);
         }
         TurnActiveUIController.Instance.CancelSkillBtn.gameObject.SetActive(false);
     }
 
-    private bool OnMouseClickSelectSkillTarget(BaseSkill skill)
+    private void OnMouseClickSelectSkillTarget(BaseSkill skill)
     {
         if (Input.GetMouseButtonDown(0))
         { 
@@ -411,33 +504,10 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
                 Node node = hit.transform.parent.GetComponent<Node>();
                 if (node) 
                 {
-                    node.PointRenderer.SetPropertyBlock(MaterialPreset.GetMaterialPreset(EMaterialPreset.selected));
-                    MagicCursor.Instance.MoveTo(node);
-                    switch (skill.TargetType)
-                    {
-                        case TargetType.Self:
-                            if (node.TileProperty.Type != TileType.Sanctuary)
-                            {
-                                m_cameraController.Show(CameraType.Default);
-                                ResetNodeColor();
-                                skill.OnActivate(m_currentPlayer.Poring);
-                                return true;
-                            }
-                        break;
-                        case TargetType.Another:
-                            if (node.steps.Count > 0 && CheckPoringInTargetNode(node) > 0)
-                                return SkillSelectPoringTarget(skill, node);
-                        break;
-                        case TargetType.Tile:
-                            if (node.steps.Count > 0)
-                                return SkillSelectTile(skill, node);
-                        break;
-                    }
+                    PhotonNetworkRaiseEvent(EventCode.SelectNodeSkill, new object[]{ node.nid, skill.name, m_currentPlayer.Index});
                 }
             }
-            return false;
         }
-        else return false;
     }
 
     private bool SkillSelectPoringTarget(BaseSkill skill, Node node)
@@ -585,12 +655,12 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         while (!isSelected && TurnActiveUIController.Instance.isActiveAttack)
         {
             yield return null;
-            isSelected = OnMouseClickSelectSkillTarget();
+            isSelected = OnMouseClickSelectAttackTarget();
         }
         TurnActiveUIController.Instance.CancelSkillBtn.gameObject.SetActive(false);
     }
 
-    private bool OnMouseClickSelectSkillTarget()
+    private bool OnMouseClickSelectAttackTarget()
     {
         if (Input.GetMouseButtonDown(0))
         { 
@@ -605,13 +675,8 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
                     MagicCursor.Instance.MoveTo(node);
                     if (CheckPoringInTargetNode(node) > 0 && node.TileProperty.Type != TileType.Sanctuary && node.steps.Count > 0)
                     {
-                        List<Poring> porings = node.porings.FindAll(poring => poring != m_currentPlayer.Poring);
-                        m_currentPlayer.Poring.Target = porings[Random.Range(0, porings.Count - 1)];
-
-                        m_cameraController.Show(CameraType.Default);
+                        PhotonNetworkRaiseEvent(EventCode.SelectNodeAttack, new object[]{ node.nid});
                         
-                        ResetNodeColor();
-                        CurrentGameState = eStateGameMode.Encounter;
                         return true;
                     }
                 }
@@ -846,5 +911,31 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
             if (m_player[i] == poring) return i;
 
         return -1;
+    }
+
+    public bool IsMineTurn()
+    {
+        return PhotonNetwork.LocalPlayer.GetPlayerNumber() == m_currentPlayer.Index;
+    }
+
+    public Node GetNodeByNodeId(int nodeId)
+    {
+        foreach (var node in Nodes)
+            if (nodeId == node.nid)
+                return node;
+
+        return null;    
+    }
+
+    public BaseSkill GetSkillOfPoring(string skillName, int poringIndex)
+    {
+        foreach (BaseSkill skill in m_player[poringIndex].Property.SkillList)
+        {
+            if (skill.name == skillName)
+            {
+                return skill;
+            }
+        }
+        return null;
     }
 }

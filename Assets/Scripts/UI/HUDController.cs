@@ -28,7 +28,7 @@ public class HUDController : InstanceObject<HUDController>
 		
 		m_gameMode.ObserveEveryValueChanged(g => g.IndexCurrentPlayer, FrameCountType.FixedUpdate).Subscribe(i =>
 		{
-			string s = (PlayerNumberingExtensions.GetPlayerNumber(PhotonNetwork.LocalPlayer) == i) ? "You turn!!" : "";
+			string s = (PhotonNetwork.LocalPlayer.GetPlayerNumber() == i) ? "You turn!!" : "Wait...";
 			Turn.text = $"Round : {m_gameMode.Turn} \n<color=#FF0000>{s}</color>";
 		});
 	}

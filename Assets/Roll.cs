@@ -94,11 +94,7 @@ public class Roll : MonoBehaviour {
 		//print("NUMBER IS " + number);
 		if (_poringIndex == PhotonNetwork.LocalPlayer.GetPlayerNumber())
 		{
-			object[] content = new object[] { index, (int)Type, _poringIndex };
-			RaiseEventOptions raiseEventOptions = new RaiseEventOptions{ Receivers = ReceiverGroup.All, };
-			SendOptions sendOptions = new SendOptions{ Reliability = true};
-
-			PhotonNetwork.RaiseEvent((byte)EventCode.RollEnd, content, raiseEventOptions, sendOptions);
+			PrototypeGameMode.Instance.PhotonNetworkRaiseEvent(EventCode.RollEnd, new object[] { index, (int)Type, _poringIndex });
 		}
 		
 		// PrototypeGameMode.Instance.OnRollEnd(number, Type);

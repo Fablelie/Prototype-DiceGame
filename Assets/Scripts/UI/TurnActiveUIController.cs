@@ -1,6 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using ExitGames.Client.Photon;
+using Photon.Pun;
+using Photon.Pun.UtilityScripts;
+using Photon.Realtime;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class TurnActiveUIController : InstanceObject<TurnActiveUIController> 
@@ -9,6 +15,7 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
     public Button AttackBtn;
     public GameObject PanelSkills;
     public Button CancelSkillBtn;
+    public Button ChangeViewBtn;
 
     public List<ButtonGroup> BtnGroup = new List<ButtonGroup>();
 
@@ -25,40 +32,82 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
         AttackBtn.gameObject.SetActive(isEnable);
         PanelSkills.SetActive(isEnable);
         CancelSkillBtn.gameObject.SetActive(!isEnable);
+        ChangeViewBtn.gameObject.SetActive(false);
+    }
+
+    public void NotMyTurn()
+    {
+        RollDiceBtn.gameObject.SetActive(false);
+        AttackBtn.gameObject.SetActive(false);
+        PanelSkills.SetActive(false);
+        CancelSkillBtn.gameObject.SetActive(false);
+        ChangeViewBtn.gameObject.SetActive(true);
     }
 
     public void ActiveCurrentPoringTurn(Poring poring, int index, PrototypeGameMode gameMode)
     {
-        SetActivePanel(true);
         if (this.gameMode == null) this.gameMode = gameMode;
+
+        if(gameMode.IndexCurrentPlayer == PhotonNetwork.LocalPlayer.GetPlayerNumber())
+        {
+            SetActivePanel(true);
+            SkillList = poring.Property.SkillList;
+            SetEventToDiceRollBtn(poring, index);
+            SetEventToAttackBtn(poring);
+            SetSkillsEvent(SkillList, poring, index);
+        }
+        else
+        {
+            NotMyTurn();
+            SetEventToChangeViewBtn(CameraType.Default);
+        }
+    }
+
+    private void SetEventToChangeViewBtn(CameraType cameraType)
+    {
+        ChangeViewBtn.onClick.RemoveAllListeners();
+        ChangeViewBtn.onClick.AddListener(() =>
+        {
+            CameraController.Instance.Show(cameraType);
+            SetEventToChangeViewBtn((cameraType == CameraType.Default) ? CameraType.TopDown : CameraType.Default);
+        });
+    }
+
+    private void SetEventToAttackBtn(Poring poring)
+    {
+        AttackBtn.onClick.RemoveAllListeners();
+        AttackBtn.onClick.AddListener(() =>
+        {
+            isActiveAttack = true;
+            CameraController.Instance.Show(CameraType.TopDown);
+
+            gameMode.PhotonNetworkRaiseEvent(EventCode.HighlightNodeAttack, new object[] { poring.Property.AttackRange});
+
+            SetActivePanel(false);
+            CancelSkillBtn.onClick.RemoveAllListeners();
+            CancelSkillBtn.onClick.AddListener(OnClickCancelAttack);
+        });
+    }
+
+    private void SetEventToDiceRollBtn(Poring poring, int index)
+    {
         RollDiceBtn.onClick.RemoveAllListeners();
         RollDiceBtn.onClick.AddListener(() =>
         {
             BtnGroup.ForEach(group => group.BtnObject.gameObject.SetActive(false));    
             AttackBtn.gameObject.SetActive(false);
             RollDiceBtn.gameObject.SetActive(false);
-            poring.MoveRoll.SetRoll(poring.Property.MoveDices[0].FaceDiceList, index);
+
+            gameMode.PhotonNetworkRaiseEvent(EventCode.BeginRollMove, new object[] { index });
+
+            // poring.MoveRoll.SetRoll(poring.Property.MoveDices[0].FaceDiceList, index);
             RollDiceBtn.onClick.RemoveAllListeners();
         });
-
-        AttackBtn.onClick.RemoveAllListeners();
-        AttackBtn.onClick.AddListener(() =>
-        {
-            isActiveAttack = true;
-            CameraController.Instance.Show(CameraType.TopDown);
-            gameMode.CheckHasTargetInRange(poring.Property.AttackRange);
-            gameMode.DisplayNodeHeatByAttackRange();
-            StartCoroutine(gameMode.WaitForSelectTarget());
-            SetActivePanel(false);
-            CancelSkillBtn.onClick.RemoveAllListeners();
-            CancelSkillBtn.onClick.AddListener(OnClickCancelAttack);
-        });
-        
-        SkillList = poring.Property.SkillList;
-        SetSkillsEvent(SkillList, poring);
     }
 
-    private void SetSkillsEvent(List<BaseSkill> skillList, Poring poring)
+    
+
+    private void SetSkillsEvent(List<BaseSkill> skillList, Poring poring, int index)
     {
         BtnGroup.ForEach(group => {
             group.BtnObject.onClick.RemoveAllListeners();
@@ -82,18 +131,20 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
                     g.BtnObject.interactable = false;
                 });
                 SetActivePanel(false);
-                ChangeModeToSelectTarget(skill, poring);
+                ChangeModeToSelectTarget(skill, poring, index);
             });
         }
     }
 
-    private void ChangeModeToSelectTarget(BaseSkill skill, Poring poring)
+    private void ChangeModeToSelectTarget(BaseSkill skill, Poring poring, int index)
     {
         isActiveSkill = true;
         CameraController.Instance.Show(CameraType.TopDown);
-        gameMode.ParseSelectableNode(skill);
-        gameMode.DisplayNodeHeatBySkill(skill);
-        StartCoroutine(gameMode.WaitForSelectTarget(skill));
+
+        gameMode.PhotonNetworkRaiseEvent(EventCode.HighlightNodeSkill, new object[]{ skill.name, index});
+        // gameMode.ParseSelectableNode(skill);
+        // gameMode.DisplayNodeHeatBySkill(skill);
+        // StartCoroutine(gameMode.WaitForSelectTarget(skill));
 
         CancelSkillBtn.onClick.RemoveAllListeners();
         CancelSkillBtn.onClick.AddListener(OnClickCancelSkill);
@@ -110,7 +161,8 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
         
         CameraController.Instance.Show(CameraType.Default);
         SetActivePanel(true);
-        gameMode.ResetNodeColor();
+        gameMode.PhotonNetworkRaiseEvent(EventCode.OnClickCancel);
+        // gameMode.ResetNodeColor();
     }
 
     private void OnClickCancelAttack()
@@ -120,7 +172,8 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
         
         CameraController.Instance.Show(CameraType.Default);
         SetActivePanel(true);
-        gameMode.ResetNodeColor();
+        gameMode.PhotonNetworkRaiseEvent(EventCode.OnClickCancel);
+        // gameMode.ResetNodeColor();
     }
 
     [System.Serializable]
