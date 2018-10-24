@@ -92,6 +92,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
     void Awake()
     {
         Instance = this;
+        Application.targetFrameRate = 120;
     }
 
     public override void OnEnable()
@@ -513,6 +514,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
             yield return null;
             OnMouseClickSelectSkillTarget(skill);
         }
+        TurnActiveUIController.Instance.SetActivePanel(false);
         TurnActiveUIController.Instance.CancelSkillBtn.gameObject.SetActive(false);
     }
 
@@ -680,6 +682,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
             yield return null;
             isSelected = OnMouseClickSelectAttackTarget();
         }
+        TurnActiveUIController.Instance.SetActivePanel(false);
         TurnActiveUIController.Instance.CancelSkillBtn.gameObject.SetActive(false);
     }
 

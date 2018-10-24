@@ -35,7 +35,7 @@ public class PoringBehavior : MonoBehaviour
 			// float step = m_moveSpeed * Time.deltaTime;
 			// // Debug.Log("MoveStep >>>>>>>>>>>>>>>>> " + step);
 			// transform.position = Vector3.MoveTowards(transform.position, m_targetPosition, step);
-			yield return null;
+			yield return new WaitForEndOfFrame();
 		}
 	}
 
