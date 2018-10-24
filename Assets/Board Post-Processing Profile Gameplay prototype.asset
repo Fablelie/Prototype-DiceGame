@@ -29,7 +29,7 @@ MonoBehaviour:
     m_Settings:
       excludeSkybox: 1
   antialiasing:
-    m_Enabled: 1
+    m_Enabled: 0
     m_Settings:
       method: 0
       fxaaSettings:
@@ -40,7 +40,7 @@ MonoBehaviour:
         stationaryBlending: 0.95
         motionBlending: 0.85
   ambientOcclusion:
-    m_Enabled: 1
+    m_Enabled: 0
     m_Settings:
       intensity: 1.14
       radius: 0.3
@@ -69,7 +69,7 @@ MonoBehaviour:
       screenEdgeMask:
         intensity: 0.03
   depthOfField:
-    m_Enabled: 1
+    m_Enabled: 0
     m_Settings:
       focusDistance: 11.87
       aperture: 0.1
@@ -85,31 +85,31 @@ MonoBehaviour:
   eyeAdaptation:
     m_Enabled: 0
     m_Settings:
-      lowPercent: 1
-      highPercent: 50.999992
+      lowPercent: 62.27433
+      highPercent: 62.27433
       minLuminance: -240.47
       maxLuminance: 131.71
       keyValue: 0.25
       dynamicKeyValue: 0
-      adaptationType: 1
+      adaptationType: 0
       speedUp: 2
       speedDown: 1
       logMin: -16
-      logMax: 16
+      logMax: 1
   bloom:
     m_Enabled: 0
     m_Settings:
       bloom:
-        intensity: 0.2
-        threshold: 1.1
-        softKnee: 0.137
+        intensity: 1
+        threshold: 1.4
+        softKnee: 0.02
         radius: 1
         antiFlicker: 0
       lensDirt:
         texture: {fileID: 0}
-        intensity: 3
+        intensity: 0.49
   colorGrading:
-    m_Enabled: 0
+    m_Enabled: 1
     m_Settings:
       tonemapping:
         tonemapper: 0
@@ -124,11 +124,11 @@ MonoBehaviour:
         temperature: 0
         tint: 13
         hueShift: 0
-        saturation: 1.1
-        contrast: 1.05
+        saturation: 1.15
+        contrast: 1
       channelMixer:
         red: {x: 1, y: 0, z: 0}
-        green: {x: 0, y: 1.05, z: 0}
+        green: {x: 0, y: 1.25, z: 0}
         blue: {x: 0, y: 0, z: 1}
         currentEditingChannel: 1
       colorWheels:
@@ -322,12 +322,12 @@ MonoBehaviour:
       mode: 0
       color: {r: 0.6397059, g: 0.6397059, b: 0.6397059, a: 1}
       center: {x: 0.5, y: 0.5}
-      intensity: 0.45
+      intensity: 0.33
       smoothness: 0.3
       roundness: 1
       mask: {fileID: 0}
       opacity: 1
-      rounded: 0
+      rounded: 1
   dithering:
     m_Enabled: 0
   monitors:

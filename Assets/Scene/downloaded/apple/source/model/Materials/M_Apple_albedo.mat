@@ -4,7 +4,7 @@
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: M_Apple_albedo
   m_Shader: {fileID: 4800000, guid: 54590c8a1e62b2a498f58af4d9cdc1f5, type: 3}

@@ -74,7 +74,7 @@ public class Roll : MonoBehaviour {
 			arrow.transform.Rotate(new Vector3(0, 0, rollSpeed));
 			//print(arrow.transform.eulerAngles.z);
 			foreach (GameObject text in _texts) text.GetComponent<Text>().fontSize = 24;
-			_texts[RadiusToNumber()-1].GetComponent<Text>().fontSize = 48;
+			_texts[RadiusToNumber()-1].GetComponent<Text>().fontSize = 36;
 		}
 
 		// if (Input.GetKeyDown(KeyCode.R)) {

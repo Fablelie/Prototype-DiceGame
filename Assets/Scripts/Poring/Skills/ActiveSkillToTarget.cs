@@ -51,8 +51,8 @@ public class ActiveSkillToTarget : BaseSkill
             poring.Animator.Play(AnimationStateName);
             yield return new WaitForSeconds(2f);
             
-            if (PrefabEffect != null)
-                GameObject.Instantiate(PrefabEffect, targetPoring.transform.position, Quaternion.identity);
+            if (EffectOnSelf != null)
+                InstantiateParticleEffect.CreateFx(EffectOnSelf, targetPoring.transform.position);
 
             AddDamageToTarget(poring, targetPoring, damage);
         }
@@ -61,16 +61,24 @@ public class ActiveSkillToTarget : BaseSkill
             // thunder bolt
             poring.transform.LookAt(targetNode.gameObject.transform);
             poring.Animator.Play(AnimationStateName);
+            if (EffectOnSelf != null)
+                InstantiateParticleEffect.CreateFx(EffectOnSelf, poring.transform.position);
             yield return new WaitForSeconds(2f);
+
+            if (EffectOnTarget != null)
+            {   
+                InstantiateParticleEffect.CreateFx(EffectOnTarget, targetNode.transform.position);
+            }
+
             AOESkillActivate(poring, targetNode, AOEValue, damage);
         }
         else
         {
             // Magnum Break
             poring.Animator.Play(AnimationStateName);
-            yield return new WaitForSeconds(2f);
-            if (PrefabEffect != null)
-                GameObject.Instantiate(PrefabEffect, targetPoring.transform.position, Quaternion.identity);
+            yield return new WaitForSeconds(2.5f);
+            if (EffectOnSelf != null)
+                InstantiateParticleEffect.CreateFx(EffectOnSelf, poring.transform.position);
             AOESkillActivate(poring, poring.Node, AOEValue, damage);
         }
 
@@ -102,20 +110,27 @@ public class ActiveSkillToTarget : BaseSkill
 
     private void AddDamageToTargetNode(Poring poring, float damage, Node node)
     {
-        node.porings.ForEach(target =>
+        for (int i = 0; i < node.porings.Count; i++)
         {
+            var target = node.porings[i];
             if(target == poring && IsIgnoreSelf)
             {
 
             }
             else
                 AddDamageToTarget(poring, target, damage);
-        });
+        }
     }
 
     private void AddDamageToTarget(Poring poring, Poring targetPoring, float damage)
     {
         targetPoring.Animator.Play("take_damage");
+        
+        if(EffectOnHit != null)
+        {
+            InstantiateParticleEffect.CreateFx(EffectOnHit, targetPoring.transform.localPosition);
+        }
+
         targetPoring.Property.CurrentHp -= damage;
 
         targetPoring.OnReceiveStatus((int)SkillStatus);

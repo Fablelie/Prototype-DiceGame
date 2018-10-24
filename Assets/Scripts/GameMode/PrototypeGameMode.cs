@@ -14,6 +14,29 @@ public class PoringPrototype
     public const string PLAYER_LIVES = "PlayerLives";
     public const string PLAYER_READY = "IsPlayerReady";
     public const string PLAYER_LOADED_LEVEL = "PlayerLoadedLevel";
+    public const string PLAYER_CHERACTER_INDEX = "BaseCharacterIndex";
+}
+
+public static class BaseCharacterIndexExtensions
+{
+    public static void SetBaseCharacterIndex(this Player player, int index)
+    {
+        Hashtable characterIndex = new Hashtable();  // using PUN's implementation of Hashtable
+        characterIndex[PoringPrototype.PLAYER_CHERACTER_INDEX] = index;
+
+        player.SetCustomProperties(characterIndex);  // this locally sets the score and will sync it in-game asap.
+    }
+
+    public static int GetBaseCharacterIndex(this Player player)
+    {
+        object characterIndex;
+        if (player.CustomProperties.TryGetValue(PoringPrototype.PLAYER_CHERACTER_INDEX, out characterIndex))
+        {
+            return (int)characterIndex;
+        }
+
+        return 0;
+    }
 }
 
 public enum EventCode
@@ -175,7 +198,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
             case TargetType.Self:
                 if (node.TileProperty.Type != TileType.Sanctuary)
                 {
-                    m_cameraController.Show(CameraType.Default);
+                    m_cameraController.Show(CameraType.Action);
                     ResetNodeColor();
                     skill.OnActivate(m_currentPlayer.Poring);
                     isSelectedTargetSkill = true;
@@ -198,7 +221,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         List<Poring> porings = node.porings.FindAll(poring => poring != m_currentPlayer.Poring);
         m_currentPlayer.Poring.Target = porings[Random.Range(0, porings.Count - 1)];
 
-        m_cameraController.Show(CameraType.Default);
+        m_cameraController.Show(CameraType.Action);
         
         ResetNodeColor();
         CurrentGameState = eStateGameMode.Encounter;
@@ -217,7 +240,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
                 List<Poring> porings = node.porings.FindAll(poring => poring != m_currentPlayer.Poring);
                 m_currentPlayer.Poring.Target = porings[Random.Range(0, porings.Count - 1)];
 
-                m_cameraController.Show(CameraType.Default);
+                m_cameraController.Show(CameraType.Action);
                 isSelectedNode = true;
                 ResetNodeColor();
                 CurrentGameState = eStateGameMode.Encounter;
@@ -252,7 +275,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
                 // print(GetNodeString(RouteList[indexRoute]));
                 m_currentPlayer.Poring.Behavior.SetupJumpToNodeTarget(RouteList[indexRoute]);
 
-                m_cameraController.Show(CameraType.Default);
+                m_cameraController.Show(CameraType.Action);
                 isSelectedNode = true;
                 ResetNodeColor();
             }
@@ -512,7 +535,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
 
     private bool SkillSelectPoringTarget(BaseSkill skill, Node node)
     {
-        m_cameraController.Show(CameraType.Default);
+        m_cameraController.Show(CameraType.Action);
         ResetNodeColor();
 
         if (skill.MoveToTarget)
@@ -541,7 +564,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
 
     private bool SkillSelectTile(BaseSkill skill, Node node)
     {
-        m_cameraController.Show(CameraType.Default);
+        m_cameraController.Show(CameraType.Action);
         ResetNodeColor();
 
         if (skill.MoveToTarget)
@@ -733,7 +756,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         if(m_currentPlayer.Poring == null) return;
         
         m_cameraController.SetTarget(m_currentPlayer.Poring);
-
+        m_cameraController.Show(CameraType.Default);
         //TODO enable UI Roll/another action.
         CurrentGameState = eStateGameMode.ActiveTurn;
     }
@@ -833,18 +856,13 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
     {
         foreach (var player in PhotonNetwork.PlayerList)
         {
-            Poring poring = GameObject.Instantiate(m_propertyStarter[0].Prefab, StartNode.transform.position, Quaternion.identity).GetComponent<Poring>();
+            int baseCharacterIndex = BaseCharacterIndexExtensions.GetBaseCharacterIndex(player);
+            Poring poring = GameObject.Instantiate(m_propertyStarter[baseCharacterIndex].Prefab, StartNode.transform.position, Quaternion.identity).GetComponent<Poring>();
             m_player.Add(poring);
             StartNode.AddPoring(poring);
-            poring.Init(m_propertyStarter[0]);
+            poring.Init(m_propertyStarter[baseCharacterIndex]);
         }
-        // foreach (var item in m_propertyStarter)
-        // {
-        //     Poring poring = GameObject.Instantiate(item.Prefab, StartNode.transform.position, Quaternion.identity).GetComponent<Poring>();
-        //     m_player.Add(poring);
-        //     StartNode.AddPoring(poring);
-        //     poring.Init(item);
-        // }
+
         SetCurrentPlayer(m_player[0]);
         m_currentPlayer.Index = IndexCurrentPlayer = 0;
     }

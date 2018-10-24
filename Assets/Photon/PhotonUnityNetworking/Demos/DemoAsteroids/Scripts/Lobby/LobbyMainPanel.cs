@@ -226,6 +226,11 @@ namespace Photon.Pun.Demo.Asteroids
             PhotonNetwork.LeaveRoom();
         }
 
+        public void OnClickCharacterToggle(int characterIndex)
+        {
+            PhotonNetwork.LocalPlayer.BaseCharacterIndex = characterIndex;
+        }
+
         public void OnLoginButtonClicked()
         {
             string playerName = PlayerNameInput.text;

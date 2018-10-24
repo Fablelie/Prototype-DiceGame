@@ -91,6 +91,30 @@ namespace Photon.Realtime
             }
         }
 
+        private int baseCharacterIndex = 0;
+
+        public int BaseCharacterIndex
+        {
+            get
+            {
+                return this.baseCharacterIndex;
+            }
+            set
+            {
+                this.baseCharacterIndex = value;
+
+                // update a room, if we changed our nickName (locally, while being in a room)
+                if (this.IsLocal && this.RoomReference != null)
+                {
+                    Hashtable props = new Hashtable
+                    {
+                        {"BaseCharacterIndex", this.baseCharacterIndex}
+                    };
+                    this.SetCustomProperties(props);
+                }
+            }
+        }
+
         /// <summary>UserId of the player, available when the room got created with RoomOptions.PublishUserId = true.</summary>
         /// <remarks>Useful for PhotonNetwork.FindFriends and blocking slots in a room for expected players (e.g. in PhotonNetwork.CreateRoom).</remarks>
         public string UserId { get; internal set; }

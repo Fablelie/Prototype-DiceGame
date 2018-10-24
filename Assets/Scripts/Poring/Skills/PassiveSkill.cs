@@ -44,7 +44,9 @@ public class PassiveSkill : BaseSkill
 				Type = AttackType,
 				DamageType = DamageType,
 				StatusResult = (int)SkillStatus,
-				DamageResult = damage
+				DamageResult = damage,
+				EffectOnSelf = EffectOnSelf,
+				EffectOnTarget = EffectOnHit,
 			};
 		}
 		else 
@@ -88,7 +90,9 @@ public class PassiveSkill : BaseSkill
 				Type = DefenseType,
 				DamageType = DamageType,
 				StatusResult = (int)SkillStatus,
-				DamageResult = damage
+				DamageResult = damage,
+				EffectOnSelf = EffectOnSelf,
+				EffectOnTarget = EffectOnHit,
 			};
 		}
 		else 

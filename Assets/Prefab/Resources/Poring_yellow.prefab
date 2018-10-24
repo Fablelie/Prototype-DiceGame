@@ -450,6 +450,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Poring: {fileID: 114994889984757446}
+  m_moveSpeed: 0.3
+  m_animationSpeed: 1.5
   hasAttack: 0
 --- !u!114 &114994889984757446
 MonoBehaviour:
@@ -473,6 +475,9 @@ MonoBehaviour:
   DeffensiveResultList: 
   OffensiveResult: 0
   DeffensiveResult: 0
+  MoveRoll: {fileID: 0}
+  OffensiveRoll: {fileID: 0}
+  DeffensiveRoll: {fileID: 0}
 --- !u!137 &137871392449303748
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

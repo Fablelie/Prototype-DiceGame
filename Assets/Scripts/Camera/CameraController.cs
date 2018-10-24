@@ -6,6 +6,7 @@ public enum CameraType {
 
 	Default,
 	TopDown,
+	Action,
 }
 
 [System.Serializable]
@@ -46,6 +47,7 @@ public class CameraController : InstanceObject<CameraController> {
 	// Update is called once per frame
 	void FixedUpdate () {
 		switch (CurrentType) {
+			case CameraType.Action:
 			case CameraType.Default:
 				if (Target == null) return;
 				// Move the rig towards target position.

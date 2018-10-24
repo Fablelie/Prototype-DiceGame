@@ -7,7 +7,8 @@ public class PoringBehavior : MonoBehaviour
 {
 	public Poring Poring;
 	private PrototypeGameMode m_gameMode;
-	private float m_moveSpeed = 1;
+	[SerializeField] private float m_moveSpeed = 0.4f;
+	[SerializeField] private float m_animationSpeed = 1;
 	private Vector3 m_rightForward = new Vector3(1, 0, 1);
 	private Vector3 m_targetPosition;
 	private bool m_isMove = false;
@@ -23,16 +24,18 @@ public class PoringBehavior : MonoBehaviour
 		transform.LookAt(pos);
 	}
 
-	private IEnumerator MoveStep()
+	private IEnumerator MoveStep(Vector3 startPosition, Vector3 target)
 	{
+		float t = 0;
 		m_isMove = true;
 		while (m_isMove)
 		{
-			
-			float step = m_moveSpeed * m_moveSpeed * Time.deltaTime;
-			// Debug.Log("MoveStep >>>>>>>>>>>>>>>>> " + step);
-			transform.position = Vector3.MoveTowards(transform.position, m_targetPosition, step);
-			yield return new WaitForEndOfFrame();
+			t += Time.deltaTime/m_moveSpeed;
+			transform.position = Vector3.Lerp(startPosition, target, t);
+			// float step = m_moveSpeed * Time.deltaTime;
+			// // Debug.Log("MoveStep >>>>>>>>>>>>>>>>> " + step);
+			// transform.position = Vector3.MoveTowards(transform.position, m_targetPosition, step);
+			yield return null;
 		}
 	}
 
@@ -46,7 +49,7 @@ public class PoringBehavior : MonoBehaviour
 		StartCoroutine(JumpTo(nodeList, callbackForSkillMove));
 	}
 
-    private WaitForSeconds wait = new WaitForSeconds(0.1f);
+    private WaitForSeconds wait = new WaitForSeconds(0.3f);
     private IEnumerator JumpTo(List<Node> nodeList, Action callbackForSkillMove = null)
 	{
         foreach (var node in nodeList)
@@ -108,6 +111,12 @@ public class PoringBehavior : MonoBehaviour
 				yield return waitSecond;
 
 				Poring.Property.CurrentHp -= defenderDiceResult.DamageResult;
+				
+				if(defenderDiceResult.EffectOnTarget != null)
+				{
+					InstantiateParticleEffect.CreateFx(defenderDiceResult.EffectOnTarget, Poring.transform.localPosition);
+				}
+
 				if (Poring.Property.CurrentHp > 0)
 				{
 					Poring.Animator.Play("take_damage");
@@ -165,6 +174,10 @@ public class PoringBehavior : MonoBehaviour
 		Poring.Animator.Play("Skill");
 		yield return waitSecond;
 		Poring.Target.Animator.Play((damageResult == 0) ? "Dodge" : (hpResult <= 0) ? "die" : "take_damage");
+		if ((damageResult != 0) && Poring.Property.NormalAttackEffect != null)
+		{
+			InstantiateParticleEffect.CreateFx(Poring.Property.NormalAttackEffect, Poring.Target.transform.position);
+		}
 		yield return waitSecond;
 
 		Poring.Target.Property.CurrentHp = hpResult;
@@ -288,12 +301,14 @@ public class PoringBehavior : MonoBehaviour
     public void CallbackStartMove()
     {
         // Debug.LogError("CallbackStartMove");
-        m_moveSpeed = Vector3.Distance(Vector3.Scale(transform.localPosition, m_rightForward), Vector3.Scale(m_targetPosition, m_rightForward));
-        m_moveSpeed *= 1f; // moveSpeed with animation "Jump"
+        // m_moveSpeed = Vector3.Distance(Vector3.Scale(transform.localPosition, m_rightForward), Vector3.Scale(m_targetPosition, m_rightForward));
+        // m_moveSpeed *= 1f; // moveSpeed with animation "Jump"
+		// m_moveSpeed = Vector3.Distance(transform.localPosition, m_targetPosition);
+		// m_moveSpeed = m_moveSpeed / 3;
 
-        Poring.Animator.speed = m_moveSpeed;
+        Poring.Animator.speed = m_animationSpeed;
 
-        StartCoroutine(MoveStep());
+        StartCoroutine(MoveStep(transform.position, m_targetPosition));
     }
 
     // Call from animation event.

@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e47813ad9534fd74ba78c98184527ba0, type: 3}
   m_Name: Archer
   m_EditorClassIdentifier: 
-  Prefab: {fileID: 1321350067973006, guid: a89272e113ae60f4ca0d06e05f2945cf, type: 2}
+  Prefab: {fileID: 1545874324687066, guid: 2260d55f76f82d649b65c2e39b5dc4f7, type: 2}
   BaseHp: 30
   CurrentMaxHp: 0
   CurrentHp: 0
@@ -37,4 +37,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: fe27273ab82e6824e994c73ca56a6f6d, type: 2}
   OffensiveDices:
   - {fileID: 11400000, guid: db3b6c9f8f439404f814dc2d31c57e05, type: 2}
-  SkillList: []
+  SkillList:
+  - {fileID: 11400000, guid: 40c439710961828468bdd4396d537c05, type: 2}
+  NormalAttackEffect: {fileID: 100004, guid: f95ff734540a0d749be6571b6cb5b37f, type: 2}

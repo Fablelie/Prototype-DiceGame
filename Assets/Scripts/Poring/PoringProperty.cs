@@ -89,6 +89,9 @@ public class PoringProperty : ScriptableObject {
 
 	public List<BaseSkill> SkillList = new List<BaseSkill>();
 
+	[Header("NormalAttackEffect!!")]
+	public GameObject NormalAttackEffect;
+
     public void Init(PoringProperty baseProperty)
     {
         BaseHp      	= baseProperty.BaseHp;
@@ -125,6 +128,8 @@ public class PoringProperty : ScriptableObject {
 			skill.Init(baseSkill);
 			SkillList.Add(skill);
 		});
+
+		NormalAttackEffect = baseProperty.NormalAttackEffect;
     }
 
 	private void UpdateProperty()

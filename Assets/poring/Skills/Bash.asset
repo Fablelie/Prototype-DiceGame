@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f4f8cbf729b8e24aa6f66f792bfff72, type: 3}
+  m_Name: Bash
+  m_EditorClassIdentifier: 
+  AnimationStateName: Ultimate
+  EffectOnHit: {fileID: 100000, guid: f06e78284f831ae469c74624ab5d513b, type: 2}
+  EffectOnSelf: {fileID: 100000, guid: 3156817f64ec68948ad6bb26569b9ef5, type: 2}
+  EffectOnSelfTile: {fileID: 0}
+  EffectOnTarget: {fileID: 0}
+  EffectOnTargetTile: {fileID: 0}
+  SkillIcon: {fileID: 21300000, guid: 0334828a4882dff45a0551863f86e4ec, type: 3}
+  MinRangeValue: 1
+  MaxRangeValue: 3
+  SkillMode: 0
+  DamageType: 0
+  DamageMultiple: 2
+  TargetType: 2
+  AOEValue: 0
+  IsIgnoreSelf: 1
+  SkillDuration: 0
+  TurnCD: 0
+  MoveToTarget: 1
+  CurrentCD: 0
+  SkillStatus: 0

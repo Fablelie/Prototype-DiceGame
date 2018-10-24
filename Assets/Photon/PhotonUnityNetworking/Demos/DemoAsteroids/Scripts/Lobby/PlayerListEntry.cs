@@ -44,9 +44,13 @@ namespace Photon.Pun.Demo.Asteroids
             }
             else
             {
-                Hashtable initialProps = new Hashtable() {{PoringPrototype.PLAYER_READY, isPlayerReady}, {AsteroidsGame.PLAYER_LIVES, AsteroidsGame.PLAYER_MAX_LIVES}};
+                Hashtable initialProps = new Hashtable() {
+                    {PoringPrototype.PLAYER_READY, isPlayerReady}, 
+                    {AsteroidsGame.PLAYER_LIVES, AsteroidsGame.PLAYER_MAX_LIVES},
+                };
                 PhotonNetwork.LocalPlayer.SetCustomProperties(initialProps);
                 PhotonNetwork.LocalPlayer.SetScore(0);
+                PhotonNetwork.LocalPlayer.SetBaseCharacterIndex(PhotonNetwork.LocalPlayer.BaseCharacterIndex);
 
                 PlayerReadyButton.onClick.AddListener(() =>
                 {

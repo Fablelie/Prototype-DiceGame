@@ -50,13 +50,17 @@ public struct OnAttackSkillResult
 	public DamageType DamageType;
 	public int StatusResult;
 	public float DamageResult;
+	public GameObject EffectOnSelf;
+	public GameObject EffectOnTarget;
 
-	public OnAttackSkillResult(AttackTypeResult type, DamageType damageType, int statusResult, float damageResult)
+	public OnAttackSkillResult(AttackTypeResult type, DamageType damageType, int statusResult, float damageResult, GameObject effectOnSelf = null, GameObject effectOnTarget = null)
 	{
 		Type         = type;
 		DamageType   = damageType;
 		StatusResult = statusResult;
 		DamageResult = damageResult;
+		EffectOnSelf = effectOnSelf;
+		EffectOnTarget = effectOnTarget;
 	}
 }
 
@@ -74,12 +78,17 @@ public struct OnDefenseSkillResult
 	public int StatusResult;
 	public float DamageResult;
 
-	public OnDefenseSkillResult(DefenseTypeResult type, DamageType damageType, int statusResult, float damageResult)
+	public GameObject EffectOnSelf;
+	public GameObject EffectOnTarget;
+
+	public OnDefenseSkillResult(DefenseTypeResult type, DamageType damageType, int statusResult, float damageResult, GameObject effectOnSelf = null, GameObject effectOnTarget = null)
 	{
 		Type         = type;
 		DamageType   = damageType;
 		StatusResult = statusResult;
 		DamageResult = damageResult;
+		EffectOnSelf = effectOnSelf;
+		EffectOnTarget = effectOnTarget;
 	}
 }
 
@@ -87,7 +96,11 @@ public struct OnDefenseSkillResult
 public class BaseSkill : ScriptableObject 
 {
 	public string AnimationStateName;
-	public GameObject PrefabEffect;
+	public GameObject EffectOnHit;
+	public GameObject EffectOnSelf;
+	public GameObject EffectOnSelfTile;
+	public GameObject EffectOnTarget;
+	public GameObject EffectOnTargetTile;
 	public Sprite SkillIcon;
 	[Range(0, 10)] public int MinRangeValue;
 	[Range(0, 10)] public int MaxRangeValue;
@@ -114,7 +127,6 @@ public class BaseSkill : ScriptableObject
 	{
 		this.name          = baseSkill.name;
 		AnimationStateName = baseSkill.AnimationStateName;
-		PrefabEffect       = baseSkill.PrefabEffect;
 		SkillIcon          = baseSkill.SkillIcon;
 		MinRangeValue      = baseSkill.MinRangeValue;
 		MaxRangeValue      = baseSkill.MaxRangeValue;
@@ -128,6 +140,13 @@ public class BaseSkill : ScriptableObject
 		TurnCD             = baseSkill.TurnCD;
 		MoveToTarget       = baseSkill.MoveToTarget;
 		CurrentCD          = 0;
+
+
+		EffectOnHit = baseSkill.EffectOnHit;
+		EffectOnSelf = baseSkill.EffectOnSelf;
+		EffectOnSelfTile = baseSkill.EffectOnSelfTile;
+		EffectOnTarget = baseSkill.EffectOnTarget;
+		EffectOnTargetTile = baseSkill.EffectOnTargetTile;
 	}
 
 	public virtual void OnActivate(Poring poring, Poring targetPoring = null, Node targetNode = null, List<Node> nodeList = null){}
