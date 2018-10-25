@@ -1245,7 +1245,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Poring: {fileID: 114034490135933850}
-  m_moveSpeed: 0.2
+  m_moveSpeed: 0.3
   m_animationSpeed: 1.5
   hasAttack: 0
 --- !u!137 &137348469698538092

@@ -30,11 +30,9 @@ public class PoringBehavior : MonoBehaviour
 		m_isMove = true;
 		while (m_isMove)
 		{
+			TurnFaceTo(m_targetPosition);
 			t += Time.deltaTime/m_moveSpeed;
 			transform.position = Vector3.Lerp(startPosition, target, t);
-			// float step = m_moveSpeed * Time.deltaTime;
-			// // Debug.Log("MoveStep >>>>>>>>>>>>>>>>> " + step);
-			// transform.position = Vector3.MoveTowards(transform.position, m_targetPosition, step);
 			yield return new WaitForEndOfFrame();
 		}
 	}
@@ -49,7 +47,7 @@ public class PoringBehavior : MonoBehaviour
 		StartCoroutine(JumpTo(nodeList, callbackForSkillMove));
 	}
 
-    private WaitForSeconds wait = new WaitForSeconds(0.3f);
+    private WaitForSeconds wait = new WaitForSeconds(0.1f);
     private IEnumerator JumpTo(List<Node> nodeList, Action callbackForSkillMove = null)
 	{
         foreach (var node in nodeList)
