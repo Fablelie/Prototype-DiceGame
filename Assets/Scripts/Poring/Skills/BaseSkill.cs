@@ -28,7 +28,6 @@ public enum DamageType
 [Flags]
 public enum SkillStatus
 {
-	
 	Stun = 2,
 	Posion = 4,
 	Burn = 8,

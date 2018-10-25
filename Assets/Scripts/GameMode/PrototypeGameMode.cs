@@ -289,7 +289,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         {
             case DiceType.Move:
                 MoveDice moveDice = m_currentPlayer.Poring.Property.MoveDices[0];
-                m_step = moveDice.GetNumberFromDiceFace(moveDice.GetDiceFace(index));
+                m_step = 5;//moveDice.GetNumberFromDiceFace(moveDice.GetDiceFace(index));
                 // Debug.LogFormat("Roll move number : {0}", number);
                 m_cameraController.Show(CameraType.TopDown);
                 ParseMovableNode(m_step);
@@ -400,6 +400,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
             if (prevNode != null)
 			    if (neighbor.Node.nid == prevNode.nid)
                     continue;
+            if (neighbor.Node.steps.Count == 0) continue;
 
 			List<Node> result2 = new List<Node>();
 			result2.AddRange(result);
@@ -514,8 +515,8 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
             yield return null;
             OnMouseClickSelectSkillTarget(skill);
         }
-        TurnActiveUIController.Instance.SetActivePanel(false);
-        TurnActiveUIController.Instance.CancelSkillBtn.gameObject.SetActive(false);
+        // TurnActiveUIController.Instance.SetActivePanel(false);
+        // TurnActiveUIController.Instance.CancelSkillBtn.gameObject.SetActive(false);
     }
 
     private void OnMouseClickSelectSkillTarget(BaseSkill skill)
@@ -682,8 +683,8 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
             yield return null;
             isSelected = OnMouseClickSelectAttackTarget();
         }
-        TurnActiveUIController.Instance.SetActivePanel(false);
-        TurnActiveUIController.Instance.CancelSkillBtn.gameObject.SetActive(false);
+        // TurnActiveUIController.Instance.SetActivePanel(false);
+        // TurnActiveUIController.Instance.CancelSkillBtn.gameObject.SetActive(false);
     }
 
     private bool OnMouseClickSelectAttackTarget()
@@ -845,7 +846,9 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         {
             if(!isStartGame)
             {
-                node.effectsOnTile.ForEach(effect => effect.CountDownLifeDuration(node));
+                if(node.effectsOnTile.Count > 0)
+                    node.effectsOnTile.ForEach(effect => effect.CountDownLifeDuration(node));
+
                 node.TileProperty.OnEndRound();
             }
         

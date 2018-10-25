@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Node
+  - FxTemporaire
+  - Bullet
   layers:
   - Default
   - TransparentFX
@@ -14,7 +16,7 @@ TagManager:
   - UI
   - 
   - 
-  - 
+  - D-Pad
   - 
   - 
   - 

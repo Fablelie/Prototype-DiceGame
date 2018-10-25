@@ -135,7 +135,7 @@ public class ActiveSkill : BaseSkill
 
         targetPoring.Property.CurrentHp -= damage;
 
-        targetPoring.OnReceiveStatus((int)SkillStatus);
+        // targetPoring.OnReceiverEffect(new List<EffectReceiver>());
 
         CheckTargetAlive(poring, targetPoring);
     }

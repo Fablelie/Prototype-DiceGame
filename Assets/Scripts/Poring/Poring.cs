@@ -43,7 +43,7 @@ public class Poring : MonoBehaviour {
 		transform.LookAt(position, transform.up);
 	}
 
-	public void OnReceiveStatus(int statusResult)
+	public void OnReceiverEffect(List<EffectReceiver> effectList)
 	{
 		
 	}

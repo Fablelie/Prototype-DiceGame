@@ -17,17 +17,24 @@ MonoBehaviour:
     type: 2}
   EffectOnTarget: {fileID: 0}
   SkillIcon: {fileID: 0}
-  MinRangeValue: 0
-  MaxRangeValue: 0
+  MinRangeValue: 1
+  MaxRangeValue: 2
   SkillMode: 0
   DamageType: 0
   DamageMultiple: 0
-  TargetType: 0
+  TargetType: 3
   AOEValue: 0
   IsIgnoreSelf: 0
-  SkillDuration: 0
+  SkillDuration: 3
   TurnCD: 0
   MoveToTarget: 0
   CurrentCD: 0
   SkillStatus: 0
-  BaseEffect: {fileID: 0}
+  effectsReceiver:
+  - OwnerId: 0
+    Damage: 200
+    EffectDuration: 0
+    Status: 0
+  BaseEffect: {fileID: 114553553711155902, guid: 827947146d0e7f149841860463344047,
+    type: 2}
+  isDestroyOnTrigger: 1

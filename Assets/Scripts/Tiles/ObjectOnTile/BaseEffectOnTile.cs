@@ -3,22 +3,32 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BaseEffectOnTile : MonoBehaviour {
-	public EffectReceiver EffectDetail;
+	[HideInInspector] public List<EffectReceiver> EffectsDetail;
+	
+	[HideInInspector] public bool DestroyOnTrigger;
+	[HideInInspector] public int LifeDuration;
+	[HideInInspector] public bool IsIgnoreSelf;
 	public GameObject EffectOnTrigger;
 
-	public EffectReceiver OnEnter()
+
+	public List<EffectReceiver> OnEnter(Node node)
 	{
 		InstantiateParticleEffect.CreateFx(EffectOnTrigger, transform.position);
-		return EffectDetail;
+		if(DestroyOnTrigger) 
+		{
+			node.effectsOnTile.Remove(this);
+			Destroy(gameObject);
+		}
+		return EffectsDetail;
 	}
 
 	public void CountDownLifeDuration(Node node)
 	{
-		EffectDetail.LifeDuration--;
-		if(EffectDetail.LifeDuration <= 0)
+		LifeDuration--;
+		if(LifeDuration <= 0)
 		{
 			node.effectsOnTile.Remove(this);
-			Destroy(this);
+			Destroy(gameObject);
 		}
 	}
 
@@ -29,8 +39,10 @@ public struct EffectReceiver
 {
 	public int OwnerId;
 	public float Damage;
-	public int LifeDuration;
 	public int EffectDuration;
-	public bool DestroyOnTrigger;
+	[SerializeField] 
+	 #if UNITY_EDITOR
+	[EnumFlags] 
+	#endif
 	public SkillStatus Status; 
 }

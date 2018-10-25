@@ -83,6 +83,11 @@ public class Node : MonoBehaviour {
 		poring.Node = this;
 		porings.Add(poring);
 		TileProperty.OnEnter(poring);
+		for (int i = 0; i < effectsOnTile.Count; i++)
+		{
+			BaseEffectOnTile baseFx = effectsOnTile[i];
+			baseFx.OnEnter(this);
+		}
 		return true;
 	}
 
