@@ -34,6 +34,8 @@ public enum SkillStatus
 	Bleed = 16,
 	Sleep = 32,
 	Ambursh = 64,
+	Root = 128,
+	Frozen = 256,
 }
 
 public enum AttackTypeResult

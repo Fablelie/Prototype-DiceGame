@@ -333,7 +333,7 @@ MonoBehaviour:
   PrevGameState: 0
   PrefabValue: {fileID: 1708990064246158, guid: 38bc081f7646b3448b754521ccfdccd5,
     type: 2}
-  StartNode: {fileID: 133659072}
+  StartNode: {fileID: 532495823}
   Nodes:
   - {fileID: 106748178}
   - {fileID: 133659072}

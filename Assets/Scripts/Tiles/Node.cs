@@ -83,11 +83,28 @@ public class Node : MonoBehaviour {
 		poring.Node = this;
 		porings.Add(poring);
 		TileProperty.OnEnter(poring);
+		List<EffectReceiver> effectsResult = new List<EffectReceiver>();
 		for (int i = 0; i < effectsOnTile.Count; i++)
 		{
 			BaseEffectOnTile baseFx = effectsOnTile[i];
-			baseFx.OnEnter(this);
+			effectsResult.AddRange(baseFx.OnEnter(this));
+			// bool result = true;
+			// result &= (((int)poring.Rarity & (int)filterData.RarityResult) != 0 || filterData.RarityResult == 0);
+			// result &= (((int)poring.ClassType & (int)filterData.ClasstypeResult) != 0 || filterData.ClasstypeResult == 0);
+			// result &= (((int)poring.RaceType & (int)filterData.RaceTypeResult) != 0 || filterData.RaceTypeResult == 0);
+			// return result;
 		}
+		poring.OnReceiverEffect(effectsResult);
+		foreach (var fx in effectsResult)
+		{
+			bool result = true;
+			result &= (((int)fx.Status & (int)SkillStatus.Frozen) != 0);
+			result &= (((int)fx.Status & (int)SkillStatus.Root) != 0);
+			result &= (((int)fx.Status & (int)SkillStatus.Sleep) != 0);
+
+			if(!result) return false;
+		}
+
 		return true;
 	}
 

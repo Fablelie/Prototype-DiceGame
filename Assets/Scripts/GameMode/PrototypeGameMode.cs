@@ -289,7 +289,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         {
             case DiceType.Move:
                 MoveDice moveDice = m_currentPlayer.Poring.Property.MoveDices[0];
-                m_step = 5;//moveDice.GetNumberFromDiceFace(moveDice.GetDiceFace(index));
+                m_step = moveDice.GetNumberFromDiceFace(moveDice.GetDiceFace(index));
                 // Debug.LogFormat("Roll move number : {0}", number);
                 m_cameraController.Show(CameraType.TopDown);
                 ParseMovableNode(m_step);

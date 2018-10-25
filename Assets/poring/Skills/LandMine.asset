@@ -34,7 +34,7 @@ MonoBehaviour:
   - OwnerId: 0
     Damage: 200
     EffectDuration: 0
-    Status: 0
+    Status: 64
   BaseEffect: {fileID: 114553553711155902, guid: 827947146d0e7f149841860463344047,
     type: 2}
   isDestroyOnTrigger: 1
