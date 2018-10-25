@@ -15,6 +15,7 @@ public class Node : MonoBehaviour {
 	public List<GameObject> AppleList = new List<GameObject>();
 	public List<Neighbor> NeighborList;
 	public List<Poring> porings;
+	public List<BaseEffectOnTile> effectsOnTile;
 	public List<int> steps = new List<int>();
 	public GameObject prefebLine;
 	public Renderer PointRenderer;
@@ -77,11 +78,12 @@ public class Node : MonoBehaviour {
 		}
 	}
 
-	public void AddPoring(Poring poring) {
+	public bool AddPoring(Poring poring) {
 		poring.transform.position = transform.position;
 		poring.Node = this;
 		porings.Add(poring);
 		TileProperty.OnEnter(poring);
+		return true;
 	}
 
 	public void RemovePoring(Poring poring)

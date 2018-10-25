@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "ActiveSkill", menuName = "Poring/Skills/ActiveSkill")]
-public class ActiveSkillToTarget : BaseSkill 
+public class ActiveSkill : BaseSkill 
 {
     private PrototypeGameMode gameMode;
     private eStateGameMode nextState;
@@ -82,8 +82,10 @@ public class ActiveSkillToTarget : BaseSkill
             AOESkillActivate(poring, poring.Node, AOEValue, damage);
         }
 
-        if (!MoveToTarget)
+        if (!MoveToTarget && gameMode.IsMineTurn())
             TurnActiveUIController.Instance.SetActivePanel(true);
+        else
+            TurnActiveUIController.Instance.NotMyTurn();
         gameMode.CurrentGameState = nextState;
         
     }

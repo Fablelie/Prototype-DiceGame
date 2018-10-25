@@ -62,7 +62,15 @@ public class PoringBehavior : MonoBehaviour
 
 			yield return new WaitUntil(() => !m_isMove);
             
-            node.AddPoring(Poring);
+            if(node.AddPoring(Poring))
+			{
+
+			}
+			else
+			{
+				FinishMove();
+				yield break;
+			}
 		}
 
         yield return wait;

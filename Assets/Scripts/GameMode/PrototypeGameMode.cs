@@ -845,6 +845,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         {
             if(!isStartGame)
             {
+                node.effectsOnTile.ForEach(effect => effect.CountDownLifeDuration(node));
                 node.TileProperty.OnEndRound();
             }
         

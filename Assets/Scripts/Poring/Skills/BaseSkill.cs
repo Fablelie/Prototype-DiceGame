@@ -92,15 +92,12 @@ public struct OnDefenseSkillResult
 	}
 }
 
-
 public class BaseSkill : ScriptableObject 
 {
 	public string AnimationStateName;
 	public GameObject EffectOnHit;
 	public GameObject EffectOnSelf;
-	public GameObject EffectOnSelfTile;
 	public GameObject EffectOnTarget;
-	public GameObject EffectOnTargetTile;
 	public Sprite SkillIcon;
 	[Range(0, 10)] public int MinRangeValue;
 	[Range(0, 10)] public int MaxRangeValue;
@@ -141,12 +138,9 @@ public class BaseSkill : ScriptableObject
 		MoveToTarget       = baseSkill.MoveToTarget;
 		CurrentCD          = 0;
 
-
 		EffectOnHit = baseSkill.EffectOnHit;
 		EffectOnSelf = baseSkill.EffectOnSelf;
-		EffectOnSelfTile = baseSkill.EffectOnSelfTile;
 		EffectOnTarget = baseSkill.EffectOnTarget;
-		EffectOnTargetTile = baseSkill.EffectOnTargetTile;
 	}
 
 	public virtual void OnActivate(Poring poring, Poring targetPoring = null, Node targetNode = null, List<Node> nodeList = null){}
