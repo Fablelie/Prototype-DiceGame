@@ -416,7 +416,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
 		}
 	}
 
-    private void FindRouteNode(int maxStep, int currentStep, Node currentNode, Node prevNode, List<Node> result = null)
+    private void FindRouteNode(int maxStep, int currentStep, Node currentNode, Node prevNode, List<Node> result = null, bool IgnoreWeightStep = false)
     {
         bool isFirstNode = false;
         if (result == null)
@@ -434,7 +434,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
             return;
         }
 
-        currentStep += (isFirstNode) ? 1 : currentNode.TileProperty.WeightStep;
+        currentStep += (isFirstNode) ? 1 : (IgnoreWeightStep) ? 1 : currentNode.TileProperty.WeightStep;
         
         foreach (Neighbor neighbor in currentNode.NeighborList)
         {
@@ -443,7 +443,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
 
             List<Node> result2 = new List<Node>();
             result2.AddRange(result);
-            FindRouteNode(maxStep, currentStep, neighbor.Node, currentNode, result2);
+            FindRouteNode(maxStep, currentStep, neighbor.Node, currentNode, result2, IgnoreWeightStep);
         }
     }
 
@@ -552,7 +552,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         if (skill.MoveToTarget)
         {
             RouteList.Clear();
-            FindRouteNode(skill.MaxRangeValue, 0, m_currentPlayer.Poring.Node, null);
+            FindRouteNode(skill.MaxRangeValue, 0, m_currentPlayer.Poring.Node, null, null, true);
             RouteList = FindTargetRoute(RouteList, node);
             int indexRoute = Random.Range(0, RouteList.Count - 1);
             
