@@ -5,7 +5,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "CreaterSkill", menuName = "Poring/Skills/CreaterSkill")]
 public class CreaterSkill : BaseSkill 
 {
-    public List<EffectReceiver> effectsReceiver;
     public BaseEffectOnTile BaseEffect;
     public bool isDestroyOnTrigger = true;
 
@@ -13,7 +12,6 @@ public class CreaterSkill : BaseSkill
 	{
 		base.Init(baseSkill);
 		var skill = (CreaterSkill)baseSkill;
-		effectsReceiver    = skill.effectsReceiver;
 		BaseEffect         = skill.BaseEffect;
         isDestroyOnTrigger = skill.isDestroyOnTrigger;
 	}
@@ -33,26 +31,47 @@ public class CreaterSkill : BaseSkill
         CurrentCD = TurnCD;
         
         // create & set property
-        var effect = Instantiate(BaseEffect);
-        effect.LifeDuration = SkillDuration;
-        effect.DestroyOnTrigger = isDestroyOnTrigger;
-        effect.IsIgnoreSelf = IsIgnoreSelf;
+        SetEffectOwnerIdAndDamage(poring);
 
-        effectsReceiver.ForEach(fx =>
-        {
-            fx.OwnerId = PrototypeGameMode.Instance.GetPoringIndexByPoring(poring);
-            if (fx.Damage == -1) fx.Damage = DamageMultiple * ((DamageType == DamageType.PAtk) ? poring.Property.CurrentPAtk : poring.Property.CurrentMAtk);
-        });
-
-        effect.EffectsDetail.AddRange(effectsReceiver);
-
-        effect.transform.SetParent(targetNode.transform);
-        effect.transform.localPosition = Vector3.zero;
-        targetNode.effectsOnTile.Add(effect);
+        CheckAOEToCreate(targetNode, AOEValue);
 
         if (PrototypeGameMode.Instance.IsMineTurn())
             TurnActiveUIController.Instance.SetActivePanel(true);
         else
             TurnActiveUIController.Instance.NotMyTurn();
+    }
+
+    private void CheckAOEToCreate(Node node, int value, Node prevNode = null)
+    {
+        if (prevNode == null)
+        {
+            CreateEffect(node);
+        }
+
+        if (value > 0)
+        {
+            value--;
+            foreach (var neighbor in node.NeighborList)
+            {
+                if (neighbor.Node == prevNode) continue;
+                if (neighbor.Node.TileProperty.Type != TileType.Sanctuary)
+                    CreateEffect(neighbor.Node);
+                CheckAOEToCreate(neighbor.Node, value, node);    
+            }
+        }
+    }
+
+    private void CreateEffect(Node node)
+    {
+        var effect = Instantiate(BaseEffect);
+        effect.LifeDuration = SkillDuration;
+        effect.DestroyOnTrigger = isDestroyOnTrigger;
+        effect.IsIgnoreSelf = IsIgnoreSelf;
+
+        effect.EffectsDetail.AddRange(EffectsReceiver);
+
+        effect.transform.SetParent(node.transform);
+        effect.transform.localPosition = Vector3.zero;
+        node.effectsOnTile.Add(effect);
     }
 }

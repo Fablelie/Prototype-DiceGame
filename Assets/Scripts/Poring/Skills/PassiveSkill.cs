@@ -21,6 +21,7 @@ public class PassiveSkill : BaseSkill
 
 	public override OnAttackSkillResult OnAttack(Poring poring, FaceDice faceDice)
 	{
+		SetEffectOwnerIdAndDamage(poring);
 		if (faceDice == ActiveOnType && CurrentCD <= 0)
 		{
 			
@@ -43,7 +44,7 @@ public class PassiveSkill : BaseSkill
 			{
 				Type = AttackType,
 				DamageType = DamageType,
-				StatusResult = (int)SkillStatus,
+				EffectStatusResults = EffectsReceiver,
 				DamageResult = damage,
 				EffectOnSelf = EffectOnSelf,
 				EffectOnTarget = EffectOnHit,
@@ -55,7 +56,7 @@ public class PassiveSkill : BaseSkill
 			{
 				Type = AttackTypeResult.None,
 				DamageType = DamageType,
-				StatusResult =0,
+				EffectStatusResults = new List<EffectReceiver>(),
 				DamageResult =0
 			};
 		}
@@ -63,6 +64,7 @@ public class PassiveSkill : BaseSkill
 
 	public override OnDefenseSkillResult OnDefense(Poring attacker, Poring poring, FaceDice faceDice)
 	{
+		SetEffectOwnerIdAndDamage(poring);
 		if (faceDice == ActiveOnType && CurrentCD <= 0)
 		{
 			// Debug.LogError($"{poring.name} : {this.name}!!");
@@ -89,7 +91,7 @@ public class PassiveSkill : BaseSkill
 			{
 				Type = DefenseType,
 				DamageType = DamageType,
-				StatusResult = (int)SkillStatus,
+				EffectStatusResults = EffectsReceiver,
 				DamageResult = damage,
 				EffectOnSelf = EffectOnSelf,
 				EffectOnTarget = EffectOnHit,
@@ -101,7 +103,7 @@ public class PassiveSkill : BaseSkill
 			{
 				Type = DefenseTypeResult.None,
 				DamageType = DamageType,
-				StatusResult = 0,
+				EffectStatusResults = new List<EffectReceiver>(),
 				DamageResult = 0
 			};
 		}

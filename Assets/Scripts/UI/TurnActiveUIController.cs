@@ -16,6 +16,7 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
     public GameObject PanelSkills;
     public Button CancelSkillBtn;
     public Button ChangeViewBtn;
+    public Button SkipBtn;
 
     public List<ButtonGroup> BtnGroup = new List<ButtonGroup>();
 
@@ -33,6 +34,12 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
         PanelSkills.SetActive(isEnable);
         CancelSkillBtn.gameObject.SetActive(!isEnable);
         ChangeViewBtn.gameObject.SetActive(false);
+        SkipBtn.gameObject.SetActive(false);
+
+        if(!CheckingEnableButtonByStatus(currentPoring))
+        {
+            OnClickSkip();
+        }
     }
 
     public void NotMyTurn()
@@ -44,10 +51,11 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
         ChangeViewBtn.gameObject.SetActive(true);
     }
 
+    private Poring currentPoring;
     public void ActiveCurrentPoringTurn(Poring poring, int index, PrototypeGameMode gameMode)
     {
         if (this.gameMode == null) this.gameMode = gameMode;
-
+        currentPoring = poring;
         if(gameMode.IndexCurrentPlayer == PhotonNetwork.LocalPlayer.GetPlayerNumber())
         {
             SetActivePanel(true);
@@ -61,6 +69,26 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
             NotMyTurn();
             SetEventToChangeViewBtn(CameraType.Default);
         }
+    }
+
+    private bool CheckingEnableButtonByStatus(Poring poring)
+    {
+        int input = poring.GetCurrentStatus();
+
+        // Skip turn.
+        SkillStatus condition = SkillStatus.Sleep | SkillStatus.Freeze | SkillStatus.Stun;
+        if(ExtensionSkillStatus.CheckResultInCondition(input, (int)condition)) return false;
+
+        // Can't move. 
+        condition = SkillStatus.Root;
+        if(ExtensionSkillStatus.CheckResultInCondition(input, (int)condition))
+        {
+            RollDiceBtn.gameObject.SetActive(false);
+            if(!CancelSkillBtn.gameObject.activeInHierarchy)
+                SkipBtn.gameObject.SetActive(true);
+        }
+
+        return true;
     }
 
     private void SetEventToChangeViewBtn(CameraType cameraType)
@@ -124,6 +152,11 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
             group.BtnObject.gameObject.SetActive(true);
 
             group.BtnObject.interactable = (skill.CurrentCD <= 0 && skill.SkillMode == SkillMode.Activate);
+
+            if(skill.MoveToTarget && ExtensionSkillStatus.CheckResultInCondition(poring.GetCurrentStatus(), (int)SkillStatus.Root))
+            {
+                group.BtnObject.interactable = false;
+            }
             
             group.BtnObject.onClick.AddListener(() =>
             {
@@ -161,6 +194,7 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
         
         CameraController.Instance.Show(CameraType.Default);
         SetActivePanel(true);
+
         gameMode.PhotonNetworkRaiseEvent(EventCode.OnClickCancel);
         // gameMode.ResetNodeColor();
     }
@@ -172,8 +206,18 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
         
         CameraController.Instance.Show(CameraType.Default);
         SetActivePanel(true);
+        
         gameMode.PhotonNetworkRaiseEvent(EventCode.OnClickCancel);
         // gameMode.ResetNodeColor();
+    }
+
+    public void OnClickSkip()
+    {
+        BtnGroup.ForEach(group => group.BtnObject.gameObject.SetActive(false));    
+        AttackBtn.gameObject.SetActive(false);
+        RollDiceBtn.gameObject.SetActive(false);
+        SkipBtn.gameObject.SetActive(false);
+        gameMode.PhotonNetworkRaiseEvent(EventCode.SkipToEndTurn);
     }
 
     [System.Serializable]

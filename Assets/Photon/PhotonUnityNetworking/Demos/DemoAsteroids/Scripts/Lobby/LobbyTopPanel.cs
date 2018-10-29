@@ -12,7 +12,7 @@ namespace Photon.Pun.Demo.Asteroids
 
         #region UNITY
 
-        public void Update()
+        public void FixedUpdate()
         {
             ConnectionStatusText.text = connectionStatusMessage + PhotonNetwork.NetworkClientState;
         }

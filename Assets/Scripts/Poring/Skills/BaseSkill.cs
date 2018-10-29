@@ -28,14 +28,38 @@ public enum DamageType
 [Flags]
 public enum SkillStatus
 {
-	Stun = 2,
-	Posion = 4,
-	Burn = 8,
-	Bleed = 16,
-	Sleep = 32,
-	Ambursh = 64,
-	Root = 128,
-	Frozen = 256,
+	Stun = 1 << 0,
+	Posion = 1 << 1,
+	Burn = 1 << 2,
+	Bleed = 1 << 3,
+	Sleep = 1 << 4,
+	Ambursh = 1 << 5,
+	Root = 1 << 6,
+	Freeze = 1 << 7,
+}
+
+[System.Serializable]
+public class EffectReceiver
+{
+	public int OwnerId;
+	[Tooltip("-1 is calculate from current atk, damage type and damage multiple")] public float Damage;
+	public int EffectDuration;
+	[SerializeField] 
+	 #if UNITY_EDITOR
+	[EnumFlags] 
+	#endif
+	public SkillStatus Status;
+	public GameObject Particle;
+
+	public EffectReceiver(EffectReceiver baseObj)
+	{
+		OwnerId        = baseObj.OwnerId;
+		EffectDuration = baseObj.EffectDuration;
+		Status         = baseObj.Status;
+		Particle       = baseObj.Particle;
+		Damage		   = baseObj.Damage;
+	}
+
 }
 
 public enum AttackTypeResult
@@ -49,16 +73,17 @@ public struct OnAttackSkillResult
 {	
 	public AttackTypeResult Type;
 	public DamageType DamageType;
-	public int StatusResult;
+	public List<EffectReceiver> EffectStatusResults;
 	public float DamageResult;
 	public GameObject EffectOnSelf;
 	public GameObject EffectOnTarget;
 
-	public OnAttackSkillResult(AttackTypeResult type, DamageType damageType, int statusResult, float damageResult, GameObject effectOnSelf = null, GameObject effectOnTarget = null)
+	public OnAttackSkillResult(AttackTypeResult type, DamageType damageType, float damageResult, List<EffectReceiver> statusResult = null, GameObject effectOnSelf = null, GameObject effectOnTarget = null)
 	{
+		if(statusResult == null) statusResult = new List<EffectReceiver>();
 		Type         = type;
 		DamageType   = damageType;
-		StatusResult = statusResult;
+		EffectStatusResults = statusResult;
 		DamageResult = damageResult;
 		EffectOnSelf = effectOnSelf;
 		EffectOnTarget = effectOnTarget;
@@ -76,21 +101,34 @@ public struct OnDefenseSkillResult
 {
 	public DefenseTypeResult Type;
 	public DamageType DamageType;
-	public int StatusResult;
+	public List<EffectReceiver> EffectStatusResults;
 	public float DamageResult;
 
 	public GameObject EffectOnSelf;
 	public GameObject EffectOnTarget;
 
-	public OnDefenseSkillResult(DefenseTypeResult type, DamageType damageType, int statusResult, float damageResult, GameObject effectOnSelf = null, GameObject effectOnTarget = null)
+	public OnDefenseSkillResult(DefenseTypeResult type, DamageType damageType, float damageResult, List<EffectReceiver> statusResult = null, GameObject effectOnSelf = null, GameObject effectOnTarget = null)
 	{
+		if(statusResult == null) statusResult = new List<EffectReceiver>();
 		Type         = type;
 		DamageType   = damageType;
-		StatusResult = statusResult;
+		EffectStatusResults = statusResult;
 		DamageResult = damageResult;
 		EffectOnSelf = effectOnSelf;
 		EffectOnTarget = effectOnTarget;
 	}
+}
+
+[Serializable]
+public struct StrongerWithStatus
+{
+	[SerializeField] 
+	 #if UNITY_EDITOR
+	[EnumFlags] 
+	#endif
+	public SkillStatus Status;
+
+	public int DamageMultiple;
 }
 
 public class BaseSkill : ScriptableObject 
@@ -114,12 +152,8 @@ public class BaseSkill : ScriptableObject
 	public int TurnCD;
 	public bool MoveToTarget;
 	public int CurrentCD = 0;
-
-	[SerializeField] 
-	 #if UNITY_EDITOR
-	[EnumFlags] 
-	#endif
-	public SkillStatus SkillStatus;
+	public List<EffectReceiver> EffectsReceiver = new List<EffectReceiver>();
+	public List<StrongerWithStatus> StrongerList = new List<StrongerWithStatus>();
 
 	public virtual void Init(BaseSkill baseSkill)
 	{
@@ -139,15 +173,39 @@ public class BaseSkill : ScriptableObject
 		MoveToTarget       = baseSkill.MoveToTarget;
 		CurrentCD          = 0;
 
+		EffectsReceiver = baseSkill.EffectsReceiver;
+
 		EffectOnHit = baseSkill.EffectOnHit;
 		EffectOnSelf = baseSkill.EffectOnSelf;
 		EffectOnTarget = baseSkill.EffectOnTarget;
 	}
 
 	public virtual void OnActivate(Poring poring, Poring targetPoring = null, Node targetNode = null, List<Node> nodeList = null){}
-	public virtual OnAttackSkillResult OnAttack(Poring poring, FaceDice faceDice){ return new OnAttackSkillResult(AttackTypeResult.None, DamageType.PAtk, 0, 0); }
-	public virtual OnDefenseSkillResult OnDefense(Poring attacker, Poring poring, FaceDice faceDice){ return new OnDefenseSkillResult(DefenseTypeResult.None, DamageType.PAtk, 0, 0); }
+	public virtual OnAttackSkillResult OnAttack(Poring poring, FaceDice faceDice){ return new OnAttackSkillResult(AttackTypeResult.None, DamageType.PAtk, 0); }
+	public virtual OnDefenseSkillResult OnDefense(Poring attacker, Poring poring, FaceDice faceDice){ return new OnDefenseSkillResult(DefenseTypeResult.None, DamageType.PAtk, 0); }
 	public virtual void OnEndTurn(){}
 	public virtual void OnStartTurn(){}
 	public virtual void OnReceiveStatus(int skillStatusResult){}
+
+	/// <summary>
+	/// Use every time before sent result of skill.
+	/// </summary>
+	public void SetEffectOwnerIdAndDamage(Poring poring)
+	{
+		EffectsReceiver.ForEach(fx =>
+        {
+			fx.OwnerId = PrototypeGameMode.Instance.GetPoringIndexByPoring(poring);
+			if (fx.Damage == -1) fx.Damage = DamageMultiple * ((DamageType == DamageType.PAtk) ? poring.Property.CurrentPAtk : poring.Property.CurrentMAtk);
+		});
+	}
+}
+
+public class ExtensionSkillStatus
+{
+	public static bool CheckResultInCondition(int input, int condition)
+	{
+		bool result = true;
+		result &= ((input & condition) != 0);
+		return result;
+	}
 }

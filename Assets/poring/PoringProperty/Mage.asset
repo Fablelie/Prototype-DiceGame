@@ -38,6 +38,7 @@ MonoBehaviour:
   OffensiveDices:
   - {fileID: 11400000, guid: db3b6c9f8f439404f814dc2d31c57e05, type: 2}
   SkillList:
-  - {fileID: 11400000, guid: 40c439710961828468bdd4396d537c05, type: 2}
+  - {fileID: 11400000, guid: e7a562f0605b9e84ca2193ccf978ed77, type: 2}
+  - {fileID: 11400000, guid: 7189f71cd2333eb4aa5224fac0c03161, type: 2}
   - {fileID: 11400000, guid: 0149e08c0be52a842a570dadeb6c8ec7, type: 2}
   NormalAttackEffect: {fileID: 100000, guid: f06e78284f831ae469c74624ab5d513b, type: 2}

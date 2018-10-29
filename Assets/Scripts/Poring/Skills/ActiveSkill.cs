@@ -126,26 +126,27 @@ public class ActiveSkill : BaseSkill
 
     private void AddDamageToTarget(Poring poring, Poring targetPoring, float damage)
     {
-        targetPoring.Animator.Play("take_damage");
-        
         if(EffectOnHit != null)
         {
             InstantiateParticleEffect.CreateFx(EffectOnHit, targetPoring.transform.localPosition);
         }
 
-        targetPoring.Property.CurrentHp -= damage;
-
-        // targetPoring.OnReceiverEffect(new List<EffectReceiver>());
-
-        CheckTargetAlive(poring, targetPoring);
-    }
-
-    private void CheckTargetAlive(Poring poring, Poring targetPoring)
-    {
-        if (targetPoring.Property.CurrentHp <= 0)
+        foreach (var s in StrongerList)
         {
-            poring.WinCondition += 1;
-            targetPoring.Behavior.Respawn();
+            if (ExtensionSkillStatus.CheckResultInCondition(targetPoring.GetCurrentStatus(), (int)s.Status))
+            {
+                damage *= s.DamageMultiple;
+            }
         }
+        
+        bool isAlive = targetPoring.TakeDamage(poring, damage);
+        if(isAlive)
+        {
+            SetEffectOwnerIdAndDamage(poring);
+            isAlive = targetPoring.OnReceiverEffect(EffectsReceiver);
+        }
+
+        if(!isAlive)
+            targetPoring.Behavior.Respawn();
     }
 }

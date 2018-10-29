@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 23553419278466084}
   - component: {fileID: 114553553711155902}
   m_Layer: 0
-  m_Name: MineTwo
+  m_Name: LandMine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -95,12 +95,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e753753fef68347479c209fac9a075db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EffectDetail:
-    OwnerId: 0
-    Damage: 0
-    LifeDuration: 0
-    EffectDuration: 0
-    DestroyOnTrigger: 0
-    Status: 2
+  EffectsDetail: []
+  DestroyOnTrigger: 0
+  LifeDuration: 0
+  IsIgnoreSelf: 0
   EffectOnTrigger: {fileID: 1892078723244562, guid: 46876a2780737ec45a19d62f88e5ce56,
     type: 2}

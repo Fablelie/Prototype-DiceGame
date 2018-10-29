@@ -9,26 +9,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7f4f8cbf729b8e24aa6f66f792bfff72, type: 3}
-  m_Name: MagnumBreakSelectTile
+  m_Name: Bash
   m_EditorClassIdentifier: 
-  AnimationStateName: Item_Used
+  AnimationStateName: Ultimate
   EffectOnHit: {fileID: 100000, guid: f06e78284f831ae469c74624ab5d513b, type: 2}
-  EffectOnSelf: {fileID: 100006, guid: 60bc526f4be1e044ab9e46340b82ffb3, type: 2}
-  EffectOnSelfTile: {fileID: 0}
-  EffectOnTarget: {fileID: 1134129239631916, guid: 7e48ba6b1b968764490bbc70b66e3fe1,
-    type: 2}
-  EffectOnTargetTile: {fileID: 0}
+  EffectOnSelf: {fileID: 100000, guid: 3156817f64ec68948ad6bb26569b9ef5, type: 2}
+  EffectOnTarget: {fileID: 0}
   SkillIcon: {fileID: 21300000, guid: 0334828a4882dff45a0551863f86e4ec, type: 3}
-  MinRangeValue: 0
+  MinRangeValue: 1
   MaxRangeValue: 3
   SkillMode: 0
   DamageType: 0
   DamageMultiple: 2
-  TargetType: 3
-  AOEValue: 1
-  IsIgnoreSelf: 0
+  TargetType: 2
+  AOEValue: 0
+  IsIgnoreSelf: 1
   SkillDuration: 0
   TurnCD: 0
-  MoveToTarget: 0
+  MoveToTarget: 1
   CurrentCD: 0
-  SkillStatus: 0
+  EffectsReceiver: []

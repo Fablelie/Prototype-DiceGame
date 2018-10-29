@@ -9,25 +9,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7f4f8cbf729b8e24aa6f66f792bfff72, type: 3}
-  m_Name: BashRange
+  m_Name: Thunderstorm
   m_EditorClassIdentifier: 
-  AnimationStateName: Ultimate
-  EffectOnHit: {fileID: 100004, guid: f95ff734540a0d749be6571b6cb5b37f, type: 2}
-  EffectOnSelf: {fileID: 100000, guid: 3156817f64ec68948ad6bb26569b9ef5, type: 2}
-  EffectOnSelfTile: {fileID: 0}
-  EffectOnTarget: {fileID: 0}
-  EffectOnTargetTile: {fileID: 0}
+  AnimationStateName: Item_Used
+  EffectOnHit: {fileID: 1628744458893394, guid: e243632bb3aff9549abdcfcc2ef0c4f0,
+    type: 2}
+  EffectOnSelf: {fileID: 100006, guid: 60bc526f4be1e044ab9e46340b82ffb3, type: 2}
+  EffectOnTarget: {fileID: 1628744458893394, guid: e243632bb3aff9549abdcfcc2ef0c4f0,
+    type: 2}
   SkillIcon: {fileID: 21300000, guid: 0334828a4882dff45a0551863f86e4ec, type: 3}
   MinRangeValue: 1
-  MaxRangeValue: 3
+  MaxRangeValue: 4
   SkillMode: 0
-  DamageType: 0
-  DamageMultiple: 2
-  TargetType: 2
-  AOEValue: 0
-  IsIgnoreSelf: 1
+  DamageType: 1
+  DamageMultiple: 1
+  TargetType: 3
+  AOEValue: 1
+  IsIgnoreSelf: 0
   SkillDuration: 0
-  TurnCD: 0
+  TurnCD: 3
   MoveToTarget: 0
   CurrentCD: 0
-  SkillStatus: 0
+  EffectsReceiver: []
+  StrongerList: []

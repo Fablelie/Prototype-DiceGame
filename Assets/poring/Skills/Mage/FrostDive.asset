@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f4f8cbf729b8e24aa6f66f792bfff72, type: 3}
+  m_Name: FrostDive
+  m_EditorClassIdentifier: 
+  AnimationStateName: Item_Used
+  EffectOnHit: {fileID: 1845240806346120, guid: b395d5d6eb4b4b846acc021ee036b744,
+    type: 2}
+  EffectOnSelf: {fileID: 100008, guid: e3d819d8722fa1f47a3f68574b56dfb3, type: 2}
+  EffectOnTarget: {fileID: 0}
+  SkillIcon: {fileID: 0}
+  MinRangeValue: 1
+  MaxRangeValue: 4
+  SkillMode: 0
+  DamageType: 1
+  DamageMultiple: 1
+  TargetType: 2
+  AOEValue: 0
+  IsIgnoreSelf: 0
+  SkillDuration: 1
+  TurnCD: 2
+  MoveToTarget: 0
+  CurrentCD: 0
+  EffectsReceiver:
+  - OwnerId: 0
+    Damage: 0
+    EffectDuration: 2
+    Status: 128
+    Particle: {fileID: 1460641713698312, guid: a15914c9eaf14d241a0906229aee6ea4, type: 2}
+  StrongerList: []

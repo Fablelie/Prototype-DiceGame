@@ -57,18 +57,29 @@ public class PoringBehavior : MonoBehaviour
             Poring.Node.RemovePoring(Poring);
 			m_targetPosition = node.transform.position;
 			TurnFaceTo(m_targetPosition);
+			
 			Poring.Animator.Play("jump");
 			m_isMove = true;
 
 			yield return new WaitUntil(() => !m_isMove);
-            
-            if(node.AddPoring(Poring))
+			
+			if(!Poring.OnMove())
 			{
-
+				yield return new WaitForSeconds(1);
+				Respawn();
+				m_gameMode.CurrentGameState = eStateGameMode.EndTurn;	
+				yield break;
 			}
-			else
+            
+            if(!node.AddPoring(Poring))
 			{
-				FinishMove();
+				if(Poring.IsAlive)
+					FinishMove();
+				else
+				{
+					Respawn();
+					m_gameMode.CurrentGameState = eStateGameMode.EndTurn;
+				}
 				yield break;
 			}
 		}
@@ -105,8 +116,8 @@ public class PoringBehavior : MonoBehaviour
 		yield return new WaitUntil(() => Poring.OffensiveResultList.Count > 0 && Poring.Target.DeffensiveResultList.Count > 0);
 		TurnFaceTo(Poring.Target.transform.position);
 		hasAttack = true;
-		var attackerDiceResult = CalculateAtackerDiceResult(Poring);
-		var defenderDiceResult = CalculateDefenderDiceResult(Poring, Poring.Target);
+		OnAttackSkillResult attackerDiceResult = CalculateAtackerDiceResult(Poring);
+		OnDefenseSkillResult defenderDiceResult = CalculateDefenderDiceResult(Poring, Poring.Target);
 
 		switch (defenderDiceResult.Type)
 		{
@@ -123,10 +134,11 @@ public class PoringBehavior : MonoBehaviour
 					InstantiateParticleEffect.CreateFx(defenderDiceResult.EffectOnTarget, Poring.transform.localPosition);
 				}
 
-				if (Poring.Property.CurrentHp > 0)
+				if (Poring.TakeDamage(Poring.Target, defenderDiceResult.DamageResult))
 				{
-					Poring.Animator.Play("take_damage");
 					yield return waitSecond;
+
+					Poring.OnReceiverEffect(defenderDiceResult.EffectStatusResults);
 
 					if(!Poring.Target.Behavior.hasAttack && Poring.Node == Poring.Target.Node)
 					{
@@ -145,11 +157,7 @@ public class PoringBehavior : MonoBehaviour
 				}
 				else
 				{
-					Poring.Animator.Play("die");
 					yield return waitSecond;
-					Poring.Target.Property.CurrentPoint += Poring.Property.CurrentPoint / 2;
-					Poring.Target.WinCondition += 1;
-
 					Poring.Behavior.Respawn();
 					Poring.Target.Behavior.hasAttack = hasAttack = false;
 					Poring.Target.Target = Poring.Target = null;
@@ -166,29 +174,24 @@ public class PoringBehavior : MonoBehaviour
 			case AttackTypeResult.None:
 			break;
 			case AttackTypeResult.Double:
+				Poring.Target.OnReceiverEffect(attackerDiceResult.EffectStatusResults);
 			break;
 			case AttackTypeResult.PowerUp:
+				Poring.Target.OnReceiverEffect(attackerDiceResult.EffectStatusResults);
 			break;
 		}
 
 		float damageResult = AdaptiveDamageCalculate(Poring);
 		damageResult = AdaptiveDefenseCalculate(damageResult, Poring.Target);
-		float hpResult = Poring.Target.Property.CurrentHp;
-
-		hpResult -= damageResult;
 
 		Poring.Animator.Play("Skill");
 		yield return waitSecond;
-		Poring.Target.Animator.Play((damageResult == 0) ? "Dodge" : (hpResult <= 0) ? "die" : "take_damage");
-		if ((damageResult != 0) && Poring.Property.NormalAttackEffect != null)
+		
+		if(damageResult != 0 && Poring.Property.NormalAttackEffect != null) InstantiateParticleEffect.CreateFx(Poring.Property.NormalAttackEffect, Poring.Target.transform.position);
+		
+		if (Poring.Target.TakeDamage(Poring, damageResult)) // alive
 		{
-			InstantiateParticleEffect.CreateFx(Poring.Property.NormalAttackEffect, Poring.Target.transform.position);
-		}
-		yield return waitSecond;
-
-		Poring.Target.Property.CurrentHp = hpResult;
-		if (hpResult > 0) // alive
-		{
+			yield return waitSecond;
 			if(!Poring.Target.Behavior.hasAttack && Poring.Node == Poring.Target.Node)
 			{
 				Poring.Target.Target = Poring;
@@ -204,9 +207,8 @@ public class PoringBehavior : MonoBehaviour
 		}
 		else // die
 		{
-			Poring.Property.CurrentPoint += Poring.Target.Property.CurrentPoint / 2;
-			Poring.WinCondition += 1;
-
+			yield return waitSecond;
+	
             Poring.Target.Behavior.Respawn();
             Poring.Target.Behavior.hasAttack = hasAttack = false;
             Poring.Target.Target = Poring.Target = null;
@@ -218,7 +220,7 @@ public class PoringBehavior : MonoBehaviour
 
 	private OnAttackSkillResult CalculateAtackerDiceResult(Poring poring)
 	{
-		OnAttackSkillResult result = new OnAttackSkillResult(AttackTypeResult.None, DamageType.PAtk, 0, 0);
+		OnAttackSkillResult result = new OnAttackSkillResult(AttackTypeResult.None, DamageType.PAtk, 0);
 		FaceDice faceDice = poring.Property.OffensiveDices[0].GetDiceFace(poring.OffensiveResultList[0]);
 		poring.Property.SkillList.ForEach(skill =>
 		{
@@ -234,7 +236,7 @@ public class PoringBehavior : MonoBehaviour
 
 	private OnDefenseSkillResult CalculateDefenderDiceResult(Poring attacker, Poring poring)
 	{
-		OnDefenseSkillResult result = new OnDefenseSkillResult(DefenseTypeResult.None, DamageType.PAtk, 0, 0);
+		OnDefenseSkillResult result = new OnDefenseSkillResult(DefenseTypeResult.None, DamageType.PAtk, 0);
 		FaceDice faceDice = poring.Property.DeffensiveDices[0].GetDiceFace(poring.DeffensiveResultList[0]);
 		poring.Property.SkillList.ForEach(skill =>
 		{

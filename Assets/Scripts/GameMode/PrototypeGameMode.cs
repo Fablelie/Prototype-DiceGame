@@ -49,6 +49,8 @@ public enum EventCode
     HighlightNodeAttack,
     RollEnd,
     OnClickCancel,
+
+    SkipToEndTurn,
 }
 
 public enum eStateGameMode
@@ -58,6 +60,7 @@ public enum eStateGameMode
     ActiveTurn,
     Encounter,
     EndTurn,
+    EndGame,
 }
 
 public struct CurrentPlayer
@@ -185,6 +188,11 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
             // On click cancel
             case (byte)EventCode.OnClickCancel:
                 ResetNodeColor();
+            break;
+
+            case (byte)EventCode.SkipToEndTurn:
+                CameraController.Instance.Show(CameraType.Default);
+                CurrentGameState = eStateGameMode.EndTurn;
             break;
             
         }
@@ -748,6 +756,9 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
                     case eStateGameMode.EndTurn:
                         EndTurn();
                         break;
+                    case eStateGameMode.EndGame:
+                        EndGame();
+                        break;
                 }
             }
         }
@@ -761,6 +772,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         
         m_cameraController.SetTarget(m_currentPlayer.Poring);
         m_cameraController.Show(CameraType.Default);
+        StartCoroutine(m_currentPlayer.Poring.OnStartTurn());
         //TODO enable UI Roll/another action.
         CurrentGameState = eStateGameMode.ActiveTurn;
     }
@@ -791,26 +803,40 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
 
     private void EndTurn()
     {
-        if (m_currentPlayer.Poring.WinCondition >= 3)
-        {
-            // TODO endgame
-            m_currentPlayer.Poring.Animator.Play("Win");
-            m_player.ForEach(poring =>
-            {
-                if (poring != m_currentPlayer.Poring) poring.Animator.Play("Lose");
-            });
-        }
-        else
-        {
-            StartCoroutine(CheckEndRoundCondition());
-        }
+        StartCoroutine(CheckEndRoundCondition());
+    }
+
+    private void EndGame()
+    {
+
     }
 
     #endregion
 
+    public void CheckEndGame()
+    {
+        bool hasWinner = false;
+        foreach (var poring in m_player)
+        {
+            if(poring.WinCondition >= 3)
+            {
+                hasWinner = true;
+                poring.Animator.Play("Win");
+                m_player.ForEach(p => 
+                {
+                    if (p != poring) p.Animator.Play("Lose");
+                }); 
+                break;
+            }
+        }
+
+        if(hasWinner) CurrentGameState = eStateGameMode.EndGame;
+    }
+
     private IEnumerator CheckEndRoundCondition()
     {
-        yield return null;
+        StartCoroutine(m_currentPlayer.Poring.OnEndTurn());
+        yield return new WaitForSeconds(1);
 
         if ((m_currentPlayer.Index + 1) >= m_player.Count)
         {
@@ -825,10 +851,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
             IndexCurrentPlayer = m_currentPlayer.Index;
         }
 
-        
         SetCurrentPlayer(m_player[m_currentPlayer.Index]);
-
-
         CurrentGameState = eStateGameMode.StartTurn;
     }
 
@@ -846,8 +869,11 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         {
             if(!isStartGame)
             {
-                if(node.effectsOnTile.Count > 0)
-                    node.effectsOnTile.ForEach(effect => effect.CountDownLifeDuration(node));
+                for (int i = 0; i < node.effectsOnTile.Count; i++)
+                {
+                    var effect = node.effectsOnTile[i];
+                    effect.CountDownLifeDuration(node);
+                }
 
                 node.TileProperty.OnEndRound();
             }
@@ -865,6 +891,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         {
             int baseCharacterIndex = BaseCharacterIndexExtensions.GetBaseCharacterIndex(player);
             Poring poring = GameObject.Instantiate(m_propertyStarter[baseCharacterIndex].Prefab, StartNode.transform.position, Quaternion.identity).GetComponent<Poring>();
+            poring.PlayerName = player.NickName;
             m_player.Add(poring);
             StartNode.AddPoring(poring);
             poring.Init(m_propertyStarter[baseCharacterIndex]);
@@ -936,6 +963,11 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
             if (m_player[i] == poring) return i;
 
         return -1;
+    }
+
+    public Poring GetPoringByIndex(int index)
+    {
+        return m_player[index];
     }
 
     public bool IsMineTurn()

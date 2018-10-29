@@ -8,29 +8,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a9b6573d30a7dba48a9c5ff820b4bbdc, type: 3}
-  m_Name: CounterAttack
+  m_Script: {fileID: 11500000, guid: 7f4f8cbf729b8e24aa6f66f792bfff72, type: 3}
+  m_Name: MagnumBreak
   m_EditorClassIdentifier: 
-  AnimationStateName: 
+  AnimationStateName: Ultimate
   EffectOnHit: {fileID: 100000, guid: f06e78284f831ae469c74624ab5d513b, type: 2}
-  EffectOnSelf: {fileID: 100000, guid: 3156817f64ec68948ad6bb26569b9ef5, type: 2}
-  EffectOnSelfTile: {fileID: 0}
+  EffectOnSelf: {fileID: 1892078723244562, guid: 46876a2780737ec45a19d62f88e5ce56,
+    type: 2}
   EffectOnTarget: {fileID: 0}
-  EffectOnTargetTile: {fileID: 0}
-  SkillIcon: {fileID: 0}
+  SkillIcon: {fileID: 21300000, guid: 0334828a4882dff45a0551863f86e4ec, type: 3}
   MinRangeValue: 0
   MaxRangeValue: 0
-  SkillMode: 1
+  SkillMode: 0
   DamageType: 0
-  DamageMultiple: 0
-  TargetType: 5
-  AOEValue: 0
-  IsIgnoreSelf: 0
+  DamageMultiple: 2
+  TargetType: 0
+  AOEValue: 1
+  IsIgnoreSelf: 1
   SkillDuration: 0
-  TurnCD: 3
+  TurnCD: 0
   MoveToTarget: 0
   CurrentCD: 0
-  SkillStatus: 0
-  AttackType: 0
-  DefenseType: 1
-  ActiveOnType: 7
+  EffectsReceiver: []

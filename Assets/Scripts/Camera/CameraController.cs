@@ -103,4 +103,17 @@ public class CameraController : InstanceObject<CameraController> {
 	{
 		ani.Play("focus");
 	}
+
+	public Transform GetCurrentCam()
+	{
+		switch (CurrentType) {
+			case CameraType.Action:
+			case CameraType.Default:
+				return CameraDatas[0].Camera.transform;
+			case CameraType.TopDown:
+				return CameraDatas[1].Camera.transform;
+		}
+
+		return CameraDatas[0].Camera.transform;
+	}
 }

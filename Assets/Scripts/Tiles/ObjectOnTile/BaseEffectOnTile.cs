@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BaseEffectOnTile : MonoBehaviour {
-	[HideInInspector] public List<EffectReceiver> EffectsDetail;
+	public List<EffectReceiver> EffectsDetail;
 	
 	[HideInInspector] public bool DestroyOnTrigger;
 	[HideInInspector] public int LifeDuration;
@@ -34,15 +34,4 @@ public class BaseEffectOnTile : MonoBehaviour {
 
 }
 
-[System.Serializable]
-public struct EffectReceiver
-{
-	public int OwnerId;
-	public float Damage;
-	public int EffectDuration;
-	[SerializeField] 
-	 #if UNITY_EDITOR
-	[EnumFlags] 
-	#endif
-	public SkillStatus Status; 
-}
+

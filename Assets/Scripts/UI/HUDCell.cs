@@ -20,6 +20,8 @@ public class HUDCell : MonoBehaviour
 	[SerializeField] private Roll _moveRoll;
 	[SerializeField] private Roll _offensiveRoll;
 	[SerializeField] private Roll _deffensiveRoll;
+
+	[SerializeField] private Text playerName;
 	
 	public Image BG;
 
@@ -29,6 +31,7 @@ public class HUDCell : MonoBehaviour
 	{
 		this.poring = poring;
 		var property = this.poring.Property;
+		playerName.text = poring.PlayerName;
 
 		// if (PrototypeGameMode.Instance.GetPoringIndexByPoring(poring) == PlayerNumberingExtensions.GetPlayerNumber(PhotonNetwork.LocalPlayer))
 		// {
