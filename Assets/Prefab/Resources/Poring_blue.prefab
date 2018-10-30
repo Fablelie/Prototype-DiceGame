@@ -584,7 +584,7 @@ MonoBehaviour:
   Target: {fileID: 0}
   Behavior: {fileID: 114858198621012744}
   Animator: {fileID: 95924547841590638}
-  Property: {fileID: 11400000, guid: fd799e29e28828f4cb59de6851d66f0c, type: 2}
+  Property: {fileID: 11400000, guid: cf67bd8531963474db6fca28c7756b90, type: 2}
   WinCondition: 0
   OffensiveResultList: 
   DeffensiveResultList: 
@@ -594,6 +594,9 @@ MonoBehaviour:
   OffensiveRoll: {fileID: 0}
   DeffensiveRoll: {fileID: 0}
   PlayerNameText: {fileID: 114210692424868652}
+  m_currentEffects: []
+  AttackResultIndex: 0
+  DefendResultIndex: 0
 --- !u!114 &114763709898460306
 MonoBehaviour:
   m_ObjectHideFlags: 1

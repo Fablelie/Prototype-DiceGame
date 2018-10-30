@@ -27,16 +27,18 @@ public class Roll : MonoBehaviour {
 	private int radiusStep = 0;
 	private List<GameObject> _texts = new List<GameObject>();
 	private int _poringIndex;
+	private int _resultIndex;
 	
-	public void SetRoll(List<FaceDice> valueList, int poringIndex) {
+	public void SetRoll(List<FaceDice> valueList, int poringIndex, int resultIndex) {
 		if (isRolling) return;
 		_texts.Clear();
 		gameObject.SetActive(true);
 		_poringIndex = poringIndex;
+		_resultIndex = resultIndex;
 		radiusStep = 360/valueList.Count;
 		for (int i = 0; i < valueList.Count; i++) {
 			GameObject ob = Instantiate(text);
-			ob.GetComponent<Text>().text = (_poringIndex == PhotonNetwork.LocalPlayer.GetPlayerNumber()) ? (int)valueList[i]+ "" : "?";
+			ob.GetComponent<Text>().text = (int)valueList[i]+ "";
 			ob.transform.SetParent(transform);
 			ob.SetActive(true);
 			// Vector3.ClampMagnitude(v, radiusStep*i);
@@ -66,9 +68,13 @@ public class Roll : MonoBehaviour {
 			rollSpeed -= rollSpeed / 30;
 
 			if (rollSpeed < 1) { 
-				rollSpeed = 0;
-				Invoke ("OnRollEnd", 0.5f);
-				isRolling = false;
+				if (_resultIndex == RadiusToNumber() - 1)
+				{
+					rollSpeed = 0;
+					Invoke ("OnRollEnd", 0.5f);
+					isRolling = false;
+				}
+				else rollSpeed += 1;
 			}
 
 			arrow.transform.Rotate(new Vector3(0, 0, rollSpeed));
@@ -84,7 +90,8 @@ public class Roll : MonoBehaviour {
 
 
 	int RadiusToNumber() {
-		return Mathf.RoundToInt((arrow.transform.eulerAngles.z+(radiusStep/2)) / radiusStep);
+		int i = Mathf.RoundToInt((arrow.transform.eulerAngles.z+(radiusStep/2)) / radiusStep);
+		return i;
 	}
 
 	void OnRollEnd() {

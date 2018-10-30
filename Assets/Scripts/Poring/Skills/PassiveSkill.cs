@@ -39,6 +39,9 @@ public class PassiveSkill : BaseSkill
 					damage = (DamageType == DamageType.PAtk) ? poring.Property.CurrentPAtk : poring.Property.CurrentMAtk;
 					damage *= 2;
 				break;
+				case AttackTypeResult.Enchant:
+					damage = (DamageType == DamageType.PAtk) ? poring.Property.CurrentPAtk : poring.Property.CurrentMAtk;
+				break;
 			}
 			return new OnAttackSkillResult()
 			{

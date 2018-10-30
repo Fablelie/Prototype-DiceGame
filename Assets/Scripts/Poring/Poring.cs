@@ -45,6 +45,9 @@ public class Poring : MonoBehaviour {
 
 	[SerializeField] private List<EffectReceiver> m_currentEffects = new List<EffectReceiver>();
 
+	public int AttackResultIndex = 0;
+	public int DefendResultIndex = 0;
+
 	void Awake()
 	{
 		// Animator = GetComponent<Animator>();
@@ -75,7 +78,10 @@ public class Poring : MonoBehaviour {
 				
 				continue;
 			}
-
+			if(	ExtensionSkillStatus.CheckResultInCondition((int)newEffect.Status, (int)SkillStatus.Posion) &&
+				PrototypeGameMode.Instance.IsMineTurn()) 
+				newEffect.EffectDuration -= 1;
+				
 			var v = m_currentEffects.Find(fx => fx.Status == newEffect.Status);
 			if(v != null)
 			{
@@ -115,7 +121,8 @@ public class Poring : MonoBehaviour {
 
 	public IEnumerator OnStartTurn()
 	{
-		List<EffectReceiver> removeKey = new List<EffectReceiver>();
+		CountDownEffectDuration();
+
 		for (int i = 0; i < m_currentEffects.Count; i++)
 		{
 			var item = m_currentEffects[i];
@@ -131,14 +138,10 @@ public class Poring : MonoBehaviour {
 				}
 				yield return wait;
 			}
-			item.EffectDuration--;
-			if(item.EffectDuration <= 0) removeKey.Add(item);
+			
 		}
 
-		removeKey.ForEach(statusKey => 
-		{
-			m_currentEffects.Remove(statusKey);
-		});
+		
 		yield break;
 	}
 
@@ -160,6 +163,23 @@ public class Poring : MonoBehaviour {
 				yield return wait;
 			}
 		}
+
+	}
+
+	private void CountDownEffectDuration()
+	{
+		List<EffectReceiver> removeKey = new List<EffectReceiver>();
+
+		m_currentEffects.ForEach(item => 
+		{
+			item.EffectDuration--;
+			if(item.EffectDuration <= 0) removeKey.Add(item);
+		});
+	
+		removeKey.ForEach(statusKey => 
+		{
+			m_currentEffects.Remove(statusKey);
+		});
 	}
 
 	public bool OnMove()

@@ -106,8 +106,8 @@ public class PoringBehavior : MonoBehaviour
     {
 		Poring.OffensiveResultList.Clear();
 		Poring.Target.DeffensiveResultList.Clear();
-		Poring.OffensiveRoll.SetRoll(Poring.Property.OffensiveDices[0].FaceDiceList, m_gameMode.GetPoringIndexByPoring(Poring));
-		Poring.Target.DeffensiveRoll.SetRoll(Poring.Target.Property.DeffensiveDices[0].FaceDiceList, m_gameMode.GetPoringIndexByPoring(Poring.Target));
+		Poring.OffensiveRoll.SetRoll(Poring.Property.OffensiveDices[0].FaceDiceList, m_gameMode.GetPoringIndexByPoring(Poring), Poring.AttackResultIndex);
+		Poring.Target.DeffensiveRoll.SetRoll(Poring.Target.Property.DeffensiveDices[0].FaceDiceList, m_gameMode.GetPoringIndexByPoring(Poring.Target), Poring.Target.DefendResultIndex);
 		StartCoroutine(WaitForDiceResult());
     }
 
@@ -169,30 +169,32 @@ public class PoringBehavior : MonoBehaviour
 			break;
 		}
 
-		switch (attackerDiceResult.Type)
-		{
-			case AttackTypeResult.None:
-			break;
-			case AttackTypeResult.Double:
-				Poring.Target.OnReceiverEffect(attackerDiceResult.EffectStatusResults);
-			break;
-			case AttackTypeResult.PowerUp:
-				Poring.Target.OnReceiverEffect(attackerDiceResult.EffectStatusResults);
-			break;
-		}
-
 		float damageResult = AdaptiveDamageCalculate(Poring);
 		damageResult = AdaptiveDefenseCalculate(damageResult, Poring.Target);
 
 		Poring.Animator.Play("Skill");
 		yield return waitSecond;
 		
+		switch (attackerDiceResult.Type)
+		{
+			case AttackTypeResult.None:
+			break;
+			case AttackTypeResult.Double:
+			case AttackTypeResult.PowerUp:
+			case AttackTypeResult.Enchant:
+				InstantiateParticleEffect.CreateFx(attackerDiceResult.EffectOnTarget, Poring.Target.transform.localPosition);
+				Poring.Target.OnReceiverEffect(attackerDiceResult.EffectStatusResults);
+			break;
+		}
+
 		if(damageResult != 0 && Poring.Property.NormalAttackEffect != null) InstantiateParticleEffect.CreateFx(Poring.Property.NormalAttackEffect, Poring.Target.transform.position);
 		
 		if (Poring.Target.TakeDamage(Poring, damageResult)) // alive
 		{
 			yield return waitSecond;
-			if(!Poring.Target.Behavior.hasAttack && Poring.Node == Poring.Target.Node)
+			if(	!Poring.Target.Behavior.hasAttack && 
+				Poring.Node == Poring.Target.Node && 
+				!ExtensionSkillStatus.CheckResultInCondition(Poring.Target.GetCurrentStatus(), (int)(SkillStatus.Freeze | SkillStatus.Sleep | SkillStatus.Stun)))
 			{
 				Poring.Target.Target = Poring;
 				Poring.Target.Behavior.AttackTarget();

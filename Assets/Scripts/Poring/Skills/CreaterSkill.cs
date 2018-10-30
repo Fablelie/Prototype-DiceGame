@@ -36,7 +36,7 @@ public class CreaterSkill : BaseSkill
         CheckAOEToCreate(targetNode, AOEValue);
 
         if (PrototypeGameMode.Instance.IsMineTurn())
-            TurnActiveUIController.Instance.SetActivePanel(true);
+            TurnActiveUIController.Instance.SetActivePanel(true, poring.Node.TileProperty.Type);
         else
             TurnActiveUIController.Instance.NotMyTurn();
     }

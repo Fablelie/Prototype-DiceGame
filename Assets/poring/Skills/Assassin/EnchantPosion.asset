@@ -9,10 +9,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a9b6573d30a7dba48a9c5ff820b4bbdc, type: 3}
-  m_Name: CounterAttack
+  m_Name: EnchantPosion
   m_EditorClassIdentifier: 
   AnimationStateName: 
-  EffectOnHit: {fileID: 100000, guid: f06e78284f831ae469c74624ab5d513b, type: 2}
+  EffectOnHit: {fileID: 100004, guid: 7867af58a6ec48846ae807eb4022fbaa, type: 2}
   EffectOnSelf: {fileID: 100000, guid: 3156817f64ec68948ad6bb26569b9ef5, type: 2}
   EffectOnTarget: {fileID: 0}
   SkillIcon: {fileID: 0}
@@ -21,17 +21,23 @@ MonoBehaviour:
   SkillMode: 1
   DamageType: 0
   DamageMultiple: 0
-  TargetType: 5
+  TargetType: 4
   AOEValue: 0
   IsIgnoreSelf: 0
   SkillDuration: 0
-  TurnCD: 3
+  TurnCD: 0
   MoveToTarget: 0
   CurrentCD: 0
-  EffectsReceiver: []
+  EffectsReceiver:
+  - OwnerId: 1
+    Damage: 5
+    EffectDuration: 3
+    Status: 2
+    Particle: {fileID: 100004, guid: 7867af58a6ec48846ae807eb4022fbaa, type: 2}
   StrongerList: []
-  Description: "\u0E2A\u0E27\u0E19\u0E01\u0E25\u0E31\u0E1A\u0E01\u0E32\u0E23\u0E42\u0E08\u0E21\u0E15\u0E35\u0E23\u0E30\u0E22\u0E30\u0E43\u0E01\u0E25\u0E49\u0E2B\u0E32\u0E01
-    \u0E44\u0E14\u0E49\u0E2B\u0E19\u0E49\u0E32\u0E40\u0E15\u0E4B\u0E32 (7)"
-  AttackType: 0
-  DefenseType: 1
+  Description: "\u0E42\u0E08\u0E21\u0E15\u0E35\u0E18\u0E23\u0E23\u0E21\u0E14\u0E32\u0E41\u0E25\u0E30\u0E17\u0E33\u0E43\u0E2B\u0E49\u0E40\u0E1B\u0E49\u0E32\u0E2B\u0E21\u0E32\u0E22\u0E15\u0E34\u0E14\u0E2A\u0E16\u0E32\u0E13\u0E30
+    <color=#C500F0>\u0E1E\u0E34\u0E29</color> \u0E44\u0E14\u0E49\u0E2B\u0E19\u0E49\u0E32\u0E40\u0E15\u0E4B\u0E32
+    (7)"
+  AttackType: 3
+  DefenseType: 0
   ActiveOnType: 7

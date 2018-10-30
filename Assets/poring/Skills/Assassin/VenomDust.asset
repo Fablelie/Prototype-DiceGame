@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9c9ae4ad1989894f9b08550ce446dc9, type: 3}
+  m_Name: VenomDust
+  m_EditorClassIdentifier: 
+  AnimationStateName: Item_Used
+  EffectOnHit: {fileID: 0}
+  EffectOnSelf: {fileID: 100006, guid: 2a474af3f4c27be4e9bdce39cfe4315d, type: 2}
+  EffectOnTarget: {fileID: 0}
+  SkillIcon: {fileID: 0}
+  MinRangeValue: 0
+  MaxRangeValue: 1
+  SkillMode: 0
+  DamageType: 1
+  DamageMultiple: 1
+  TargetType: 3
+  AOEValue: 0
+  IsIgnoreSelf: 0
+  SkillDuration: 2
+  TurnCD: 2
+  MoveToTarget: 0
+  CurrentCD: 0
+  EffectsReceiver:
+  - OwnerId: 0
+    Damage: 5
+    EffectDuration: 4
+    Status: 2
+    Particle: {fileID: 100004, guid: 7867af58a6ec48846ae807eb4022fbaa, type: 2}
+  StrongerList: []
+  Description: "\u0E42\u0E1B\u0E23\u0E22 <color=#C500F0>\u0E1E\u0E34\u0E29</color>
+    \u0E25\u0E07\u0E1A\u0E19\u0E1E\u0E37\u0E49\u0E19\u0E17\u0E35\u0E48\u0E40\u0E1B\u0E49\u0E32\u0E2B\u0E21\u0E32\u0E22\u0E1C\u0E39\u0E49\u0E40\u0E25\u0E48\u0E19\u0E17\u0E35\u0E48\u0E1C\u0E48\u0E32\u0E19\u0E21\u0E32\u0E08\u0E30\u0E44\u0E14\u0E49\u0E23\u0E31\u0E1A\u0E2A\u0E16\u0E32\u0E13\u0E30
+    <color=#C500F0>\u0E1E\u0E34\u0E29</color> \u0E04\u0E27\u0E32\u0E21\u0E04\u0E27\u0E32\u0E21\u0E40\u0E2A\u0E35\u0E22\u0E2B\u0E32\u0E22\u0E15\u0E32\u0E21
+    <color=#0000FF>M.Atk</color> \u0E02\u0E2D\u0E07\u0E1C\u0E39\u0E49\u0E43\u0E0A\u0E49"
+  BaseEffect: {fileID: 114285482209128014, guid: e1403a085132dd845ab69d763949b688,
+    type: 2}
+  isDestroyOnTrigger: 1

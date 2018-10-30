@@ -26,18 +26,29 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
 
     public bool isActiveSkill = false;
     public bool isActiveAttack = false;
+    public SkillDescriptionPanel descriptPanel;
 
-    public void SetActivePanel(bool isEnable)
+    public void SetActivePanel(bool isEnable, TileType type)
     {
+        if(!CheckingEnableButtonByStatus(currentPoring))
+        {
+            // if(descriptPanel.gameObject.activeInHierarchy) descriptPanel.ClosePanel();
+            OnClickSkip();
+            return;
+        }
         RollDiceBtn.gameObject.SetActive(isEnable);
-        AttackBtn.gameObject.SetActive(isEnable);
-        PanelSkills.SetActive(isEnable);
+        if(type != TileType.Sanctuary)
+        {
+            AttackBtn.gameObject.SetActive(isEnable);
+            PanelSkills.SetActive(isEnable);
+        }
         CancelSkillBtn.gameObject.SetActive(!isEnable);
         ChangeViewBtn.gameObject.SetActive(false);
         SkipBtn.gameObject.SetActive(false);
 
         if(!CheckingEnableButtonByStatus(currentPoring))
         {
+            if(descriptPanel.gameObject.activeInHierarchy) descriptPanel.ClosePanel();
             OnClickSkip();
         }
     }
@@ -48,6 +59,8 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
         AttackBtn.gameObject.SetActive(false);
         PanelSkills.SetActive(false);
         CancelSkillBtn.gameObject.SetActive(false);
+        SkipBtn.gameObject.SetActive(false);
+        
         ChangeViewBtn.gameObject.SetActive(true);
     }
 
@@ -58,7 +71,7 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
         currentPoring = poring;
         if(gameMode.IndexCurrentPlayer == PhotonNetwork.LocalPlayer.GetPlayerNumber())
         {
-            SetActivePanel(true);
+            SetActivePanel(true, currentPoring.Node.TileProperty.Type);
             SkillList = poring.Property.SkillList;
             SetEventToDiceRollBtn(poring, index);
             SetEventToAttackBtn(poring);
@@ -67,7 +80,7 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
         else
         {
             NotMyTurn();
-            SetEventToChangeViewBtn(CameraType.Default);
+            SetEventToChangeViewBtn();
         }
     }
 
@@ -91,14 +104,15 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
         return true;
     }
 
-    private void SetEventToChangeViewBtn(CameraType cameraType)
+    private void SetEventToChangeViewBtn()
     {
-        ChangeViewBtn.onClick.RemoveAllListeners();
-        ChangeViewBtn.onClick.AddListener(() =>
-        {
-            CameraController.Instance.Show(cameraType);
-            SetEventToChangeViewBtn((cameraType == CameraType.Default) ? CameraType.TopDown : CameraType.Default);
-        });
+        // ChangeViewBtn.onClick.RemoveAllListeners();
+        // ChangeViewBtn.onClick.AddListener(() =>
+        // {
+        var cam = CameraController.Instance;
+        cam.Show((cam.CurrentType == CameraType.TopDown) ? CameraType.Action : CameraType.TopDown);
+            // SetEventToChangeViewBtn((cameraType == CameraType.Default) ? CameraType.TopDown : CameraType.Default);
+        // });
     }
 
     private void SetEventToAttackBtn(Poring poring)
@@ -111,7 +125,7 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
 
             gameMode.PhotonNetworkRaiseEvent(EventCode.HighlightNodeAttack, new object[] { poring.Property.AttackRange});
 
-            SetActivePanel(false);
+            SetActivePanel(false, currentPoring.Node.TileProperty.Type);
             CancelSkillBtn.onClick.RemoveAllListeners();
             CancelSkillBtn.onClick.AddListener(OnClickCancelAttack);
         });
@@ -125,15 +139,13 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
             BtnGroup.ForEach(group => group.BtnObject.gameObject.SetActive(false));    
             AttackBtn.gameObject.SetActive(false);
             RollDiceBtn.gameObject.SetActive(false);
+            int result = UnityEngine.Random.Range(0,6);
+            // Debug.LogError($"Move > >>>> >> > {result}");
+            gameMode.PhotonNetworkRaiseEvent(EventCode.BeginRollMove, new object[] { index, result });
 
-            gameMode.PhotonNetworkRaiseEvent(EventCode.BeginRollMove, new object[] { index });
-
-            // poring.MoveRoll.SetRoll(poring.Property.MoveDices[0].FaceDiceList, index);
             RollDiceBtn.onClick.RemoveAllListeners();
         });
     }
-
-    
 
     private void SetSkillsEvent(List<BaseSkill> skillList, Poring poring, int index)
     {
@@ -151,6 +163,9 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
             group.BtnName.text = skill.name;
             group.BtnObject.gameObject.SetActive(true);
 
+            var skillDetail = group.BtnObject.gameObject.GetComponent<SkillDetail>();
+            skillDetail.SetDetail(skill, poring);
+
             group.BtnObject.interactable = (skill.CurrentCD <= 0 && skill.SkillMode == SkillMode.Activate);
 
             if(skill.MoveToTarget && ExtensionSkillStatus.CheckResultInCondition(poring.GetCurrentStatus(), (int)SkillStatus.Root))
@@ -163,7 +178,7 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
                 BtnGroup.ForEach(g => {
                     g.BtnObject.interactable = false;
                 });
-                SetActivePanel(false);
+                SetActivePanel(false, currentPoring.Node.TileProperty.Type);
                 ChangeModeToSelectTarget(skill, poring, index);
             });
         }
@@ -193,7 +208,7 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
         }
         
         CameraController.Instance.Show(CameraType.Default);
-        SetActivePanel(true);
+        SetActivePanel(true, currentPoring.Node.TileProperty.Type);
 
         gameMode.PhotonNetworkRaiseEvent(EventCode.OnClickCancel);
         // gameMode.ResetNodeColor();
@@ -205,7 +220,7 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
         isActiveAttack = false;
         
         CameraController.Instance.Show(CameraType.Default);
-        SetActivePanel(true);
+        SetActivePanel(true, currentPoring.Node.TileProperty.Type);
         
         gameMode.PhotonNetworkRaiseEvent(EventCode.OnClickCancel);
         // gameMode.ResetNodeColor();

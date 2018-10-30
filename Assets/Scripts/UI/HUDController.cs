@@ -33,6 +33,11 @@ public class HUDController : InstanceObject<HUDController>
 		});
 	}
 
+	public void ShowTextEndGame()
+	{
+		Turn.text = Turn.text + "\nEnd game...";
+	}
+
 	// private void FixedUpdate() 
 	// {
 	// 	if(m_gameMode != null)

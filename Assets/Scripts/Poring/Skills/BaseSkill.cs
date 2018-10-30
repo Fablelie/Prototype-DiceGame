@@ -67,6 +67,7 @@ public enum AttackTypeResult
 	None,
 	Double,
 	PowerUp,
+	Enchant,
 }
 
 public struct OnAttackSkillResult
@@ -95,6 +96,7 @@ public enum DefenseTypeResult
 	None,
 	Counter,
 	Dodge,
+	Enchant
 }
 
 public struct OnDefenseSkillResult
@@ -155,6 +157,8 @@ public class BaseSkill : ScriptableObject
 	public List<EffectReceiver> EffectsReceiver = new List<EffectReceiver>();
 	public List<StrongerWithStatus> StrongerList = new List<StrongerWithStatus>();
 
+	public string Description;
+
 	public virtual void Init(BaseSkill baseSkill)
 	{
 		this.name          = baseSkill.name;
@@ -172,6 +176,7 @@ public class BaseSkill : ScriptableObject
 		TurnCD             = baseSkill.TurnCD;
 		MoveToTarget       = baseSkill.MoveToTarget;
 		CurrentCD          = 0;
+		Description 	   = baseSkill.Description;
 
 		EffectsReceiver = baseSkill.EffectsReceiver;
 

@@ -83,7 +83,7 @@ public class ActiveSkill : BaseSkill
         }
 
         if (!MoveToTarget && gameMode.IsMineTurn())
-            TurnActiveUIController.Instance.SetActivePanel(true);
+            TurnActiveUIController.Instance.SetActivePanel(true, poring.Node.TileProperty.Type);
         else
             TurnActiveUIController.Instance.NotMyTurn();
         gameMode.CurrentGameState = nextState;

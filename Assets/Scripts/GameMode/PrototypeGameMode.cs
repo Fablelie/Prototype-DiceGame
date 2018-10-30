@@ -95,7 +95,8 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
     void Awake()
     {
         Instance = this;
-        Application.targetFrameRate = 120;
+
+        Application.targetFrameRate = 300;
     }
 
     public override void OnEnable()
@@ -116,7 +117,6 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
 
     private void Start() 
     {
-        Application.targetFrameRate = 120;
         m_cameraController = CameraController.Instance;
 
         Hashtable props = new Hashtable
@@ -144,10 +144,10 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         {
             // Move
             case (byte)EventCode.BeginRollMove:
-                BeginRollMove((int)data[0]);
+                BeginRollMove((int)data[0], (int)data[1]);
             break;
             case (byte)EventCode.SelectNodeMove:
-                ReceiveNodeSelected(GetNodeByNodeId((int)data[0]));        
+                ReceiveNodeSelected(GetNodeByNodeId((int)data[0]), (int)data[1], (int)data[2], (int)data[3], (int)data[4]);
             break;
 
             // Attack
@@ -158,7 +158,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
                     node.PointRenderer.SetPropertyBlock(MaterialPreset.GetMaterialPreset(EMaterialPreset.selected));
                     MagicCursor.Instance.MoveTo(node);
                 }
-                ReceiveNodeAttackTarget(node);
+                ReceiveNodeAttackTarget(node, (int)data[1], (int)data[2], (int)data[3], (int)data[4]);
             break;
             case (byte)EventCode.HighlightNodeAttack:
                 CheckHasTargetInRange((int)data[0]);
@@ -225,10 +225,16 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         }
     }
 
-    private void ReceiveNodeAttackTarget(Node node)
+    private void ReceiveNodeAttackTarget(Node node, int attackA, int attackB, int defendA, int defendB)
     {
         List<Poring> porings = node.porings.FindAll(poring => poring != m_currentPlayer.Poring);
         m_currentPlayer.Poring.Target = porings[Random.Range(0, porings.Count - 1)];
+
+        m_currentPlayer.Poring.AttackResultIndex = attackA;
+        m_currentPlayer.Poring.DefendResultIndex = defendA;
+
+        m_currentPlayer.Poring.Target.AttackResultIndex = attackB;
+        m_currentPlayer.Poring.Target.DefendResultIndex = defendB;
 
         m_cameraController.Show(CameraType.Action);
         
@@ -236,7 +242,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         CurrentGameState = eStateGameMode.Encounter;
     }
 
-    private void ReceiveNodeSelected(Node node)
+    private void ReceiveNodeSelected(Node node, int attackA, int attackB, int defendA, int defendB)
     {
         if (node) 
         {
@@ -248,6 +254,12 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
             {
                 List<Poring> porings = node.porings.FindAll(poring => poring != m_currentPlayer.Poring);
                 m_currentPlayer.Poring.Target = porings[Random.Range(0, porings.Count - 1)];
+
+                m_currentPlayer.Poring.AttackResultIndex = attackA;
+                m_currentPlayer.Poring.DefendResultIndex = defendA;
+
+                m_currentPlayer.Poring.Target.AttackResultIndex = attackB;
+                m_currentPlayer.Poring.Target.DefendResultIndex = defendB;
 
                 m_cameraController.Show(CameraType.Action);
                 isSelectedNode = true;
@@ -263,6 +275,12 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
                     List<Poring> porings = node.porings.FindAll(poring => poring != m_currentPlayer.Poring);
                     m_currentPlayer.Poring.Target = porings[Random.Range(0, porings.Count - 1)];
 
+                    m_currentPlayer.Poring.AttackResultIndex = attackA;
+                    m_currentPlayer.Poring.DefendResultIndex = defendA;
+
+                    m_currentPlayer.Poring.Target.AttackResultIndex = attackB;
+                    m_currentPlayer.Poring.Target.DefendResultIndex = defendB;
+
                     RouteList.Clear();
                     FindRouteNode(m_step, 0, m_currentPlayer.Poring.Node, m_currentPlayer.Poring.PrevNode);
 
@@ -277,11 +295,8 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
                 }
 
                 int indexRoute = Random.Range(0, RouteList.Count - 1);
-                // Debug.LogFormat("index >>>>>>>>>> {0}", indexRoute);
-                // Debug.LogFormat("RouteList >>>>>>>>>> {0}", RouteList.Count);
 
                 // TODO send result route to rendar path with UI
-                // print(GetNodeString(RouteList[indexRoute]));
                 m_currentPlayer.Poring.Behavior.SetupJumpToNodeTarget(RouteList[indexRoute]);
 
                 m_cameraController.Show(CameraType.Action);
@@ -319,9 +334,9 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         }
     }
     
-    private void BeginRollMove(int poringIndex)
+    private void BeginRollMove(int poringIndex, int resultIndex)
     {
-        m_player[poringIndex].MoveRoll.SetRoll(m_player[poringIndex].Property.MoveDices[0].FaceDiceList, poringIndex);
+        m_player[poringIndex].MoveRoll.SetRoll(m_player[poringIndex].Property.MoveDices[0].FaceDiceList, poringIndex, resultIndex);
     }
 
     #endregion
@@ -344,7 +359,14 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
                     Node node = hit.transform.parent.GetComponent<Node>();
                     if(node != null)
                     {
-                        PhotonNetworkRaiseEvent(EventCode.SelectNodeMove, new object[] { node.nid });
+                        int resultAttackA = UnityEngine.Random.Range(0,6);
+                        int resultAttackB = UnityEngine.Random.Range(0,6);
+                        int resultDefendA = UnityEngine.Random.Range(0,6);
+                        int resultDefendB = UnityEngine.Random.Range(0,6);
+
+                        // Debug.LogError($"AttackA : {resultAttackA}, DefendA {resultDefendA}");
+                        // Debug.LogError($"AttackB : {resultAttackB}, DefendB {resultDefendB}");
+                        PhotonNetworkRaiseEvent(EventCode.SelectNodeMove, new object[] { node.nid, resultAttackA, resultAttackB, resultDefendA, resultDefendB });
                     }
                 }
             }
@@ -710,7 +732,14 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
                     MagicCursor.Instance.MoveTo(node);
                     if (CheckPoringInTargetNode(node) > 0 && node.TileProperty.Type != TileType.Sanctuary && node.steps.Count > 0)
                     {
-                        PhotonNetworkRaiseEvent(EventCode.SelectNodeAttack, new object[]{ node.nid});
+                        int resultAttackA = UnityEngine.Random.Range(0,6);
+                        int resultAttackB = UnityEngine.Random.Range(0,6);
+                        int resultDefendA = UnityEngine.Random.Range(0,6);
+                        int resultDefendB = UnityEngine.Random.Range(0,6);
+
+                        // Debug.LogError($"AttackA : {resultAttackA}, DefendA {resultDefendA}");
+                        // Debug.LogError($"AttackB : {resultAttackB}, DefendB {resultDefendB}");
+                        PhotonNetworkRaiseEvent(EventCode.SelectNodeAttack, new object[]{ node.nid, resultAttackA, resultAttackB, resultDefendA, resultDefendB});
                         
                         return true;
                     }
@@ -730,7 +759,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         m_cameraController.Show(CameraType.Default);
         m_cameraController.SetTarget(m_currentPlayer.Poring);
 
-        StartCoroutine(UpdateState());
+        StartCoroutine("UpdateState");
     }
 
     public IEnumerator UpdateState()
@@ -739,7 +768,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         while (true)
         {
             yield return new WaitForEndOfFrame();
-            if (PrevGameState != CurrentGameState)
+            if (PrevGameState != CurrentGameState && PrevGameState != eStateGameMode.EndGame)
             {
                 PrevGameState = CurrentGameState;
                 switch (CurrentGameState)
@@ -808,7 +837,9 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
 
     private void EndGame()
     {
-
+        StopAllCoroutines();
+        HUDController.Instance.ShowTextEndGame();
+        TurnActiveUIController.Instance.NotMyTurn();
     }
 
     #endregion
@@ -818,7 +849,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         bool hasWinner = false;
         foreach (var poring in m_player)
         {
-            if(poring.WinCondition >= 3)
+            if(poring.WinCondition >= 1)
             {
                 hasWinner = true;
                 poring.Animator.Play("Win");

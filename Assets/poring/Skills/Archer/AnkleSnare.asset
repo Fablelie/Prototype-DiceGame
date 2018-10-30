@@ -18,7 +18,7 @@ MonoBehaviour:
   EffectOnTarget: {fileID: 0}
   SkillIcon: {fileID: 0}
   MinRangeValue: 0
-  MaxRangeValue: 0
+  MaxRangeValue: 1
   SkillMode: 0
   DamageType: 0
   DamageMultiple: 0
@@ -36,6 +36,9 @@ MonoBehaviour:
     Status: 64
     Particle: {fileID: 100000, guid: 3d4907e6bd39f474b8fd8220920e65c4, type: 2}
   StrongerList: []
+  Description: "\u0E27\u0E32\u0E07\u0E01\u0E33\u0E14\u0E31\u0E01 \u0E17\u0E35\u0E48\u0E40\u0E21\u0E37\u0E48\u0E2D\u0E21\u0E35\u0E15\u0E31\u0E27\u0E25\u0E30\u0E04\u0E23\u0E21\u0E32\u0E40\u0E2B\u0E22\u0E35\u0E22\u0E1A\u0E08\u0E30\u0E17\u0E33\u0E43\u0E2B\u0E49
+    \u0E44\u0E21\u0E48\u0E2A\u0E32\u0E21\u0E32\u0E23\u0E16\u0E40\u0E25\u0E37\u0E48\u0E2D\u0E19\u0E17\u0E35\u0E48\u0E15\u0E48\u0E2D\u0E44\u0E14\u0E49\u0E41\u0E25\u0E30\u0E15\u0E34\u0E14
+    <color=#00FF00>\u0E23\u0E32\u0E01</color>"
   BaseEffect: {fileID: 114553553711155902, guid: c419b313bc7b3ce4faefde2d473ef453,
     type: 2}
   isDestroyOnTrigger: 1

@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Name: OffensiveDice
   m_EditorClassIdentifier: 
   DiceName: 
-  FaceDiceList: ffffffff0200000003000000040000000500000006000000
+  FaceDiceList: ffffffff0200000007000000070000000700000007000000
