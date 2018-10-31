@@ -42,6 +42,12 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
             AttackBtn.gameObject.SetActive(isEnable);
             PanelSkills.SetActive(isEnable);
         }
+        else
+        {
+            AttackBtn.gameObject.SetActive(false);
+            PanelSkills.SetActive(false);
+        }
+
         CancelSkillBtn.gameObject.SetActive(!isEnable);
         ChangeViewBtn.gameObject.SetActive(false);
         SkipBtn.gameObject.SetActive(false);
@@ -90,11 +96,11 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
 
         // Skip turn.
         SkillStatus condition = SkillStatus.Sleep | SkillStatus.Freeze | SkillStatus.Stun;
-        if(ExtensionSkillStatus.CheckResultInCondition(input, (int)condition)) return false;
+        if(ExtensionStatus.CheckHasStatus(input, (int)condition)) return false;
 
         // Can't move. 
         condition = SkillStatus.Root;
-        if(ExtensionSkillStatus.CheckResultInCondition(input, (int)condition))
+        if(ExtensionStatus.CheckHasStatus(input, (int)condition))
         {
             RollDiceBtn.gameObject.SetActive(false);
             if(!CancelSkillBtn.gameObject.activeInHierarchy)
@@ -168,7 +174,7 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
 
             group.BtnObject.interactable = (skill.CurrentCD <= 0 && skill.SkillMode == SkillMode.Activate);
 
-            if(skill.MoveToTarget && ExtensionSkillStatus.CheckResultInCondition(poring.GetCurrentStatus(), (int)SkillStatus.Root))
+            if(skill.MoveToTarget && ExtensionStatus.CheckHasStatus(poring.GetCurrentStatus(), (int)SkillStatus.Root))
             {
                 group.BtnObject.interactable = false;
             }

@@ -30,7 +30,7 @@ MonoBehaviour:
   CurrentCD: 0
   EffectsReceiver:
   - OwnerId: 0
-    Damage: 5
+    Damage: -1
     EffectDuration: 4
     Status: 2
     Particle: {fileID: 100004, guid: 7867af58a6ec48846ae807eb4022fbaa, type: 2}
@@ -41,4 +41,4 @@ MonoBehaviour:
     <color=#0000FF>M.Atk</color> \u0E02\u0E2D\u0E07\u0E1C\u0E39\u0E49\u0E43\u0E0A\u0E49"
   BaseEffect: {fileID: 114285482209128014, guid: e1403a085132dd845ab69d763949b688,
     type: 2}
-  isDestroyOnTrigger: 1
+  isDestroyOnTrigger: 0

@@ -194,7 +194,8 @@ public class PoringBehavior : MonoBehaviour
 			yield return waitSecond;
 			if(	!Poring.Target.Behavior.hasAttack && 
 				Poring.Node == Poring.Target.Node && 
-				!ExtensionSkillStatus.CheckResultInCondition(Poring.Target.GetCurrentStatus(), (int)(SkillStatus.Freeze | SkillStatus.Sleep | SkillStatus.Stun)))
+				!ExtensionStatus.CheckHasStatus(Poring.Target.GetCurrentStatus(), (int)(SkillStatus.Freeze | SkillStatus.Sleep | SkillStatus.Stun)) && // target is not freeze, sleep, stun
+				!ExtensionStatus.CheckHasStatus(Poring.GetCurrentStatus(), (int)SkillStatus.Ambursh)) // Attacker is not ambursh
 			{
 				Poring.Target.Target = Poring;
 				Poring.Target.Behavior.AttackTarget();

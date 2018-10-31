@@ -377,7 +377,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
     {
         int count = node.porings.Count;
 
-        if (node.porings.Find(poring => poring == m_currentPlayer.Poring) != null) count -= 1;
+        if (node.porings.Find(poring => poring == m_currentPlayer.Poring || ExtensionStatus.CheckHasStatus(poring.GetCurrentStatus(), (int)SkillStatus.Ambursh) ) != null) count -= 1;
 
         return count;
     }
@@ -849,7 +849,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         bool hasWinner = false;
         foreach (var poring in m_player)
         {
-            if(poring.WinCondition >= 1)
+            if(poring.WinCondition >= 3)
             {
                 hasWinner = true;
                 poring.Animator.Play("Win");

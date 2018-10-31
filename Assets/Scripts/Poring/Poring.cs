@@ -42,8 +42,10 @@ public class Poring : MonoBehaviour {
 	}
 
 	[SerializeField] private Text PlayerNameText;
+	[SerializeField] private Transform iconRoot;
 
 	[SerializeField] private List<EffectReceiver> m_currentEffects = new List<EffectReceiver>();
+	[SerializeField] private List<StatusIconData> m_currentIconEffects = new List<StatusIconData>();
 
 	public int AttackResultIndex = 0;
 	public int DefendResultIndex = 0;
@@ -78,7 +80,7 @@ public class Poring : MonoBehaviour {
 				
 				continue;
 			}
-			if(	ExtensionSkillStatus.CheckResultInCondition((int)newEffect.Status, (int)SkillStatus.Posion) &&
+			if(	ExtensionStatus.CheckHasStatus((int)newEffect.Status, (int)SkillStatus.Posion) &&
 				PrototypeGameMode.Instance.IsMineTurn()) 
 				newEffect.EffectDuration -= 1;
 				
@@ -90,6 +92,11 @@ public class Poring : MonoBehaviour {
 			else
 			{
 				m_currentEffects.Add(newEffect);
+				StatusIconData icon = new StatusIconData(){
+					status = newEffect.Status,
+					image = StatusIconCreater.Instance.CreateIcon(newEffect.Status, iconRoot)
+				};
+				m_currentIconEffects.Add(icon);
 			}
 		}
 
@@ -128,7 +135,7 @@ public class Poring : MonoBehaviour {
 			var item = m_currentEffects[i];
 
 			SkillStatus e = SkillStatus.Burn;
-			if(ExtensionSkillStatus.CheckResultInCondition((int)item.Status, (int)e))
+			if(ExtensionStatus.CheckHasStatus((int)item.Status, (int)e))
 			{
 				if(!TakeDamage(PrototypeGameMode.Instance.GetPoringByIndex(item.OwnerId), item.Damage, item.Particle))
 				{
@@ -152,7 +159,7 @@ public class Poring : MonoBehaviour {
 			var item = m_currentEffects[i];
 
 			SkillStatus e = SkillStatus.Posion;
-			if(ExtensionSkillStatus.CheckResultInCondition((int)item.Status, (int)e))
+			if(ExtensionStatus.CheckHasStatus((int)item.Status, (int)e))
 			{
 				if(!TakeDamage(PrototypeGameMode.Instance.GetPoringByIndex(item.OwnerId), item.Damage, item.Particle))
 				{
@@ -179,6 +186,10 @@ public class Poring : MonoBehaviour {
 		removeKey.ForEach(statusKey => 
 		{
 			m_currentEffects.Remove(statusKey);
+
+			StatusIconData i = m_currentIconEffects.Find(ci => ci.status == statusKey.Status);
+			Destroy(i.image.gameObject);
+			m_currentIconEffects.Remove(i);
 		});
 	}
 
@@ -189,7 +200,7 @@ public class Poring : MonoBehaviour {
 			var item = m_currentEffects[i];
 
 			SkillStatus e = SkillStatus.Bleed;
-			if(ExtensionSkillStatus.CheckResultInCondition((int)item.Status, (int)e))
+			if(ExtensionStatus.CheckHasStatus((int)item.Status, (int)e))
 			{
 				if(!TakeDamage(PrototypeGameMode.Instance.GetPoringByIndex(item.OwnerId), item.Damage, item.Particle))
 				{
@@ -210,5 +221,11 @@ public class Poring : MonoBehaviour {
 			status |= dict.Status;
 		}
 		return (int)status;
+	}
+
+	struct StatusIconData
+	{
+		public SkillStatus status;
+		public Image image;
 	}
 }

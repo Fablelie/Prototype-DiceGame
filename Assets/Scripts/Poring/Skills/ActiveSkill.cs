@@ -112,6 +112,13 @@ public class ActiveSkill : BaseSkill
 
     private void AddDamageToTargetNode(Poring poring, float damage, Node node)
     {
+        if(this.name == "Cloaking")
+        {
+            SetEffectOwnerIdAndDamage(poring);
+            poring.OnReceiverEffect(EffectsReceiver);
+            return;
+        }
+
         for (int i = 0; i < node.porings.Count; i++)
         {
             var target = node.porings[i];
@@ -133,7 +140,7 @@ public class ActiveSkill : BaseSkill
 
         foreach (var s in StrongerList)
         {
-            if (ExtensionSkillStatus.CheckResultInCondition(targetPoring.GetCurrentStatus(), (int)s.Status))
+            if (ExtensionStatus.CheckHasStatus(targetPoring.GetCurrentStatus(), (int)s.Status))
             {
                 damage *= s.DamageMultiple;
             }

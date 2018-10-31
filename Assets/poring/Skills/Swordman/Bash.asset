@@ -20,7 +20,7 @@ MonoBehaviour:
   MaxRangeValue: 3
   SkillMode: 0
   DamageType: 0
-  DamageMultiple: 2
+  DamageMultiple: 1.5
   TargetType: 2
   AOEValue: 0
   IsIgnoreSelf: 1

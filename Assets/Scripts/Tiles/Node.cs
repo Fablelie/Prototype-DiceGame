@@ -95,7 +95,7 @@ public class Node : MonoBehaviour {
 		foreach (var fx in effectsResult)
 		{
 			SkillStatus e = SkillStatus.Freeze | SkillStatus.Root | SkillStatus.Sleep;
-			if(ExtensionSkillStatus.CheckResultInCondition((int)fx.Status, (int)e)) return false;
+			if(ExtensionStatus.CheckHasStatus((int)fx.Status, (int)e)) return false;
 		}
 		return true;
 	}

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using ExitGames.Client.Photon;
 using Photon.Pun;
@@ -25,7 +26,7 @@ public class Roll : MonoBehaviour {
 	public bool isRolling = false;
 	public float rollSpeed = 0;
 	private int radiusStep = 0;
-	private List<GameObject> _texts = new List<GameObject>();
+	[SerializeField] private List<GameObject> _texts = new List<GameObject>();
 	private int _poringIndex;
 	private int _resultIndex;
 	
@@ -35,10 +36,18 @@ public class Roll : MonoBehaviour {
 		gameObject.SetActive(true);
 		_poringIndex = poringIndex;
 		_resultIndex = resultIndex;
+		
 		radiusStep = 360/valueList.Count;
+		// Debug.LogError($"{radiusStep} = 360/{valueList.Count}");
 		for (int i = 0; i < valueList.Count; i++) {
 			GameObject ob = Instantiate(text);
-			ob.GetComponent<Text>().text = (int)valueList[i]+ "";
+			int value = (int)valueList[i];
+			string s = value.ToString();
+			if(value < 0) s = "M";
+			else if(value == 7) s = "Z";
+			else if(value == 8) s = "ZZ";
+
+			ob.GetComponent<Text>().text = $"{s}";
 			ob.transform.SetParent(transform);
 			ob.SetActive(true);
 			// Vector3.ClampMagnitude(v, radiusStep*i);
@@ -53,7 +62,7 @@ public class Roll : MonoBehaviour {
 			_texts.Add(ob);
 		}
 
-		arrow.transform.Rotate(new Vector3(0, 0, Random.Range(0, 360)));
+		arrow.transform.Rotate(new Vector3(0, 0, UnityEngine.Random.Range(0, 360)));
 		rollSpeed = 32;
 		isRolling = true;
 	}
@@ -68,7 +77,7 @@ public class Roll : MonoBehaviour {
 			rollSpeed -= rollSpeed / 30;
 
 			if (rollSpeed < 1) { 
-				if (_resultIndex == RadiusToNumber() - 1)
+				if (_resultIndex == RadiusToNumber())
 				{
 					rollSpeed = 0;
 					Invoke ("OnRollEnd", 0.5f);
@@ -80,7 +89,17 @@ public class Roll : MonoBehaviour {
 			arrow.transform.Rotate(new Vector3(0, 0, rollSpeed));
 			//print(arrow.transform.eulerAngles.z);
 			foreach (GameObject text in _texts) text.GetComponent<Text>().fontSize = 24;
-			_texts[RadiusToNumber()-1].GetComponent<Text>().fontSize = 36;
+			int index = RadiusToNumber();
+			try
+			{
+				_texts[index].GetComponent<Text>().fontSize = 36;	
+			}
+			catch (ArgumentOutOfRangeException)
+			{
+				Debug.LogError(index);
+				throw;
+			}
+			
 		}
 
 		// if (Input.GetKeyDown(KeyCode.R)) {
@@ -91,13 +110,13 @@ public class Roll : MonoBehaviour {
 
 	int RadiusToNumber() {
 		int i = Mathf.RoundToInt((arrow.transform.eulerAngles.z+(radiusStep/2)) / radiusStep);
-		return i;
+		return i - 1;
 	}
 
 	void OnRollEnd() {
 		foreach (GameObject text in _texts) Destroy(text.gameObject);
 		gameObject.SetActive(false);
-		int index = RadiusToNumber()-1;
+		int index = RadiusToNumber();
 		//print("NUMBER IS " + number);
 		if (_poringIndex == PhotonNetwork.LocalPlayer.GetPlayerNumber())
 		{

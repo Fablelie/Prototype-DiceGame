@@ -12,20 +12,20 @@ MonoBehaviour:
   m_Name: Mage
   m_EditorClassIdentifier: 
   Prefab: {fileID: 1851545479495634, guid: 5e71f9c3c1a786a4993a81dab7123063, type: 2}
-  BaseHp: 30
+  BaseHp: 20
   CurrentMaxHp: 0
   CurrentHp: 0
-  BasePAtk: 5
+  BasePAtk: 1
   CurrentPAtk: 0
-  BaseMAtk: 10
+  BaseMAtk: 20
   CurrentMAtk: 0
   AttackRange: 0
-  MaxHp: 60
+  MaxHp: 50
   MaxPAtk: 10
   MaxMAtk: 30
-  GrowupHp: 8
+  GrowupHp: 3
   GrowupPAtk: 1
-  GrowupMAtk: 5
+  GrowupMAtk: 1
   CurrentRequestExp: 2
   MaxLevel: 10
   StartRequestExp: 2

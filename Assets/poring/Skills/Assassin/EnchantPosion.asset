@@ -30,7 +30,7 @@ MonoBehaviour:
   CurrentCD: 0
   EffectsReceiver:
   - OwnerId: 1
-    Damage: 5
+    Damage: 10
     EffectDuration: 3
     Status: 2
     Particle: {fileID: 100004, guid: 7867af58a6ec48846ae807eb4022fbaa, type: 2}

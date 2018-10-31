@@ -205,9 +205,9 @@ public class BaseSkill : ScriptableObject
 	}
 }
 
-public class ExtensionSkillStatus
+public class ExtensionStatus
 {
-	public static bool CheckResultInCondition(int input, int condition)
+	public static bool CheckHasStatus(int input, int condition)
 	{
 		bool result = true;
 		result &= ((input & condition) != 0);

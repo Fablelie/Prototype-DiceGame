@@ -18,7 +18,7 @@ MonoBehaviour:
   EffectOnTarget: {fileID: 0}
   SkillIcon: {fileID: 0}
   MinRangeValue: 0
-  MaxRangeValue: 0
+  MaxRangeValue: 1
   SkillMode: 0
   DamageType: 0
   DamageMultiple: 0
@@ -31,7 +31,7 @@ MonoBehaviour:
   CurrentCD: 0
   EffectsReceiver:
   - OwnerId: 0
-    Damage: 200
+    Damage: 20
     EffectDuration: 0
     Status: 0
     Particle: {fileID: 0}

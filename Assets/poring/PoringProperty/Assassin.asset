@@ -12,19 +12,19 @@ MonoBehaviour:
   m_Name: Assassin
   m_EditorClassIdentifier: 
   Prefab: {fileID: 1802245692122424, guid: 2f05cfae33e93384e8743b663b821c7f, type: 2}
-  BaseHp: 30
+  BaseHp: 20
   CurrentMaxHp: 0
   CurrentHp: 0
   BasePAtk: 10
   CurrentPAtk: 0
-  BaseMAtk: 5
+  BaseMAtk: 10
   CurrentMAtk: 0
   AttackRange: 0
-  MaxHp: 60
+  MaxHp: 50
   MaxPAtk: 30
-  MaxMAtk: 10
-  GrowupHp: 8
-  GrowupPAtk: 5
+  MaxMAtk: 20
+  GrowupHp: 3
+  GrowupPAtk: 2
   GrowupMAtk: 1
   CurrentRequestExp: 2
   MaxLevel: 10
@@ -36,8 +36,9 @@ MonoBehaviour:
   DeffensiveDices:
   - {fileID: 11400000, guid: fe27273ab82e6824e994c73ca56a6f6d, type: 2}
   OffensiveDices:
-  - {fileID: 11400000, guid: db3b6c9f8f439404f814dc2d31c57e05, type: 2}
+  - {fileID: 11400000, guid: ea287c69e16643a4ba673ee953c8c9e8, type: 2}
   SkillList:
   - {fileID: 11400000, guid: bb285c53d4e2d1b4db5e5c3e96beb601, type: 2}
   - {fileID: 11400000, guid: 5423279c0bde6e34eacfc73cb0efda62, type: 2}
+  - {fileID: 11400000, guid: e8139e9252aa79540a56109bb0238b51, type: 2}
   NormalAttackEffect: {fileID: 100000, guid: f06e78284f831ae469c74624ab5d513b, type: 2}

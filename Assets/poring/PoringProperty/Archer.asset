@@ -17,14 +17,14 @@ MonoBehaviour:
   CurrentHp: 0
   BasePAtk: 10
   CurrentPAtk: 0
-  BaseMAtk: 5
+  BaseMAtk: 1
   CurrentMAtk: 0
   AttackRange: 2
-  MaxHp: 60
+  MaxHp: 40
   MaxPAtk: 30
   MaxMAtk: 10
-  GrowupHp: 8
-  GrowupPAtk: 5
+  GrowupHp: 1
+  GrowupPAtk: 2
   GrowupMAtk: 1
   CurrentRequestExp: 2
   MaxLevel: 10

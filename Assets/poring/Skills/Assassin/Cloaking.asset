@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f4f8cbf729b8e24aa6f66f792bfff72, type: 3}
+  m_Name: Cloaking
+  m_EditorClassIdentifier: 
+  AnimationStateName: Item_Used
+  EffectOnHit: {fileID: 0}
+  EffectOnSelf: {fileID: 100000, guid: 83cd9cc9f9c88824ba18dc59b05ae328, type: 2}
+  EffectOnTarget: {fileID: 0}
+  SkillIcon: {fileID: 0}
+  MinRangeValue: 0
+  MaxRangeValue: 0
+  SkillMode: 0
+  DamageType: 0
+  DamageMultiple: 0
+  TargetType: 0
+  AOEValue: 0
+  IsIgnoreSelf: 0
+  SkillDuration: 0
+  TurnCD: 3
+  MoveToTarget: 0
+  CurrentCD: 0
+  EffectsReceiver:
+  - OwnerId: 0
+    Damage: 0
+    EffectDuration: 2
+    Status: 32
+    Particle: {fileID: 100000, guid: 83cd9cc9f9c88824ba18dc59b05ae328, type: 2}
+  StrongerList: []
+  Description: "\u0E1E\u0E25\u0E32\u0E07\u0E15\u0E31\u0E27 \u0E44\u0E14\u0E49\u0E23\u0E31\u0E1A\u0E2A\u0E16\u0E32\u0E13\u0E30
+    <color=#858585>Ambursh</color> \u0E44\u0E21\u0E48\u0E2A\u0E32\u0E21\u0E32\u0E23\u0E16\u0E15\u0E01\u0E40\u0E1B\u0E47\u0E19\u0E40\u0E1B\u0E49\u0E32\u0E2B\u0E21\u0E32\u0E22\u0E44\u0E14\u0E49
+    \u0E1F\u0E34\u0E27\u0E27\u0E27\u0E27\u0E27\u0E27\u0E27\u0E27"
