@@ -51,7 +51,11 @@ public class EffectReceiver
 	public SkillStatus Status;
 	public GameObject Particle;
 
-	public EffectReceiver(EffectReceiver baseObj)
+    public EffectReceiver()
+    {
+    }
+
+    public EffectReceiver(EffectReceiver baseObj)
 	{
 		OwnerId        = baseObj.OwnerId;
 		EffectDuration = baseObj.EffectDuration;

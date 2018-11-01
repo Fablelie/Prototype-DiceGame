@@ -14,3 +14,4 @@ MonoBehaviour:
   Type: 1
   WeightStep: 1
   Material: {fileID: 2100000, guid: 0b42fce6112f79d419f3dc55d5751c04, type: 2}
+  particle: {fileID: 100000, guid: 83cd9cc9f9c88824ba18dc59b05ae328, type: 2}

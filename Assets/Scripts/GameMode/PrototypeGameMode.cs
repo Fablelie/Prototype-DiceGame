@@ -214,7 +214,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
                 }
             break;
             case TargetType.Another:
-                if (node.steps.Count > 0 && CheckPoringInTargetNode(node) > 0)
+                if (node.steps.Count > 0 && CheckAnotherPoringInTargetNode(node))
                     
                     isSelectedTargetSkill = SkillSelectPoringTarget(skill, node);
             break;
@@ -250,7 +250,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
             // SFX.PlayClip(resource.sound[0]).GetComponent<AudioSource>().time = 0.3f;
             node.PointRenderer.SetPropertyBlock(MaterialPreset.GetMaterialPreset(EMaterialPreset.selected));
             MagicCursor.Instance.MoveTo(node);
-            if (node == m_currentPlayer.Poring.Node && CheckPoringInTargetNode(node) > 0 && node.TileProperty.Type != TileType.Sanctuary)
+            if (node == m_currentPlayer.Poring.Node && CheckAnotherPoringInTargetNode(node) && node.TileProperty.Type != TileType.Sanctuary)
             {
                 List<Poring> porings = node.porings.FindAll(poring => poring != m_currentPlayer.Poring);
                 m_currentPlayer.Poring.Target = porings[Random.Range(0, porings.Count - 1)];
@@ -266,11 +266,11 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
                 ResetNodeColor();
                 CurrentGameState = eStateGameMode.Encounter;
             }
-            else if (node.steps.Count > 0 && (CheckPoringInTargetNode(node) > 0 || node.steps.Find(step => step == m_step) == m_step))
+            else if (node.steps.Count > 0 && (CheckAnotherPoringInTargetNode(node) || node.steps.Find(step => step == m_step) == m_step))
             {
                 MagicCursor.Instance.MoveTo(node);
 
-                if (CheckPoringInTargetNode(node) > 0 && node.TileProperty.Type != TileType.Sanctuary)
+                if (CheckAnotherPoringInTargetNode(node) && node.TileProperty.Type != TileType.Sanctuary)
                 {
                     List<Poring> porings = node.porings.FindAll(poring => poring != m_currentPlayer.Poring);
                     m_currentPlayer.Poring.Target = porings[Random.Range(0, porings.Count - 1)];
@@ -359,10 +359,10 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
                     Node node = hit.transform.parent.GetComponent<Node>();
                     if(node != null)
                     {
-                        int resultAttackA = UnityEngine.Random.Range(0,6);
-                        int resultAttackB = UnityEngine.Random.Range(0,6);
-                        int resultDefendA = UnityEngine.Random.Range(0,6);
-                        int resultDefendB = UnityEngine.Random.Range(0,6);
+                        int resultAttackA = UnityEngine.Random.Range(0,5);
+                        int resultAttackB = UnityEngine.Random.Range(0,5);
+                        int resultDefendA = UnityEngine.Random.Range(0,5);
+                        int resultDefendB = UnityEngine.Random.Range(0,5);
 
                         // Debug.LogError($"AttackA : {resultAttackA}, DefendA {resultDefendA}");
                         // Debug.LogError($"AttackB : {resultAttackB}, DefendB {resultDefendB}");
@@ -373,13 +373,16 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         }
     }
 
-    private int CheckPoringInTargetNode(Node node)
+    public bool CheckAnotherPoringInTargetNode(Node node)
     {
         int count = node.porings.Count;
 
-        if (node.porings.Find(poring => poring == m_currentPlayer.Poring || ExtensionStatus.CheckHasStatus(poring.GetCurrentStatus(), (int)SkillStatus.Ambursh) ) != null) count -= 1;
-
-        return count;
+        node.porings.ForEach(poring => 
+        {
+            if (poring == m_currentPlayer.Poring || ExtensionStatus.CheckHasStatus(poring.GetCurrentStatus(), (int)SkillStatus.Ambursh))
+                count -= 1;
+        });
+        return count > 0;
     }
 
     public void ResetNodeColor()
@@ -521,10 +524,10 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
 		if (max == 0) max = m_step;
 		foreach(Node node in Nodes) 
         {
-            if (node == m_currentPlayer.Poring.Node && CheckPoringInTargetNode(node) > 0 && node.TileProperty.Type != TileType.Sanctuary) node.PointRenderer.material.SetColor("_Color", Color.red);
+            if (node == m_currentPlayer.Poring.Node && CheckAnotherPoringInTargetNode(node) && node.TileProperty.Type != TileType.Sanctuary) node.PointRenderer.material.SetColor("_Color", Color.red);
             if (node.steps.Count == 0) continue;
 			node.steps.Sort();
-            Color color = (CheckPoringInTargetNode(node) > 0 && node.TileProperty.Type != TileType.Sanctuary) ? Color.red : (node.steps[node.steps.Count - 1] == max) ? Color.green : Color.yellow;
+            Color color = (CheckAnotherPoringInTargetNode(node) && node.TileProperty.Type != TileType.Sanctuary) ? Color.red : (node.steps[node.steps.Count - 1] == max) ? Color.green : Color.yellow;
             
 			node.PointRenderer.material.SetColor("_Color", color);
 			node.PointRenderer.material.SetColor("_EmissionColor", new Color(0.5f, 0.5f, 0.5f));
@@ -658,7 +661,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
                     SetColorNode(m_currentPlayer.Poring.Node, Color.red);
                 return;
                 case TargetType.Another:
-                    if (CheckPoringInTargetNode(node) > 0)
+                    if (CheckAnotherPoringInTargetNode(node))
                         SetColorNode(node, Color.red);
                 break;
                 case TargetType.Tile:
@@ -675,7 +678,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         foreach (var node in Nodes)
         {
             if (node.steps.Count == 0 || node.TileProperty.Type == TileType.Sanctuary) continue;
-            if (CheckPoringInTargetNode(node) > 0)
+            if (CheckAnotherPoringInTargetNode(node))
                 SetColorNode(node, Color.red);
         }
     }
@@ -686,7 +689,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         { 
             node = m_currentPlayer.Poring.Node;
             // remeaningRange = maxRange;
-            if(node.TileProperty.Type != TileType.Sanctuary && CheckPoringInTargetNode(node) > 0) node.steps.Add(0);
+            if(node.TileProperty.Type != TileType.Sanctuary && CheckAnotherPoringInTargetNode(node)) node.steps.Add(0);
         }
 
         if(maxRange == 0) return;
@@ -730,12 +733,12 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
                 {
                     node.PointRenderer.SetPropertyBlock(MaterialPreset.GetMaterialPreset(EMaterialPreset.selected));
                     MagicCursor.Instance.MoveTo(node);
-                    if (CheckPoringInTargetNode(node) > 0 && node.TileProperty.Type != TileType.Sanctuary && node.steps.Count > 0)
+                    if (CheckAnotherPoringInTargetNode(node) && node.TileProperty.Type != TileType.Sanctuary && node.steps.Count > 0)
                     {
-                        int resultAttackA = UnityEngine.Random.Range(0,6);
-                        int resultAttackB = UnityEngine.Random.Range(0,6);
-                        int resultDefendA = UnityEngine.Random.Range(0,6);
-                        int resultDefendB = UnityEngine.Random.Range(0,6);
+                        int resultAttackA = UnityEngine.Random.Range(0,5);
+                        int resultAttackB = UnityEngine.Random.Range(0,5);
+                        int resultDefendA = UnityEngine.Random.Range(0,5);
+                        int resultDefendB = UnityEngine.Random.Range(0,5);
 
                         // Debug.LogError($"AttackA : {resultAttackA}, DefendA {resultDefendA}");
                         // Debug.LogError($"AttackB : {resultAttackB}, DefendB {resultDefendB}");
@@ -764,11 +767,12 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
 
     public IEnumerator UpdateState()
     {
+        
         yield return new WaitForSeconds(2);
-        while (true)
+        while (PrevGameState != eStateGameMode.EndGame)
         {
             yield return new WaitForEndOfFrame();
-            if (PrevGameState != CurrentGameState && PrevGameState != eStateGameMode.EndGame)
+            if (PrevGameState != CurrentGameState)
             {
                 PrevGameState = CurrentGameState;
                 switch (CurrentGameState)
@@ -837,7 +841,10 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
 
     private void EndGame()
     {
-        StopAllCoroutines();
+        // Debug.LogError("EndGame");
+        StopCoroutine("UpdateState");
+        CurrentGameState = eStateGameMode.EndGame;
+        // StopAllCoroutines();
         HUDController.Instance.ShowTextEndGame();
         TurnActiveUIController.Instance.NotMyTurn();
     }
@@ -846,22 +853,21 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
 
     public void CheckEndGame()
     {
-        bool hasWinner = false;
+        // bool hasWinner = false;
         foreach (var poring in m_player)
         {
             if(poring.WinCondition >= 3)
             {
-                hasWinner = true;
+                // hasWinner = true;
                 poring.Animator.Play("Win");
                 m_player.ForEach(p => 
                 {
                     if (p != poring) p.Animator.Play("Lose");
                 }); 
-                break;
+                EndGame();
+                return;
             }
         }
-
-        if(hasWinner) CurrentGameState = eStateGameMode.EndGame;
     }
 
     private IEnumerator CheckEndRoundCondition()
@@ -998,6 +1004,8 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
 
     public Poring GetPoringByIndex(int index)
     {
+        if(index == -1) return null;
+        
         return m_player[index];
     }
 

@@ -82,7 +82,15 @@ public class Node : MonoBehaviour {
 		poring.transform.position = transform.position;
 		poring.Node = this;
 		porings.Add(poring);
-		TileProperty.OnEnter(poring);
+		if (porings.Count > 1 && 
+			ExtensionStatus.CheckHasStatus(porings[0].GetCurrentStatus(), (int)SkillStatus.Ambursh) &&
+			!ExtensionStatus.CheckHasStatus(poring.GetCurrentStatus(), (int)SkillStatus.Ambursh))
+		{
+			porings[0].Animator.Play("Skill");
+			poring.TakeDamage(porings[0], porings[0].Property.CurrentPAtk, porings[0].Property.NormalAttackEffect);
+		}
+
+		TileProperty.OnEnter(poring, this);
 		List<EffectReceiver> effectsResult = new List<EffectReceiver>();
 		for (int i = 0; i < effectsOnTile.Count; i++)
 		{
@@ -103,7 +111,7 @@ public class Node : MonoBehaviour {
 	public void RemovePoring(Poring poring)
 	{
 		porings.Remove(poring);
-		TileProperty.OnExit(poring);
+		TileProperty.OnExit(poring, this);
 	}
 #if UNITY_EDITOR
 	void OnDrawGizmosSelected() {
@@ -181,7 +189,7 @@ public class Node : MonoBehaviour {
 		AppleList.ForEach(apple => DestroyImmediate(apple));
 		AppleList.Clear();
 
-		TileProperty.OnFinish(poring);
+		TileProperty.OnFinish(poring, this);
 	}
 }
 

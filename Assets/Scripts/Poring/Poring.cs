@@ -116,9 +116,14 @@ public class Poring : MonoBehaviour {
 		else
 		{
 			Animator.Play("die");
-			ownerDamage.Property.CurrentPoint += Property.CurrentPoint / 2;
-			ownerDamage.WinCondition += 1;
+			if(ownerDamage != null)
+			{
+				ownerDamage.Property.CurrentPoint += Property.CurrentPoint / 2;
+				ownerDamage.WinCondition += 1;
+			}
 			m_currentEffects.Clear();
+			m_currentIconEffects.ForEach(icon => Destroy(icon.image.gameObject));
+			m_currentIconEffects.Clear();
 			PrototypeGameMode.Instance.CheckEndGame();
 			return false;
 		}

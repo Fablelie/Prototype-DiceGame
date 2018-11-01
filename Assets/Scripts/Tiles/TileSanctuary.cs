@@ -8,13 +8,13 @@ public class TileSanctuary : TileProperty
 {
 	private Dictionary<Poring, int> members = new Dictionary<Poring, int>();
 
-	public override void OnEnter(Poring poring)
+	public override void OnEnter(Poring poring, Node node)
 	{
 		CaculateLevelUp(poring.Property);
 		// poring.Property.PermanentPoint += poring.Property.CurrentPoint;
 	}
 
-	public override void OnFinish(Poring poring)
+	public override void OnFinish(Poring poring, Node node)
 	{
 		if(members.ContainsKey(poring))
 		{

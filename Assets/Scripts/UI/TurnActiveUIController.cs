@@ -30,6 +30,7 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
 
     public void SetActivePanel(bool isEnable, TileType type)
     {
+        if(gameMode.CurrentGameState == eStateGameMode.EndGame) return;
         if(!CheckingEnableButtonByStatus(currentPoring))
         {
             // if(descriptPanel.gameObject.activeInHierarchy) descriptPanel.ClosePanel();
@@ -112,13 +113,13 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
 
     private void SetEventToChangeViewBtn()
     {
-        // ChangeViewBtn.onClick.RemoveAllListeners();
-        // ChangeViewBtn.onClick.AddListener(() =>
-        // {
-        var cam = CameraController.Instance;
-        cam.Show((cam.CurrentType == CameraType.TopDown) ? CameraType.Action : CameraType.TopDown);
+        ChangeViewBtn.onClick.RemoveAllListeners();
+        ChangeViewBtn.onClick.AddListener(() =>
+        {
+            var cam = CameraController.Instance;
+            cam.Show((cam.CurrentType == CameraType.TopDown) ? CameraType.Action : CameraType.TopDown);
             // SetEventToChangeViewBtn((cameraType == CameraType.Default) ? CameraType.TopDown : CameraType.Default);
-        // });
+        });
     }
 
     private void SetEventToAttackBtn(Poring poring)
@@ -145,7 +146,7 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
             BtnGroup.ForEach(group => group.BtnObject.gameObject.SetActive(false));    
             AttackBtn.gameObject.SetActive(false);
             RollDiceBtn.gameObject.SetActive(false);
-            int result = UnityEngine.Random.Range(0,6);
+            int result = UnityEngine.Random.Range(0,5);
             // Debug.LogError($"Move > >>>> >> > {result}");
             gameMode.PhotonNetworkRaiseEvent(EventCode.BeginRollMove, new object[] { index, result });
 
