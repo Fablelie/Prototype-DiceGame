@@ -199,13 +199,27 @@ public class BaseSkill : ScriptableObject
 	/// <summary>
 	/// Use every time before sent result of skill.
 	/// </summary>
-	public void SetEffectOwnerIdAndDamage(Poring poring)
+	public List<EffectReceiver> SetEffectOwnerIdAndDamage(Poring poring)
 	{
+		List<EffectReceiver> resultList = new List<EffectReceiver>();
 		EffectsReceiver.ForEach(fx =>
         {
-			fx.OwnerId = PrototypeGameMode.Instance.GetPoringIndexByPoring(poring);
-			if (fx.Damage == -1) fx.Damage = DamageMultiple * ((DamageType == DamageType.PAtk) ? poring.Property.CurrentPAtk : poring.Property.CurrentMAtk);
+			float d = 0;
+			if (fx.Damage == -1)
+				d = DamageMultiple * ((DamageType == DamageType.PAtk) ? poring.Property.CurrentPAtk : poring.Property.CurrentMAtk);
+			else d = fx.Damage;
+			EffectReceiver result = new EffectReceiver()
+			{
+				OwnerId = PrototypeGameMode.Instance.GetPoringIndexByPoring(poring),
+				Damage = d,
+				EffectDuration = fx.EffectDuration,
+				Status = fx.Status,
+				Particle = fx.Particle
+			};
+			resultList.Add(result);
 		});
+
+		return resultList;
 	}
 }
 

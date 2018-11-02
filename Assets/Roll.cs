@@ -74,16 +74,16 @@ public class Roll : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (isRolling) {
-			rollSpeed -= rollSpeed / 30;
+			rollSpeed -= rollSpeed / 20;
 
-			if (rollSpeed < 1) { 
+			if (rollSpeed < 2) { 
 				if (_resultIndex == RadiusToNumber())
 				{
 					rollSpeed = 0;
 					Invoke ("OnRollEnd", 0.5f);
 					isRolling = false;
 				}
-				else rollSpeed += 1;
+				else rollSpeed += 2;
 			}
 
 			arrow.transform.Rotate(new Vector3(0, 0, rollSpeed));

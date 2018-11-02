@@ -22,17 +22,15 @@ public class CreaterSkill : BaseSkill
 
         PrototypeGameMode.Instance.StartCoroutine(WaitForAnimation(poring, targetNode));
     }
-
+    private Poring p;
     private IEnumerator WaitForAnimation(Poring poring, Node targetNode)
     {
         poring.Animator.Play(AnimationStateName);
+        p = poring;
         yield return new WaitForSeconds(0.5f);
         InstantiateParticleEffect.CreateFx(EffectOnSelf, poring.transform.position);
         CurrentCD = TurnCD;
         
-        // create & set property
-        SetEffectOwnerIdAndDamage(poring);
-
         CheckAOEToCreate(targetNode, AOEValue);
 
         if (PrototypeGameMode.Instance.IsMineTurn())
@@ -68,7 +66,7 @@ public class CreaterSkill : BaseSkill
         effect.DestroyOnTrigger = isDestroyOnTrigger;
         effect.IsIgnoreSelf = IsIgnoreSelf;
 
-        effect.EffectsDetail.AddRange(EffectsReceiver);
+        effect.EffectsDetail.AddRange(SetEffectOwnerIdAndDamage(p));
 
         effect.transform.SetParent(node.transform);
         effect.transform.localPosition = Vector3.zero;

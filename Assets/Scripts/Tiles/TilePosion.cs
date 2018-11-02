@@ -12,7 +12,7 @@ public class TilePosion : TileProperty
         var e = new EffectReceiver(){
             OwnerId = -1,
             Damage = tileDamage,
-            EffectDuration = 1,
+            EffectDuration = 5,
             Status = SkillStatus.Posion
         };
         

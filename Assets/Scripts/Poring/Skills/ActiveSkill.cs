@@ -114,8 +114,7 @@ public class ActiveSkill : BaseSkill
     {
         if(this.name == "Cloaking")
         {
-            SetEffectOwnerIdAndDamage(poring);
-            poring.OnReceiverEffect(EffectsReceiver);
+            poring.OnReceiverEffect(SetEffectOwnerIdAndDamage(poring));
             return;
         }
 
@@ -149,8 +148,7 @@ public class ActiveSkill : BaseSkill
         bool isAlive = targetPoring.TakeDamage(poring, damage);
         if(isAlive)
         {
-            SetEffectOwnerIdAndDamage(poring);
-            isAlive = targetPoring.OnReceiverEffect(EffectsReceiver);
+            isAlive = targetPoring.OnReceiverEffect(SetEffectOwnerIdAndDamage(poring));
         }
 
         if(!isAlive)
