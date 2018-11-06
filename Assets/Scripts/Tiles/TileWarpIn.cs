@@ -25,6 +25,7 @@ public class TileWarpIn : TileProperty
     {
         TileWarpOut o = (TileWarpOut)node.TileProperty;
 
+        poring.Node.RemovePoring(poring);
         node.AddPoring(poring);
         poring.transform.position = node.transform.position;
         poring.Animator.Play("Warp_down");

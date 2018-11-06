@@ -42,6 +42,7 @@ public class Poring : MonoBehaviour {
 	}
 
 	[SerializeField] private Text PlayerNameText;
+	[SerializeField] private Image JobImage;
 	[SerializeField] private Transform iconRoot;
 
 	[SerializeField] private List<EffectReceiver> m_currentEffects = new List<EffectReceiver>();
@@ -61,6 +62,7 @@ public class Poring : MonoBehaviour {
 	{
 		Property = ScriptableObject.CreateInstance<PoringProperty>();
         Property.Init(baseProperty);
+		JobImage.sprite = Property.JobImage;
 		// Debug.Log("Current hp : " + Property.CurrentHp);
 	}
 
@@ -103,8 +105,14 @@ public class Poring : MonoBehaviour {
 		return true;
 	}
 
-	public bool TakeDamage(Poring ownerDamage, float damageResult, GameObject particle = null)
+	public bool TakeDamage(Poring ownerDamage, float damageResult, bool ignoreUltimate = false, GameObject particle = null)
 	{
+		if(!ignoreUltimate && damageResult != 0)
+		{
+			PrototypeGameMode.Instance.AddPoringCanGetUltimatePoint(this);
+			PrototypeGameMode.Instance.AddPoringCanGetUltimatePoint(ownerDamage);
+		}
+		
 		Property.CurrentHp -= damageResult;
 		if(particle != null) InstantiateParticleEffect.CreateFx(particle, transform.position);
 
@@ -142,7 +150,7 @@ public class Poring : MonoBehaviour {
 			SkillStatus e = SkillStatus.Burn;
 			if(ExtensionStatus.CheckHasStatus((int)item.Status, (int)e))
 			{
-				if(!TakeDamage(PrototypeGameMode.Instance.GetPoringByIndex(item.OwnerId), item.Damage, item.Particle))
+				if(!TakeDamage(PrototypeGameMode.Instance.GetPoringByIndex(item.OwnerId), item.Damage, true, item.Particle))
 				{
 					Behavior.Respawn();
 					PrototypeGameMode.Instance.CurrentGameState = eStateGameMode.EndTurn;
@@ -166,7 +174,7 @@ public class Poring : MonoBehaviour {
 			SkillStatus e = SkillStatus.Posion;
 			if(ExtensionStatus.CheckHasStatus((int)item.Status, (int)e))
 			{
-				if(!TakeDamage(PrototypeGameMode.Instance.GetPoringByIndex(item.OwnerId), item.Damage, item.Particle))
+				if(!TakeDamage(PrototypeGameMode.Instance.GetPoringByIndex(item.OwnerId), item.Damage, true, item.Particle))
 				{
 					Behavior.Respawn();
 					PrototypeGameMode.Instance.CurrentGameState = eStateGameMode.EndTurn;

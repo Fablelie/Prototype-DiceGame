@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f4f8cbf729b8e24aa6f66f792bfff72, type: 3}
+  m_Name: Heal
+  m_EditorClassIdentifier: 
+  AnimationStateName: Item_Used
+  EffectOnHit: {fileID: 0}
+  EffectOnSelf: {fileID: 100006, guid: 60bc526f4be1e044ab9e46340b82ffb3, type: 2}
+  EffectOnTarget: {fileID: 100004, guid: 757df604761b8ef42831192c70ee1099, type: 2}
+  SkillIcon: {fileID: 0}
+  MinRangeValue: 0
+  MaxRangeValue: 0
+  SkillMode: 0
+  DamageType: 1
+  DamageMultiple: -1
+  TargetType: 0
+  AOEValue: 0
+  IsIgnoreSelf: 0
+  SkillDuration: 0
+  TurnCD: 2
+  MoveToTarget: 0
+  CurrentCD: 0
+  EffectsReceiver: []
+  StrongerList: []
+  Description: "\u0E40\u0E1E\u0E34\u0E48\u0E21\u0E1E\u0E25\u0E31\u0E07\u0E0A\u0E35\u0E27\u0E34\u0E15\u0E15\u0E32\u0E21
+    M.Atk"

@@ -9,7 +9,16 @@ public class PoringProperty : ScriptableObject {
 	[Header("Base")]
 	public int BaseHp;
 	[HideInInspector] public int CurrentMaxHp;
-	[HideInInspector]public float CurrentHp;
+	private float m_currentHp;
+	[HideInInspector]public float CurrentHp {
+		get {
+			return m_currentHp;
+			}
+		set {
+			m_currentHp = value;
+			if (m_currentHp > CurrentMaxHp) m_currentHp = CurrentMaxHp;
+			}
+	}
 	public int BasePAtk;
 	[HideInInspector]public float CurrentPAtk;
 	public int BaseMAtk;
@@ -92,6 +101,10 @@ public class PoringProperty : ScriptableObject {
 	[Header("NormalAttackEffect!!")]
 	public GameObject NormalAttackEffect;
 
+	public Sprite JobImage;
+
+	[HideInInspector] public int UltimatePoint = 0;
+
     public void Init(PoringProperty baseProperty)
     {
         BaseHp      	= baseProperty.BaseHp;
@@ -130,6 +143,7 @@ public class PoringProperty : ScriptableObject {
 		});
 
 		NormalAttackEffect = baseProperty.NormalAttackEffect;
+		JobImage = baseProperty.JobImage;
     }
 
 	private void UpdateProperty()

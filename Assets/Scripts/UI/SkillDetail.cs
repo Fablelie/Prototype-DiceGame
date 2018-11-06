@@ -18,6 +18,10 @@ public class SkillDetail : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     public void SetDetail(BaseSkill baseSkill, Poring poring)
     {
+        float d = (baseSkill.DamageType == DamageType.PAtk) ? poring.Property.CurrentPAtk : poring.Property.CurrentMAtk;
+        if(ExtensionStatus.CheckHasStatus(poring.GetCurrentStatus(), (int)SkillStatus.Blessing))
+            d *= 2;
+            
         Damage = (int)((baseSkill.SkillMode == SkillMode.Activate) ? (baseSkill.DamageType == DamageType.PAtk) ? baseSkill.DamageMultiple * poring.Property.CurrentPAtk : baseSkill.DamageMultiple * poring.Property.CurrentMAtk : (baseSkill.DamageType == DamageType.PAtk) ? poring.Property.CurrentPAtk : poring.Property.CurrentMAtk);
         DamageType = baseSkill.DamageType;
         TargetTypestr = (baseSkill.TargetType == TargetType.Another) ? "Poring" : baseSkill.TargetType.ToString();

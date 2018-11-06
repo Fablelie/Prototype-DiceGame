@@ -87,7 +87,10 @@ public class Node : MonoBehaviour {
 			!ExtensionStatus.CheckHasStatus(poring.GetCurrentStatus(), (int)SkillStatus.Ambursh))
 		{
 			porings[0].Animator.Play("Skill");
-			poring.TakeDamage(porings[0], porings[0].Property.CurrentPAtk, porings[0].Property.NormalAttackEffect);
+			float damage = porings[0].Property.CurrentPAtk;
+			if(ExtensionStatus.CheckHasStatus(poring.GetCurrentStatus(), (int)SkillStatus.Blessing))
+				damage *= 2;
+			poring.TakeDamage(porings[0], damage, porings[0].Property.NormalAttackEffect);
 		}
 
 		TileProperty.OnEnter(poring, this);
@@ -102,7 +105,7 @@ public class Node : MonoBehaviour {
 		if(!isAlive) return false;
 		foreach (var fx in effectsResult)
 		{
-			SkillStatus e = SkillStatus.Freeze | SkillStatus.Root | SkillStatus.Sleep;
+			SkillStatus e = SkillStatus.Freeze | SkillStatus.Root | SkillStatus.Sleep | SkillStatus.Stun;
 			if(ExtensionStatus.CheckHasStatus((int)fx.Status, (int)e)) return false;
 		}
 		return true;
@@ -183,13 +186,14 @@ public class Node : MonoBehaviour {
 		}
 	}
 
-	public void PoringKeepValueOnTile(Poring poring)
+	public void PoringKeepValueOnTile(Poring poring, bool ignoreOnFinish = false)
 	{
 		poring.Property.CurrentPoint += AppleList.Count;
 		AppleList.ForEach(apple => DestroyImmediate(apple));
 		AppleList.Clear();
 
-		TileProperty.OnFinish(poring, this);
+		if(!ignoreOnFinish)
+			TileProperty.OnFinish(poring, this);
 	}
 }
 

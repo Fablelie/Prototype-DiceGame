@@ -14,7 +14,6 @@ MonoBehaviour:
   Prefab: {fileID: 1545874324687066, guid: 2260d55f76f82d649b65c2e39b5dc4f7, type: 2}
   BaseHp: 30
   CurrentMaxHp: 0
-  CurrentHp: 0
   BasePAtk: 10
   CurrentPAtk: 0
   BaseMAtk: 1
@@ -40,5 +39,7 @@ MonoBehaviour:
   SkillList:
   - {fileID: 11400000, guid: 40c439710961828468bdd4396d537c05, type: 2}
   - {fileID: 11400000, guid: d179b71d7889b5f4592eb86a55e13139, type: 2}
-  - {fileID: 11400000, guid: c6a77eb35f821df43bfd053c19bb1878, type: 2}
+  - {fileID: 11400000, guid: 35ea464b537f01943ab53509d0d7afbc, type: 2}
   NormalAttackEffect: {fileID: 100004, guid: f95ff734540a0d749be6571b6cb5b37f, type: 2}
+  JobImage: {fileID: 21300000, guid: 29b766b77d5b3d74bb18dc1e576d9c3b, type: 3}
+  UltimatePoint: 0

@@ -13,7 +13,8 @@ public class TilePosion : TileProperty
             OwnerId = -1,
             Damage = tileDamage,
             EffectDuration = 5,
-            Status = SkillStatus.Posion
+            Status = SkillStatus.Posion,
+            Particle = particle            
         };
         
         InstantiateParticleEffect.CreateFx(particle, poring.transform.position);

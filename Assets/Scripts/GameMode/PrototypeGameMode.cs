@@ -83,6 +83,8 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
     [SerializeField] private List<PoringProperty> m_propertyStarter;
     [SerializeField] private List<Poring> m_player = new List<Poring>();
 
+    [SerializeField] private List<Poring> m_poringGetUltimate = new List<Poring>();
+
     private CurrentPlayer m_currentPlayer;
     public int IndexCurrentPlayer;
     private CameraController m_cameraController;
@@ -870,11 +872,24 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         }
     }
 
+    public void AddPoringCanGetUltimatePoint(Poring poring)
+    {
+        if(!m_poringGetUltimate.Contains(poring))
+        {
+            m_poringGetUltimate.Add(poring);
+            poring.Property.UltimatePoint += 1;
+        }
+
+        Debug.LogError($"{poring.PlayerName} :>>> gain ultimate point >>> {poring.Property.UltimatePoint}");
+    }
+
     private IEnumerator CheckEndRoundCondition()
     {
         StartCoroutine(m_currentPlayer.Poring.OnEndTurn());
         yield return new WaitForSeconds(1);
 
+        m_poringGetUltimate.Clear();
+        
         if ((m_currentPlayer.Index + 1) >= m_player.Count)
         {
             Turn++;

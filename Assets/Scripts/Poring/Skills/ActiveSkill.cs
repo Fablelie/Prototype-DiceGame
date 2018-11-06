@@ -36,6 +36,8 @@ public class ActiveSkill : BaseSkill
     private void SkillEffectActivate(Poring poring, Poring targetPoring = null, Node targetNode = null)
     {
         float damageResult = (DamageType == DamageType.PAtk) ? poring.Property.CurrentPAtk : poring.Property.CurrentMAtk;
+        if(ExtensionStatus.CheckHasStatus(poring.GetCurrentStatus(), (int)SkillStatus.Blessing))
+            damageResult *= 2;
         damageResult *= DamageMultiple;
 
         PrototypeGameMode.Instance.StartCoroutine(WaitForAnimation(poring, damageResult, targetPoring, targetNode));

@@ -36,6 +36,7 @@ public enum SkillStatus
 	Ambursh = 1 << 5,
 	Root = 1 << 6,
 	Freeze = 1 << 7,
+	Blessing = 1 << 8,
 }
 
 [System.Serializable]
@@ -206,7 +207,13 @@ public class BaseSkill : ScriptableObject
         {
 			float d = 0;
 			if (fx.Damage == -1)
-				d = DamageMultiple * ((DamageType == DamageType.PAtk) ? poring.Property.CurrentPAtk : poring.Property.CurrentMAtk);
+			{
+				d = ((DamageType == DamageType.PAtk) ? poring.Property.CurrentPAtk : poring.Property.CurrentMAtk);
+				if(ExtensionStatus.CheckHasStatus(poring.GetCurrentStatus(), (int)SkillStatus.Blessing))
+					d *= 2;
+				d *= DamageMultiple;
+			}
+				
 			else d = fx.Damage;
 			EffectReceiver result = new EffectReceiver()
 			{

@@ -126,7 +126,6 @@ public class PoringBehavior : MonoBehaviour
 			case DefenseTypeResult.Counter:
 				Poring.Target.Animator.Play("Skill");
 				yield return waitSecond;
-
 				Poring.Property.CurrentHp -= defenderDiceResult.DamageResult;
 				
 				if(defenderDiceResult.EffectOnTarget != null)

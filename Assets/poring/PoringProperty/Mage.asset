@@ -14,7 +14,6 @@ MonoBehaviour:
   Prefab: {fileID: 1851545479495634, guid: 5e71f9c3c1a786a4993a81dab7123063, type: 2}
   BaseHp: 20
   CurrentMaxHp: 0
-  CurrentHp: 0
   BasePAtk: 1
   CurrentPAtk: 0
   BaseMAtk: 20
@@ -42,3 +41,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7189f71cd2333eb4aa5224fac0c03161, type: 2}
   - {fileID: 11400000, guid: 0149e08c0be52a842a570dadeb6c8ec7, type: 2}
   NormalAttackEffect: {fileID: 100000, guid: f06e78284f831ae469c74624ab5d513b, type: 2}
+  JobImage: {fileID: 21300000, guid: 834c8990bc7d7c540a72d3d0c27c7547, type: 3}

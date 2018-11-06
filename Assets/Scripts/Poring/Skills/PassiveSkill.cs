@@ -34,13 +34,19 @@ public class PassiveSkill : BaseSkill
 				break;
 				case AttackTypeResult.Double:
 					damage = (DamageType == DamageType.PAtk) ? poring.Property.CurrentPAtk : poring.Property.CurrentMAtk;
+					if(ExtensionStatus.CheckHasStatus(poring.GetCurrentStatus(), (int)SkillStatus.Blessing))
+						damage *= 2;
 				break;
 				case AttackTypeResult.PowerUp:
 					damage = (DamageType == DamageType.PAtk) ? poring.Property.CurrentPAtk : poring.Property.CurrentMAtk;
+					if(ExtensionStatus.CheckHasStatus(poring.GetCurrentStatus(), (int)SkillStatus.Blessing))
+						damage *= 2;
 					damage *= 2;
 				break;
 				case AttackTypeResult.Enchant:
 					damage = (DamageType == DamageType.PAtk) ? poring.Property.CurrentPAtk : poring.Property.CurrentMAtk;
+					if(ExtensionStatus.CheckHasStatus(poring.GetCurrentStatus(), (int)SkillStatus.Blessing))
+						damage *= 2;
 				break;
 			}
 			return new OnAttackSkillResult()
@@ -79,6 +85,8 @@ public class PassiveSkill : BaseSkill
 				break;
 				case DefenseTypeResult.Counter:
 					damage = (DamageType == DamageType.PAtk) ? poring.Property.CurrentPAtk : poring.Property.CurrentMAtk;
+					if(ExtensionStatus.CheckHasStatus(poring.GetCurrentStatus(), (int)SkillStatus.Blessing))
+						damage *= 2;
 					if (attacker.Node != poring.Node)
 					{
 						DefenseType = DefenseTypeResult.None;
