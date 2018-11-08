@@ -37,6 +37,8 @@ public enum SkillStatus
 	Root = 1 << 6,
 	Freeze = 1 << 7,
 	Blessing = 1 << 8,
+	Blind = 1 << 9,
+	MaximizePower = 1 << 10,
 }
 
 [System.Serializable]
@@ -164,6 +166,9 @@ public class BaseSkill : ScriptableObject
 
 	public string Description;
 
+	public bool IsSelfOnly;
+	public bool IsAppendDamageOnRoute;
+
 	public virtual void Init(BaseSkill baseSkill)
 	{
 		this.name          = baseSkill.name;
@@ -182,6 +187,8 @@ public class BaseSkill : ScriptableObject
 		MoveToTarget       = baseSkill.MoveToTarget;
 		CurrentCD          = 0;
 		Description 	   = baseSkill.Description;
+		IsSelfOnly		   = baseSkill.IsSelfOnly;
+		IsAppendDamageOnRoute = baseSkill.IsAppendDamageOnRoute;
 
 		EffectsReceiver = baseSkill.EffectsReceiver;
 
@@ -209,8 +216,9 @@ public class BaseSkill : ScriptableObject
 			if (fx.Damage == -1)
 			{
 				d = ((DamageType == DamageType.PAtk) ? poring.Property.CurrentPAtk : poring.Property.CurrentMAtk);
-				if(ExtensionStatus.CheckHasStatus(poring.GetCurrentStatus(), (int)SkillStatus.Blessing))
-					d *= 2;
+				d *= poring.GetBlessingBuff();
+				EffectReceiver maximizePower = poring.GetStatus(SkillStatus.MaximizePower);
+				d *= (maximizePower != null) ? maximizePower.Damage : 1;
 				d *= DamageMultiple;
 			}
 				
@@ -230,9 +238,16 @@ public class BaseSkill : ScriptableObject
 	}
 }
 
-public class ExtensionStatus
+public static class ExtensionStatus
 {
-	public static bool CheckHasStatus(int input, int condition)
+	public static bool CheckHasStatus(this Poring poring, SkillStatus condition)
+	{
+		bool result = true;
+		result &= ((poring.GetCurrentStatus() & condition) != 0);
+		return result;
+	}
+
+	public static bool CheckHasStatus(this SkillStatus input, SkillStatus condition)
 	{
 		bool result = true;
 		result &= ((input & condition) != 0);

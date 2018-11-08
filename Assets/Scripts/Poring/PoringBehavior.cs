@@ -119,6 +119,8 @@ public class PoringBehavior : MonoBehaviour
 		OnAttackSkillResult attackerDiceResult = CalculateAtackerDiceResult(Poring);
 		OnDefenseSkillResult defenderDiceResult = CalculateDefenderDiceResult(Poring, Poring.Target);
 
+		EffectReceiver maximizePower;
+
 		switch (defenderDiceResult.Type)
 		{
 			case DefenseTypeResult.None:
@@ -126,6 +128,8 @@ public class PoringBehavior : MonoBehaviour
 			case DefenseTypeResult.Counter:
 				Poring.Target.Animator.Play("Skill");
 				yield return waitSecond;
+				maximizePower = Poring.Target.GetStatus(SkillStatus.MaximizePower);
+				defenderDiceResult.DamageResult *= (maximizePower != null) ? maximizePower.Damage : 1;
 				Poring.Property.CurrentHp -= defenderDiceResult.DamageResult;
 				
 				if(defenderDiceResult.EffectOnTarget != null)
@@ -170,6 +174,8 @@ public class PoringBehavior : MonoBehaviour
 
 		float damageResult = AdaptiveDamageCalculate(Poring);
 		damageResult = AdaptiveDefenseCalculate(damageResult, Poring.Target);
+		maximizePower = Poring.GetStatus(SkillStatus.MaximizePower);
+		damageResult *= (maximizePower != null) ? maximizePower.Damage : 1;
 
 		Poring.Animator.Play("Skill");
 		yield return waitSecond;
@@ -193,8 +199,8 @@ public class PoringBehavior : MonoBehaviour
 			yield return waitSecond;
 			if(	!Poring.Target.Behavior.hasAttack && 
 				Poring.Node == Poring.Target.Node && 
-				!ExtensionStatus.CheckHasStatus(Poring.Target.GetCurrentStatus(), (int)(SkillStatus.Freeze | SkillStatus.Sleep | SkillStatus.Stun)) && // target is not freeze, sleep, stun
-				!ExtensionStatus.CheckHasStatus(Poring.GetCurrentStatus(), (int)SkillStatus.Ambursh)) // Attacker is not ambursh
+				!Poring.Target.CheckHasStatus(SkillStatus.Freeze | SkillStatus.Sleep | SkillStatus.Stun) && // target is not freeze, sleep, stun
+				!Poring.CheckHasStatus(SkillStatus.Ambursh)) // Attacker is not ambursh
 			{
 				Poring.Target.Target = Poring;
 				Poring.Target.Behavior.AttackTarget();

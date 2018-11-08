@@ -8,6 +8,8 @@ public class ActiveSkill : BaseSkill
     private PrototypeGameMode gameMode;
     private eStateGameMode nextState;
 
+    private List<Poring> targetOnRoute = new List<Poring>();
+
     public override void OnActivate(Poring poring, Poring targetPoring = null, Node targetNode = null, List<Node> nodeList = null)
     {
         gameMode = (PrototypeGameMode)PrototypeGameMode.Instance;
@@ -19,16 +21,29 @@ public class ActiveSkill : BaseSkill
         }
 
         CurrentCD = TurnCD;
+        targetOnRoute.Clear();
 
         if (nodeList != null)
         {
             // Move first!!
             nextState = eStateGameMode.EndTurn;
+            if(IsAppendDamageOnRoute)
+            {
+                nodeList.ForEach(n => 
+                {
+                    n.porings.ForEach(p =>
+                    {
+                        if(p != targetPoring || p != poring) 
+                            targetOnRoute.Add(p);
+                    });
+                });
+            }
+
             poring.Behavior.SetupJumpToNodeTarget(nodeList, () => SkillEffectActivate(poring, targetPoring, targetNode));
         }
         else
         {
-            nextState = gameMode.CurrentGameState;
+            nextState = (poring.Property.UltimateSkill.name == name) ? eStateGameMode.EndTurn : gameMode.CurrentGameState;
             SkillEffectActivate(poring, targetPoring, targetNode);
         }
     }
@@ -36,9 +51,13 @@ public class ActiveSkill : BaseSkill
     private void SkillEffectActivate(Poring poring, Poring targetPoring = null, Node targetNode = null)
     {
         float damageResult = (DamageType == DamageType.PAtk) ? poring.Property.CurrentPAtk : poring.Property.CurrentMAtk;
-        if(ExtensionStatus.CheckHasStatus(poring.GetCurrentStatus(), (int)SkillStatus.Blessing))
-            damageResult *= 2;
+        damageResult *= poring.GetBlessingBuff();
+        EffectReceiver maximizePower = poring.GetStatus(SkillStatus.MaximizePower);
+        damageResult *= (maximizePower != null) ? maximizePower.Damage : 1;
         damageResult *= DamageMultiple;
+
+        if(poring.CheckHasStatus(SkillStatus.Blind) && targetNode == null)
+            damageResult = 0;
 
         PrototypeGameMode.Instance.StartCoroutine(WaitForAnimation(poring, damageResult, targetPoring, targetNode));
     }
@@ -52,6 +71,17 @@ public class ActiveSkill : BaseSkill
             poring.transform.LookAt(targetPoring.gameObject.transform);
             poring.Animator.Play(AnimationStateName);
             yield return new WaitForSeconds(2f);
+
+            targetOnRoute.ForEach( p =>
+            {
+                if(p != targetPoring)
+                {
+                    if (EffectOnSelf != null)
+                        InstantiateParticleEffect.CreateFx(EffectOnSelf, p.transform.position);
+
+                    AddDamageToTarget(poring, p, damage);    
+                }
+            });
             
             if (EffectOnSelf != null)
                 InstantiateParticleEffect.CreateFx(EffectOnSelf, targetPoring.transform.position);
@@ -114,7 +144,7 @@ public class ActiveSkill : BaseSkill
 
     private void AddDamageToTargetNode(Poring poring, float damage, Node node)
     {
-        if(this.name == "Cloaking")
+        if(IsSelfOnly)
         {
             poring.OnReceiverEffect(SetEffectOwnerIdAndDamage(poring));
             return;
@@ -141,7 +171,7 @@ public class ActiveSkill : BaseSkill
 
         foreach (var s in StrongerList)
         {
-            if (ExtensionStatus.CheckHasStatus(targetPoring.GetCurrentStatus(), (int)s.Status))
+            if (targetPoring.CheckHasStatus(s.Status))
             {
                 damage *= s.DamageMultiple;
             }

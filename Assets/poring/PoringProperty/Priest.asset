@@ -40,5 +40,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 096bf7e551bcfca46bf4632ad825faf1, type: 2}
   - {fileID: 11400000, guid: 7a8022c515d3a2948a4364f06cceceb6, type: 2}
   - {fileID: 11400000, guid: dba8caa4c82bb734faf403b4083c568a, type: 2}
+  UltimateSkill: {fileID: 11400000, guid: 37e3999cfb8bf944288980c96d8a1741, type: 2}
   NormalAttackEffect: {fileID: 100000, guid: f06e78284f831ae469c74624ab5d513b, type: 2}
   JobImage: {fileID: 21300000, guid: b0a8381769a018c4fb3da5831de8c40a, type: 3}
+  UltimatePoint: 0

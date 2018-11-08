@@ -83,13 +83,17 @@ public class Node : MonoBehaviour {
 		poring.Node = this;
 		porings.Add(poring);
 		if (porings.Count > 1 && 
-			ExtensionStatus.CheckHasStatus(porings[0].GetCurrentStatus(), (int)SkillStatus.Ambursh) &&
-			!ExtensionStatus.CheckHasStatus(poring.GetCurrentStatus(), (int)SkillStatus.Ambursh))
+			porings[0].CheckHasStatus(SkillStatus.Ambursh) &&
+			!poring.CheckHasStatus(SkillStatus.Ambursh))
 		{
 			porings[0].Animator.Play("Skill");
 			float damage = porings[0].Property.CurrentPAtk;
-			if(ExtensionStatus.CheckHasStatus(poring.GetCurrentStatus(), (int)SkillStatus.Blessing))
-				damage *= 2;
+			damage *= porings[0].GetBlessingBuff();
+			EffectReceiver maximizePower = poring.GetStatus(SkillStatus.MaximizePower);
+			damage *= (maximizePower != null) ? maximizePower.Damage : 1;
+			if(porings[0].CheckHasStatus(SkillStatus.Blind))
+            	damage = 0;
+				
 			poring.TakeDamage(porings[0], damage, porings[0].Property.NormalAttackEffect);
 		}
 
@@ -106,7 +110,7 @@ public class Node : MonoBehaviour {
 		foreach (var fx in effectsResult)
 		{
 			SkillStatus e = SkillStatus.Freeze | SkillStatus.Root | SkillStatus.Sleep | SkillStatus.Stun;
-			if(ExtensionStatus.CheckHasStatus((int)fx.Status, (int)e)) return false;
+			if(fx.Status.CheckHasStatus(e)) return false;
 		}
 		return true;
 	}
@@ -188,7 +192,9 @@ public class Node : MonoBehaviour {
 
 	public void PoringKeepValueOnTile(Poring poring, bool ignoreOnFinish = false)
 	{
-		poring.Property.CurrentPoint += AppleList.Count;
+		EffectReceiver maximizePower = poring.GetStatus(SkillStatus.MaximizePower);
+		int value = (maximizePower != null) ? AppleList.Count / 2 : AppleList.Count ; 
+		poring.Property.CurrentPoint += value;
 		AppleList.ForEach(apple => DestroyImmediate(apple));
 		AppleList.Clear();
 

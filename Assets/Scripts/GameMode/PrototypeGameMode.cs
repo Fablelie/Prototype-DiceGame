@@ -381,7 +381,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
 
         node.porings.ForEach(poring => 
         {
-            if (poring == m_currentPlayer.Poring || ExtensionStatus.CheckHasStatus(poring.GetCurrentStatus(), (int)SkillStatus.Ambursh))
+            if (poring == m_currentPlayer.Poring || poring.CheckHasStatus(SkillStatus.Ambursh))
                 count -= 1;
         });
         return count > 0;
@@ -550,8 +550,10 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
             yield return null;
             OnMouseClickSelectSkillTarget(skill);
         }
-        // TurnActiveUIController.Instance.SetActivePanel(false);
-        // TurnActiveUIController.Instance.CancelSkillBtn.gameObject.SetActive(false);
+        
+        // if use ultimate skill re set ultimate point.
+        if(skill.name == m_currentPlayer.Poring.Property.UltimateSkill.name)
+            m_currentPlayer.Poring.Property.UltimatePoint = 0;
     }
 
     private void OnMouseClickSelectSkillTarget(BaseSkill skill)
@@ -879,8 +881,6 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
             m_poringGetUltimate.Add(poring);
             poring.Property.UltimatePoint += 1;
         }
-
-        Debug.LogError($"{poring.PlayerName} :>>> gain ultimate point >>> {poring.Property.UltimatePoint}");
     }
 
     private IEnumerator CheckEndRoundCondition()
@@ -1040,13 +1040,16 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
 
     public BaseSkill GetSkillOfPoring(string skillName, int poringIndex)
     {
-        foreach (BaseSkill skill in m_player[poringIndex].Property.SkillList)
+        PoringProperty property = m_player[poringIndex].Property;
+        foreach (BaseSkill skill in property.SkillList)
         {
             if (skill.name == skillName)
             {
                 return skill;
             }
         }
+
+        if(skillName == property.UltimateSkill.name) return property.UltimateSkill;
         return null;
     }
 }

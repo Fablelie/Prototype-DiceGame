@@ -9,34 +9,33 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7f4f8cbf729b8e24aa6f66f792bfff72, type: 3}
-  m_Name: Blessing
+  m_Name: MaximizePower
   m_EditorClassIdentifier: 
   AnimationStateName: Item_Used
   EffectOnHit: {fileID: 0}
-  EffectOnSelf: {fileID: 100006, guid: 60bc526f4be1e044ab9e46340b82ffb3, type: 2}
-  EffectOnTarget: {fileID: 1545806602296978, guid: 9e4577abe56a95f4a91d29a0473cd30c,
+  EffectOnSelf: {fileID: 1545806602296978, guid: 9e4577abe56a95f4a91d29a0473cd30c,
     type: 2}
+  EffectOnTarget: {fileID: 0}
   SkillIcon: {fileID: 0}
   MinRangeValue: 0
   MaxRangeValue: 0
   SkillMode: 0
-  DamageType: 1
+  DamageType: 0
   DamageMultiple: 0
   TargetType: 0
   AOEValue: 0
   IsIgnoreSelf: 0
   SkillDuration: 0
-  TurnCD: 2
+  TurnCD: 0
   MoveToTarget: 0
   CurrentCD: 0
   EffectsReceiver:
   - OwnerId: 0
-    Damage: 1.5
-    EffectDuration: 2
-    Status: 256
-    Particle: {fileID: 1545806602296978, guid: 9e4577abe56a95f4a91d29a0473cd30c, type: 2}
+    Damage: 2
+    EffectDuration: 3
+    Status: 1024
+    Particle: {fileID: 0}
   StrongerList: []
-  Description: "\u0E43\u0E0A\u0E49 blessing \u0E43\u0E2A\u0E48\u0E15\u0E19\u0E40\u0E2D\u0E07\u0E17\u0E33\u0E43\u0E2B\u0E49\u0E04\u0E27\u0E32\u0E21\u0E40\u0E2A\u0E35\u0E22\u0E2B\u0E32\u0E22\u0E17\u0E31\u0E49\u0E07\u0E2B\u0E21\u0E14
-    *2"
+  Description: "\u0E27\u0E32\u0E01\u0E01\u0E01\u0E01\u0E01\u0E01\u0E01\u0E01\u0E01\u0E01\u0E01\u0E01\u0E01\u0E01!!!"
   IsSelfOnly: 1
   IsAppendDamageOnRoute: 0

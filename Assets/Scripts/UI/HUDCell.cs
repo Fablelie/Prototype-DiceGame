@@ -22,6 +22,11 @@ public class HUDCell : MonoBehaviour
 	[SerializeField] private Roll _deffensiveRoll;
 
 	[SerializeField] private Text playerName;
+
+	[SerializeField] private Transform ultimateGaugeRoot;
+	[SerializeField] private GameObject ultimatePrefab;
+
+	private List<GameObject> gaugeList = new List<GameObject>();
 	
 	public Image BG;
 
@@ -74,6 +79,36 @@ public class HUDCell : MonoBehaviour
 			// print("Update Dice def");
 			float DefResult = (i > 0) ? i * 10 : 0;
 			DeffensiveDiceResult.text = $"{DefResult}%";
+		});
+
+		this.poring.ObserveEveryValueChanged(p => p.Property.UltimatePoint, FrameCountType.FixedUpdate).Subscribe(i => 
+		{
+			if(i > 5) return;
+			if(gaugeList.Count != i)
+			{
+				if(i > gaugeList.Count)
+				{
+					int createCount = i - gaugeList.Count;
+					for (int index = 0; index < createCount; index++)
+					{
+						GameObject obj = Instantiate(ultimatePrefab);
+						obj.transform.SetParent(ultimateGaugeRoot);
+						obj.transform.position = Vector3.zero;
+						obj.transform.rotation = Quaternion.identity;
+
+						gaugeList.Add(obj);
+					}
+				}
+				else
+				{
+					int removeCount = gaugeList.Count - i;
+					for (int index = 0; index < removeCount; index++)
+					{
+						Destroy(gaugeList[0]);
+						gaugeList.RemoveAt(0);
+					}
+				}
+			}
 		});
 	}
 }

@@ -32,3 +32,5 @@ MonoBehaviour:
   StrongerList: []
   Description: "\u0E40\u0E1E\u0E34\u0E48\u0E21\u0E1E\u0E25\u0E31\u0E07\u0E0A\u0E35\u0E27\u0E34\u0E15\u0E15\u0E32\u0E21
     M.Atk"
+  IsSelfOnly: 0
+  IsAppendDamageOnRoute: 0

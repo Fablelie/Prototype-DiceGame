@@ -16,7 +16,7 @@ MonoBehaviour:
   CurrentMaxHp: 0
   BasePAtk: 1
   CurrentPAtk: 0
-  BaseMAtk: 20
+  BaseMAtk: 10
   CurrentMAtk: 0
   AttackRange: 0
   MaxHp: 50
@@ -24,7 +24,7 @@ MonoBehaviour:
   MaxMAtk: 30
   GrowupHp: 3
   GrowupPAtk: 1
-  GrowupMAtk: 1
+  GrowupMAtk: 2
   CurrentRequestExp: 2
   MaxLevel: 10
   StartRequestExp: 2
@@ -40,5 +40,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e7a562f0605b9e84ca2193ccf978ed77, type: 2}
   - {fileID: 11400000, guid: 7189f71cd2333eb4aa5224fac0c03161, type: 2}
   - {fileID: 11400000, guid: 0149e08c0be52a842a570dadeb6c8ec7, type: 2}
+  UltimateSkill: {fileID: 11400000, guid: 7e5d64881c57c4d44ae1abf93ccc2a28, type: 2}
   NormalAttackEffect: {fileID: 100000, guid: f06e78284f831ae469c74624ab5d513b, type: 2}
   JobImage: {fileID: 21300000, guid: 834c8990bc7d7c540a72d3d0c27c7547, type: 3}
+  UltimatePoint: 0

@@ -17,6 +17,7 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
     public Button CancelSkillBtn;
     public Button ChangeViewBtn;
     public Button SkipBtn;
+    public Button UltimateSkillBtn;
 
     public List<ButtonGroup> BtnGroup = new List<ButtonGroup>();
 
@@ -42,11 +43,15 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
         {
             AttackBtn.gameObject.SetActive(isEnable);
             PanelSkills.SetActive(isEnable);
+            
+            UltimateSkillBtn.interactable = (currentPoring.Property.UltimatePoint == 5 && !isActiveSkill);
+            UltimateSkillBtn.gameObject.SetActive(isEnable);
         }
         else
         {
             AttackBtn.gameObject.SetActive(false);
             PanelSkills.SetActive(false);
+            UltimateSkillBtn.gameObject.SetActive(false);
         }
 
         CancelSkillBtn.gameObject.SetActive(!isEnable);
@@ -65,6 +70,7 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
         RollDiceBtn.gameObject.SetActive(false);
         AttackBtn.gameObject.SetActive(false);
         PanelSkills.SetActive(false);
+        UltimateSkillBtn.gameObject.SetActive(false);
         CancelSkillBtn.gameObject.SetActive(false);
         SkipBtn.gameObject.SetActive(false);
         
@@ -76,6 +82,7 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
     {
         if (this.gameMode == null) this.gameMode = gameMode;
         currentPoring = poring;
+        isActiveSkill = false;
         if(gameMode.IndexCurrentPlayer == PhotonNetwork.LocalPlayer.GetPlayerNumber())
         {
             SetActivePanel(true, currentPoring.Node.TileProperty.Type);
@@ -93,15 +100,13 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
 
     private bool CheckingEnableButtonByStatus(Poring poring)
     {
-        int input = poring.GetCurrentStatus();
-
         // Skip turn.
         SkillStatus condition = SkillStatus.Sleep | SkillStatus.Freeze | SkillStatus.Stun;
-        if(ExtensionStatus.CheckHasStatus(input, (int)condition)) return false;
+        if(poring.CheckHasStatus(condition)) return false;
 
         // Can't move. 
         condition = SkillStatus.Root;
-        if(ExtensionStatus.CheckHasStatus(input, (int)condition))
+        if(poring.CheckHasStatus(condition))
         {
             RollDiceBtn.gameObject.SetActive(false);
             if(!CancelSkillBtn.gameObject.activeInHierarchy)
@@ -143,6 +148,7 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
         RollDiceBtn.onClick.RemoveAllListeners();
         RollDiceBtn.onClick.AddListener(() =>
         {
+            UltimateSkillBtn.gameObject.SetActive(false);
             BtnGroup.ForEach(group => group.BtnObject.gameObject.SetActive(false));    
             AttackBtn.gameObject.SetActive(false);
             RollDiceBtn.gameObject.SetActive(false);
@@ -156,6 +162,16 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
 
     private void SetSkillsEvent(List<BaseSkill> skillList, Poring poring, int index)
     {
+        BaseSkill ultimateSkill = poring.Property.UltimateSkill;
+        UltimateSkillBtn.GetComponentInChildren<Text>().text = ultimateSkill.name;
+        UltimateSkillBtn.GetComponent<SkillDetail>().SetDetail(ultimateSkill, poring);
+        UltimateSkillBtn.onClick.RemoveAllListeners();
+        UltimateSkillBtn.onClick.AddListener(() =>
+        {
+            SetActivePanel(false, currentPoring.Node.TileProperty.Type);
+            ChangeModeToSelectTarget(ultimateSkill, poring, index);
+        });
+
         BtnGroup.ForEach(group => {
             group.BtnObject.onClick.RemoveAllListeners();
             group.BtnObject.gameObject.SetActive(false);
@@ -175,7 +191,7 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
 
             group.BtnObject.interactable = (skill.CurrentCD <= 0 && skill.SkillMode == SkillMode.Activate);
 
-            if(skill.MoveToTarget && ExtensionStatus.CheckHasStatus(poring.GetCurrentStatus(), (int)SkillStatus.Root))
+            if(skill.MoveToTarget && poring.CheckHasStatus(SkillStatus.Root))
             {
                 group.BtnObject.interactable = false;
             }
@@ -185,6 +201,7 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
                 BtnGroup.ForEach(g => {
                     g.BtnObject.interactable = false;
                 });
+                UltimateSkillBtn.interactable = false;
                 SetActivePanel(false, currentPoring.Node.TileProperty.Type);
                 ChangeModeToSelectTarget(skill, poring, index);
             });
@@ -197,9 +214,6 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
         CameraController.Instance.Show(CameraType.TopDown);
 
         gameMode.PhotonNetworkRaiseEvent(EventCode.HighlightNodeSkill, new object[]{ skill.name, index});
-        // gameMode.ParseSelectableNode(skill);
-        // gameMode.DisplayNodeHeatBySkill(skill);
-        // StartCoroutine(gameMode.WaitForSelectTarget(skill));
 
         CancelSkillBtn.onClick.RemoveAllListeners();
         CancelSkillBtn.onClick.AddListener(OnClickCancelSkill);
@@ -207,6 +221,7 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
 
     private void OnClickCancelSkill()
     {
+        UltimateSkillBtn.interactable = (currentPoring.Property.UltimatePoint == 5);
         CancelSkillBtn.onClick.RemoveAllListeners();
         isActiveSkill = false;
         for (int i = 0; i < SkillList.Count; i++)
@@ -218,7 +233,6 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
         SetActivePanel(true, currentPoring.Node.TileProperty.Type);
 
         gameMode.PhotonNetworkRaiseEvent(EventCode.OnClickCancel);
-        // gameMode.ResetNodeColor();
     }
 
     private void OnClickCancelAttack()

@@ -37,6 +37,8 @@ public class CreaterSkill : BaseSkill
             TurnActiveUIController.Instance.SetActivePanel(true, poring.Node.TileProperty.Type);
         else
             TurnActiveUIController.Instance.NotMyTurn();
+
+        PrototypeGameMode.Instance.CurrentGameState = (poring.Property.UltimateSkill.name == name) ? eStateGameMode.EndTurn : PrototypeGameMode.Instance.CurrentGameState;
     }
 
     private void CheckAOEToCreate(Node node, int value, Node prevNode = null)

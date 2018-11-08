@@ -97,13 +97,14 @@ public class PoringProperty : ScriptableObject {
 	public List<OffensiveDice> OffensiveDices;
 
 	public List<BaseSkill> SkillList = new List<BaseSkill>();
+	public BaseSkill UltimateSkill;
 
 	[Header("NormalAttackEffect!!")]
 	public GameObject NormalAttackEffect;
 
 	public Sprite JobImage;
 
-	[HideInInspector] public int UltimatePoint = 0;
+	[HideInInspector] public int UltimatePoint = 5;
 
     public void Init(PoringProperty baseProperty)
     {
@@ -133,6 +134,7 @@ public class PoringProperty : ScriptableObject {
 		StartRequestExp       = baseProperty.StartRequestExp;
 		MultiplyPerLevel      = baseProperty.MultiplyPerLevel;
 
+		// normal skill
 		baseProperty.SkillList.ForEach(baseSkill => 
 		{
 			Type type = baseSkill.GetType();
@@ -141,6 +143,12 @@ public class PoringProperty : ScriptableObject {
 			skill.Init(baseSkill);
 			SkillList.Add(skill);
 		});
+
+		// Ultimate skill
+		Type t = baseProperty.UltimateSkill.GetType();
+		var s = ScriptableObject.CreateInstance(t.ToString()) as BaseSkill;
+		s.Init(baseProperty.UltimateSkill);
+		UltimateSkill = s;
 
 		NormalAttackEffect = baseProperty.NormalAttackEffect;
 		JobImage = baseProperty.JobImage;

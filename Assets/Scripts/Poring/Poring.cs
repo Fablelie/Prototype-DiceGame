@@ -82,7 +82,7 @@ public class Poring : MonoBehaviour {
 				
 				continue;
 			}
-			if(	ExtensionStatus.CheckHasStatus((int)newEffect.Status, (int)SkillStatus.Posion) &&
+			if(newEffect.Status.CheckHasStatus(SkillStatus.Posion) &&
 				PrototypeGameMode.Instance.IsMineTurn()) 
 				newEffect.EffectDuration -= 1;
 				
@@ -148,7 +148,7 @@ public class Poring : MonoBehaviour {
 			var item = m_currentEffects[i];
 
 			SkillStatus e = SkillStatus.Burn;
-			if(ExtensionStatus.CheckHasStatus((int)item.Status, (int)e))
+			if(item.Status.CheckHasStatus(e))
 			{
 				if(!TakeDamage(PrototypeGameMode.Instance.GetPoringByIndex(item.OwnerId), item.Damage, true, item.Particle))
 				{
@@ -172,7 +172,7 @@ public class Poring : MonoBehaviour {
 			var item = m_currentEffects[i];
 
 			SkillStatus e = SkillStatus.Posion;
-			if(ExtensionStatus.CheckHasStatus((int)item.Status, (int)e))
+			if(item.Status.CheckHasStatus(e))
 			{
 				if(!TakeDamage(PrototypeGameMode.Instance.GetPoringByIndex(item.OwnerId), item.Damage, true, item.Particle))
 				{
@@ -183,7 +183,6 @@ public class Poring : MonoBehaviour {
 				yield return wait;
 			}
 		}
-
 	}
 
 	private void CountDownEffectDuration()
@@ -213,7 +212,7 @@ public class Poring : MonoBehaviour {
 			var item = m_currentEffects[i];
 
 			SkillStatus e = SkillStatus.Bleed;
-			if(ExtensionStatus.CheckHasStatus((int)item.Status, (int)e))
+			if(item.Status.CheckHasStatus(e))
 			{
 				if(!TakeDamage(PrototypeGameMode.Instance.GetPoringByIndex(item.OwnerId), item.Damage, item.Particle))
 				{
@@ -225,7 +224,7 @@ public class Poring : MonoBehaviour {
 		return true;
 	}
 
-	public int GetCurrentStatus()
+	public SkillStatus GetCurrentStatus()
 	{
 		SkillStatus status = 0;
 
@@ -233,7 +232,21 @@ public class Poring : MonoBehaviour {
 		{
 			status |= dict.Status;
 		}
-		return (int)status;
+		return status;
+	}
+
+	public EffectReceiver GetStatus(SkillStatus status)
+	{
+		EffectReceiver fx = m_currentEffects.Find( s => status == s.Status);
+		if(fx != null) return fx;
+		else return null;
+	}
+
+	public float GetBlessingBuff()
+	{
+		EffectReceiver fx = m_currentEffects.Find( s => SkillStatus.Blessing == s.Status);
+		if(fx != null) return fx.Damage;
+		else return 1;
 	}
 
 	struct StatusIconData

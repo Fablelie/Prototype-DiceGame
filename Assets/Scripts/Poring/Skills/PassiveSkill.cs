@@ -21,7 +21,7 @@ public class PassiveSkill : BaseSkill
 
 	public override OnAttackSkillResult OnAttack(Poring poring, FaceDice faceDice)
 	{
-		
+		EffectReceiver maximizePowerDef;
 		if (faceDice == ActiveOnType && CurrentCD <= 0)
 		{
 			
@@ -34,21 +34,29 @@ public class PassiveSkill : BaseSkill
 				break;
 				case AttackTypeResult.Double:
 					damage = (DamageType == DamageType.PAtk) ? poring.Property.CurrentPAtk : poring.Property.CurrentMAtk;
-					if(ExtensionStatus.CheckHasStatus(poring.GetCurrentStatus(), (int)SkillStatus.Blessing))
-						damage *= 2;
+					damage *= poring.GetBlessingBuff();	
+					maximizePowerDef = poring.GetStatus(SkillStatus.MaximizePower);
+					damage *= (maximizePowerDef != null) ? maximizePowerDef.Damage : 1;
 				break;
 				case AttackTypeResult.PowerUp:
 					damage = (DamageType == DamageType.PAtk) ? poring.Property.CurrentPAtk : poring.Property.CurrentMAtk;
-					if(ExtensionStatus.CheckHasStatus(poring.GetCurrentStatus(), (int)SkillStatus.Blessing))
-						damage *= 2;
+					damage *= poring.GetBlessingBuff();
 					damage *= 2;
+
+					maximizePowerDef = poring.GetStatus(SkillStatus.MaximizePower);
+					damage *= (maximizePowerDef != null) ? maximizePowerDef.Damage : 1;
 				break;
 				case AttackTypeResult.Enchant:
 					damage = (DamageType == DamageType.PAtk) ? poring.Property.CurrentPAtk : poring.Property.CurrentMAtk;
-					if(ExtensionStatus.CheckHasStatus(poring.GetCurrentStatus(), (int)SkillStatus.Blessing))
-						damage *= 2;
+					damage *= poring.GetBlessingBuff();
+					maximizePowerDef = poring.GetStatus(SkillStatus.MaximizePower);
+					damage *= (maximizePowerDef != null) ? maximizePowerDef.Damage : 1;
 				break;
 			}
+			
+			if(poring.CheckHasStatus(SkillStatus.Blind))
+            	damage = 0;
+
 			return new OnAttackSkillResult()
 			{
 				Type = AttackType,
@@ -85,13 +93,16 @@ public class PassiveSkill : BaseSkill
 				break;
 				case DefenseTypeResult.Counter:
 					damage = (DamageType == DamageType.PAtk) ? poring.Property.CurrentPAtk : poring.Property.CurrentMAtk;
-					if(ExtensionStatus.CheckHasStatus(poring.GetCurrentStatus(), (int)SkillStatus.Blessing))
-						damage *= 2;
+					damage *= poring.GetBlessingBuff();
+					EffectReceiver maximizePower = poring.GetStatus(SkillStatus.MaximizePower);
+					damage *= (maximizePower != null) ? maximizePower.Damage : 1;
 					if (attacker.Node != poring.Node)
 					{
 						DefenseType = DefenseTypeResult.None;
 						damage = 0;
 					}
+					if(poring.CheckHasStatus(SkillStatus.Blind))
+            			damage = 0;
 				break;
 				case DefenseTypeResult.Dodge:
 					damage = 0;
