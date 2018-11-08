@@ -221,9 +221,10 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
 
     private void OnClickCancelSkill()
     {
-        UltimateSkillBtn.interactable = (currentPoring.Property.UltimatePoint == 5);
+        
         CancelSkillBtn.onClick.RemoveAllListeners();
         isActiveSkill = false;
+        UltimateSkillBtn.interactable = (currentPoring.Property.UltimatePoint == 5);
         for (int i = 0; i < SkillList.Count; i++)
         {
             BtnGroup[i].BtnObject.interactable = (SkillList[i].CurrentCD <= 0 && SkillList[i].SkillMode == SkillMode.Activate);

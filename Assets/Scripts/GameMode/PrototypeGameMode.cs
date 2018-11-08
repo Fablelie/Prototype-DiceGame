@@ -552,7 +552,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         }
         
         // if use ultimate skill re set ultimate point.
-        if(skill.name == m_currentPlayer.Poring.Property.UltimateSkill.name)
+        if(skill.name == m_currentPlayer.Poring.Property.UltimateSkill.name && isSelectedTargetSkill)
             m_currentPlayer.Poring.Property.UltimatePoint = 0;
     }
 

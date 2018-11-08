@@ -104,7 +104,7 @@ public class PoringProperty : ScriptableObject {
 
 	public Sprite JobImage;
 
-	[HideInInspector] public int UltimatePoint = 5;
+	[HideInInspector] public int UltimatePoint = 0;
 
     public void Init(PoringProperty baseProperty)
     {
