@@ -12,6 +12,7 @@ using UnityEngine.UI;
 public class TurnActiveUIController : InstanceObject<TurnActiveUIController> 
 {
     public Button RollDiceBtn;
+    [SerializeField] private DiceControl diceControl;
     public Button AttackBtn;
     public GameObject PanelSkills;
     public Button CancelSkillBtn;
@@ -87,7 +88,7 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
         {
             SetActivePanel(true, currentPoring.Node.TileProperty.Type);
             SkillList = poring.Property.SkillList;
-            SetEventToDiceRollBtn(poring, index);
+            SetUpDiceBtn(index, gameMode);
             SetEventToAttackBtn(poring);
             SetSkillsEvent(SkillList, poring, index);
         }
@@ -143,21 +144,17 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
         });
     }
 
-    private void SetEventToDiceRollBtn(Poring poring, int index)
+    private void SetUpDiceBtn(int index, PrototypeGameMode gameMode)
     {
-        RollDiceBtn.onClick.RemoveAllListeners();
-        RollDiceBtn.onClick.AddListener(() =>
-        {
-            UltimateSkillBtn.gameObject.SetActive(false);
-            BtnGroup.ForEach(group => group.BtnObject.gameObject.SetActive(false));    
-            AttackBtn.gameObject.SetActive(false);
-            RollDiceBtn.gameObject.SetActive(false);
-            int result = UnityEngine.Random.Range(0,5);
-            // Debug.LogError($"Move > >>>> >> > {result}");
-            gameMode.PhotonNetworkRaiseEvent(EventCode.BeginRollMove, new object[] { index, result });
+        diceControl.PoringIndex = index;
+        diceControl.GameMode = gameMode;
+    }
 
-            RollDiceBtn.onClick.RemoveAllListeners();
-        });
+    public void OnPressRollDice()
+    {
+        UltimateSkillBtn.gameObject.SetActive(false);
+        BtnGroup.ForEach(group => group.BtnObject.gameObject.SetActive(false));    
+        AttackBtn.gameObject.SetActive(false);
     }
 
     private void SetSkillsEvent(List<BaseSkill> skillList, Poring poring, int index)

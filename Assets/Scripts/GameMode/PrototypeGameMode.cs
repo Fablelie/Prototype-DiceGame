@@ -361,10 +361,10 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
                     Node node = hit.transform.parent.GetComponent<Node>();
                     if(node != null)
                     {
-                        int resultAttackA = UnityEngine.Random.Range(0,5);
-                        int resultAttackB = UnityEngine.Random.Range(0,5);
-                        int resultDefendA = UnityEngine.Random.Range(0,5);
-                        int resultDefendB = UnityEngine.Random.Range(0,5);
+                        int resultAttackA = UnityEngine.Random.Range(0,6);
+                        int resultAttackB = UnityEngine.Random.Range(0,6);
+                        int resultDefendA = UnityEngine.Random.Range(0,6);
+                        int resultDefendB = UnityEngine.Random.Range(0,6);
 
                         // Debug.LogError($"AttackA : {resultAttackA}, DefendA {resultDefendA}");
                         // Debug.LogError($"AttackB : {resultAttackB}, DefendB {resultDefendB}");
@@ -739,10 +739,10 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
                     MagicCursor.Instance.MoveTo(node);
                     if (CheckAnotherPoringInTargetNode(node) && node.TileProperty.Type != TileType.Sanctuary && node.steps.Count > 0)
                     {
-                        int resultAttackA = UnityEngine.Random.Range(0,5);
-                        int resultAttackB = UnityEngine.Random.Range(0,5);
-                        int resultDefendA = UnityEngine.Random.Range(0,5);
-                        int resultDefendB = UnityEngine.Random.Range(0,5);
+                        int resultAttackA = UnityEngine.Random.Range(0,6);
+                        int resultAttackB = UnityEngine.Random.Range(0,6);
+                        int resultDefendA = UnityEngine.Random.Range(0,6);
+                        int resultDefendB = UnityEngine.Random.Range(0,6);
 
                         // Debug.LogError($"AttackA : {resultAttackA}, DefendA {resultDefendA}");
                         // Debug.LogError($"AttackB : {resultAttackB}, DefendB {resultDefendB}");
