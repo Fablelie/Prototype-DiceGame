@@ -84,6 +84,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
     [SerializeField] private List<Poring> m_player = new List<Poring>();
 
     [SerializeField] private List<Poring> m_poringGetUltimate = new List<Poring>();
+    [SerializeField] private MonsterPool m_monsterPool;
 
     private CurrentPlayer m_currentPlayer;
     public int IndexCurrentPlayer;
@@ -834,7 +835,21 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         }
         else
         {
-            CurrentGameState = eStateGameMode.EndTurn;
+            // Node node = m_currentPlayer.Poring.Node;
+            // if(node.TileProperty.Type != TileType.Sanctuary && node.monsters.Count < 1)
+            // {
+            //     var baseMonster = m_monsterPool.GetMonster(Turn);
+            //     Debug.LogError(baseMonster.name);
+            //     if(baseMonster)
+            //     {
+            //         GameObject obj = Instantiate(baseMonster.Prefab);
+            //         BaseMonster monster = obj.GetComponent<BaseMonster>();
+            //         monster.Init(baseMonster, m_currentPlayer.Poring);
+            //         m_currentPlayer.Poring.Behavior.AttackMonster(monster);
+            //     }
+            // }
+            // else
+                CurrentGameState = eStateGameMode.EndTurn;
         }
     }
 
@@ -889,10 +904,8 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(1);
 
         m_poringGetUltimate.Clear();
-        
         if ((m_currentPlayer.Index + 1) >= m_player.Count)
         {
-            Turn++;
             m_currentPlayer.Index = IndexCurrentPlayer = 0;
             RespawnValueOnTile(false);
             yield return new WaitForSeconds(1);
@@ -902,6 +915,8 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
             m_currentPlayer.Index += 1;
             IndexCurrentPlayer = m_currentPlayer.Index;
         }
+        
+        Turn++;
 
         SetCurrentPlayer(m_player[m_currentPlayer.Index]);
         CurrentGameState = eStateGameMode.StartTurn;

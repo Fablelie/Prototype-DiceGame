@@ -100,6 +100,11 @@ public class PoringBehavior : MonoBehaviour
 		m_gameMode.CurrentGameState = eStateGameMode.Encounter;
 	}
 
+	public void AttackMonster(BaseMonster monster)
+	{
+		
+	}
+
 	public bool hasAttack = false;
 
     public void AttackTarget()

@@ -26,10 +26,16 @@ public class HUDController : InstanceObject<HUDController>
 			cell.gameObject.SetActive(true);
 		}
 		
-		m_gameMode.ObserveEveryValueChanged(g => g.IndexCurrentPlayer, FrameCountType.FixedUpdate).Subscribe(i =>
+		// m_gameMode.ObserveEveryValueChanged(g => g.IndexCurrentPlayer, FrameCountType.FixedUpdate).Subscribe(i =>
+		// {
+		// 	string s = (PhotonNetwork.LocalPlayer.GetPlayerNumber() == i) ? "You turn!!" : "Wait...";
+		// 	Turn.text = $"Round : {m_gameMode.Turn} \n<color=#FF0000>{s}</color>";
+		// });
+
+		m_gameMode.ObserveEveryValueChanged(g => g.Turn, FrameCountType.FixedUpdate).Subscribe(i =>
 		{
-			string s = (PhotonNetwork.LocalPlayer.GetPlayerNumber() == i) ? "You turn!!" : "Wait...";
-			Turn.text = $"Round : {m_gameMode.Turn} \n<color=#FF0000>{s}</color>";
+			string s = (PhotonNetwork.LocalPlayer.GetPlayerNumber() == m_gameMode.IndexCurrentPlayer) ? "You turn!!" : "Wait...";
+			Turn.text = $"Round : {i} \n<color=#FF0000>{s}</color>";
 		});
 	}
 

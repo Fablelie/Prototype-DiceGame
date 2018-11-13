@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdfacf27dc7a35443aa590ed369c1867, type: 3}
+  m_Name: Vocal
+  m_EditorClassIdentifier: 
+  Prefab: {fileID: 1153710646211854, guid: fb22818f099f28544998f88d17870a5b, type: 2}
+  Data:
+    Name: 
+    Attack: 0
+    MaxHp: 0
+    CurrentHp: 0
+    DropExp: 0
+    DropCurrency: 0
+    BuffEffects: []

@@ -67,10 +67,6 @@ public class Roll : MonoBehaviour {
 		isRolling = true;
 	}
 
-	void Start () {
-		// SetRoll(6);
-	}
-	
 	// Update is called once per frame
 	void Update () {
 		if (isRolling) {
@@ -99,12 +95,7 @@ public class Roll : MonoBehaviour {
 				Debug.LogError(index);
 				throw;
 			}
-			
 		}
-
-		// if (Input.GetKeyDown(KeyCode.R)) {
-		// 	SetRoll(6);
-		// }
 	}
 
 

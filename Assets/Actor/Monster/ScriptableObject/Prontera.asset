@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7691a48e135ef1488b21fd882db4f13, type: 3}
+  m_Name: Prontera
+  m_EditorClassIdentifier: 
+  MonsterTierList:
+  - TierName: LowTier
+    TierType: 0
+    StringFormatTier: 1-3
+    Monsters:
+    - {fileID: 11400000, guid: b44facee1db086c4d9e5f0f9c90ba119, type: 2}
+    - {fileID: 11400000, guid: 2e5c76f35590a294fa01c5e6d1100fc8, type: 2}
+    - {fileID: 11400000, guid: e37f253b19216824492eb7e391d7ac06, type: 2}
+  - TierName: MidTier
+    TierType: 0
+    StringFormatTier: 4-6
+    Monsters:
+    - {fileID: 11400000, guid: 658cc29498fcb564987a1a31cea55366, type: 2}
+    - {fileID: 11400000, guid: 12ec3f44de8fa2142a7a90a626e5f3da, type: 2}
+    - {fileID: 11400000, guid: f0ec52b9b0338004788287432f8889c8, type: 2}
+  - TierName: HighTier
+    TierType: 1
+    StringFormatTier: 7+
+    Monsters:
+    - {fileID: 11400000, guid: f96c5229b375a3247b067e2d77f68a95, type: 2}
+    - {fileID: 11400000, guid: b41445957b46b7b479d0f8f88e5bdc57, type: 2}
+  - TierName: EXTRA
+    TierType: 2
+    StringFormatTier: 10%
+    Monsters:
+    - {fileID: 11400000, guid: f8134c04251ab124c9c1ea3598d02e0d, type: 2}

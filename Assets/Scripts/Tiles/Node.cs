@@ -15,6 +15,7 @@ public class Node : MonoBehaviour {
 	public List<GameObject> AppleList = new List<GameObject>();
 	public List<Neighbor> NeighborList;
 	public List<Poring> porings;
+	public List<BaseMonster> monsters;
 	public List<BaseEffectOnTile> effectsOnTile;
 	public List<int> steps = new List<int>();
 	public GameObject prefebLine;
@@ -113,6 +114,11 @@ public class Node : MonoBehaviour {
 			if(fx.Status.CheckHasStatus(e)) return false;
 		}
 		return true;
+	}
+
+	public void AddMonster(BaseMonster monster)
+	{
+		monsters.Add(monster);
 	}
 
 	public void RemovePoring(Poring poring)

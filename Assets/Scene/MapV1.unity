@@ -187,6 +187,52 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 33028707}
   m_CullTransparentMesh: 0
+--- !u!1001 &36881250
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4951523188569760, guid: fb22818f099f28544998f88d17870a5b, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 29.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 4951523188569760, guid: fb22818f099f28544998f88d17870a5b, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 2.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4951523188569760, guid: fb22818f099f28544998f88d17870a5b, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 18.46
+      objectReference: {fileID: 0}
+    - target: {fileID: 4951523188569760, guid: fb22818f099f28544998f88d17870a5b, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4951523188569760, guid: fb22818f099f28544998f88d17870a5b, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4951523188569760, guid: fb22818f099f28544998f88d17870a5b, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4951523188569760, guid: fb22818f099f28544998f88d17870a5b, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4951523188569760, guid: fb22818f099f28544998f88d17870a5b, type: 2}
+      propertyPath: m_RootOrder
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1153710646211854, guid: fb22818f099f28544998f88d17870a5b, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: fb22818f099f28544998f88d17870a5b, type: 2}
+  m_IsPrefabAsset: 0
 --- !u!23 &68563766 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 23913278119508230, guid: 1ce91ed63009d0941959b47b595fabce,
@@ -433,6 +479,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a2db3103205c2f64795265c2327c3331, type: 2}
   m_player: []
   m_poringGetUltimate: []
+  m_monsterPool: {fileID: 11400000, guid: 9b8f18f4a4e05d14ea738a87c9e7d25e, type: 2}
   IndexCurrentPlayer: 0
 --- !u!114 &89211224
 MonoBehaviour:
@@ -29451,7 +29498,7 @@ Transform:
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2047096702
 GameObject:
