@@ -835,6 +835,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
         }
         else
         {
+            #region uncomment this when unpause feture monster
             // Node node = m_currentPlayer.Poring.Node;
             // if(node.TileProperty.Type != TileType.Sanctuary && node.monsters.Count < 1)
             // {
@@ -849,6 +850,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
             //     }
             // }
             // else
+            #endregion
                 CurrentGameState = eStateGameMode.EndTurn;
         }
     }
