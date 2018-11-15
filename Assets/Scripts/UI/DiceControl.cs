@@ -4,24 +4,29 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class DiceControl : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
+public class DiceControl : InstanceObject<DiceControl>, IPointerUpHandler, IPointerDownHandler
 {
 	[SerializeField] private TurnActiveUIController uiController;
 	[SerializeField] private Image diceGauge;
 
 	public int PoringIndex;
 	public PrototypeGameMode GameMode;
+	public bool isRollFinish = true;
 
-	private bool isPress;
+	private bool isPress = false;
 	private int diceResult;
 
 	public void OnPointerDown(PointerEventData eventData)
     {
-		uiController.OnPressRollDice();
-		isPress = true;
-		diceResult = UnityEngine.Random.Range(0,2);
+		if(isRollFinish)
+		{
+			gameObject.GetComponent<Button>().interactable = false;
+			uiController.OnPressRollDice();
+			isPress = true;
+			diceResult = UnityEngine.Random.Range(0,2);
 
-		StartCoroutine(OnPressBtn());
+			StartCoroutine(OnPressBtn());
+		}
     }
 
     public void OnPointerUp(PointerEventData eventData)
@@ -31,6 +36,7 @@ public class DiceControl : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 
 	private IEnumerator OnPressBtn()
 	{
+		isRollFinish = false;
 		diceGauge.fillAmount = 0;
 		while (isPress)
 		{

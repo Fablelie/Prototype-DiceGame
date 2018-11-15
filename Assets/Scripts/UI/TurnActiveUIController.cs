@@ -35,7 +35,6 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
         if(gameMode.CurrentGameState == eStateGameMode.EndGame) return;
         if(!CheckingEnableButtonByStatus(currentPoring))
         {
-            // if(descriptPanel.gameObject.activeInHierarchy) descriptPanel.ClosePanel();
             OnClickSkip();
             return;
         }
@@ -146,6 +145,8 @@ public class TurnActiveUIController : InstanceObject<TurnActiveUIController>
 
     private void SetUpDiceBtn(int index, PrototypeGameMode gameMode)
     {
+        diceControl.isRollFinish = true;
+        diceControl.GetComponent<Button>().interactable = true;
         diceControl.PoringIndex = index;
         diceControl.GameMode = gameMode;
     }

@@ -77,7 +77,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
     public GameObject PrefabValue;
     public Node StartNode;
     public Node[] Nodes;
-    public int Turn;
+    public int Turn = 0;
     [SerializeField] private GameObject halo;
     
     [SerializeField] private List<PoringProperty> m_propertyStarter;
@@ -99,7 +99,7 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
     {
         Instance = this;
 
-        Application.targetFrameRate = 300;
+        Application.targetFrameRate = 60;
     }
 
     public override void OnEnable()
@@ -917,8 +917,9 @@ public class PrototypeGameMode : MonoBehaviourPunCallbacks
             m_currentPlayer.Index += 1;
             IndexCurrentPlayer = m_currentPlayer.Index;
         }
+
+        if(m_currentPlayer.Index == 0) Turn++;
         
-        Turn++;
 
         SetCurrentPlayer(m_player[m_currentPlayer.Index]);
         CurrentGameState = eStateGameMode.StartTurn;
