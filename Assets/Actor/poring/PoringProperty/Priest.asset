@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e47813ad9534fd74ba78c98184527ba0, type: 3}
   m_Name: Priest
   m_EditorClassIdentifier: 
-  Prefab: {fileID: 1851545479495634, guid: 5e71f9c3c1a786a4993a81dab7123063, type: 2}
+  Prefab: {fileID: 1476023295340040, guid: 76f31fc397753724582790a2bfffa278, type: 2}
   BaseHp: 30
   CurrentMaxHp: 0
   BasePAtk: 5

@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e47813ad9534fd74ba78c98184527ba0, type: 3}
   m_Name: Swordman
   m_EditorClassIdentifier: 
-  Prefab: {fileID: 1594514244734316, guid: fddd19b1f8bcf4545bcf46c6c1825b0c, type: 2}
+  Prefab: {fileID: 1476023295340040, guid: 76f31fc397753724582790a2bfffa278, type: 2}
   BaseHp: 30
   CurrentMaxHp: 0
   BasePAtk: 10

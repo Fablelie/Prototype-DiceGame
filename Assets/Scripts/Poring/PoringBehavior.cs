@@ -21,7 +21,7 @@ public class PoringBehavior : MonoBehaviour
 
 	private void TurnFaceTo(Vector3 pos)
 	{
-		transform.LookAt(pos);
+		Poring.transform.LookAt(pos);
 	}
 
 	private IEnumerator MoveStep(Vector3 startPosition, Vector3 target)
@@ -32,7 +32,7 @@ public class PoringBehavior : MonoBehaviour
 		{
 			TurnFaceTo(m_targetPosition);
 			t += Time.deltaTime/m_moveSpeed;
-			transform.position = Vector3.Lerp(startPosition, target, t);
+			Poring.transform.position = Vector3.Lerp(startPosition, target, t);
 			yield return new WaitForEndOfFrame();
 		}
 	}
@@ -301,7 +301,7 @@ public class PoringBehavior : MonoBehaviour
     {
         Poring.Property.CurrentPoint = Poring.Property.CurrentPoint / 2;
         
-        gameObject.transform.position = m_gameMode.StartNode.transform.position;
+        Poring.transform.position = m_gameMode.StartNode.transform.position;
         Poring.Animator.Play("Warp_down");
 
         Poring.PrevNode = null;
@@ -329,7 +329,7 @@ public class PoringBehavior : MonoBehaviour
 
         Poring.Animator.speed = m_animationSpeed;
 
-        StartCoroutine(MoveStep(transform.position, m_targetPosition));
+        StartCoroutine(MoveStep(Poring.transform.position, m_targetPosition));
     }
 
     // Call from animation event.
@@ -342,7 +342,7 @@ public class PoringBehavior : MonoBehaviour
     public void CallbackEndMove()
     {
         m_isMove = false;
-        transform.position = m_targetPosition;
+        Poring.transform.position = m_targetPosition;
         Poring.Animator.speed = 1;
     }
 

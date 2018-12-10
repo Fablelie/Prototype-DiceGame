@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e47813ad9534fd74ba78c98184527ba0, type: 3}
   m_Name: Assassin
   m_EditorClassIdentifier: 
-  Prefab: {fileID: 1802245692122424, guid: 2f05cfae33e93384e8743b663b821c7f, type: 2}
+  Prefab: {fileID: 1476023295340040, guid: 76f31fc397753724582790a2bfffa278, type: 2}
   BaseHp: 20
   CurrentMaxHp: 0
   BasePAtk: 10
