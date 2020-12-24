@@ -9,4 +9,4 @@
         3. skill you can use any skill if skill is not cooldown after using skill state will return to dice state but skip to end turn if skill is move to target.
     - step 6 : End game state if has someone kill score to 3
     
-    - please gentle with my game. *3*
+    - please gentle. *3*
